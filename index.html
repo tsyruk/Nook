@@ -206,7 +206,21 @@ select option{background:#0a0a0f;color:var(--g);}
       </div>
       <div>
         <label class="lbl">BIRTHDAY (OPTIONAL)</label>
-        <input id="inp-bday" type="date" style="color-scheme:dark;"/>
+        <div style="display:grid;grid-template-columns:2fr 1fr 2fr;gap:6px;">
+          <select id="inp-bday-m" style="font-size:7px;padding:11px 6px;">
+            <option value="">MONTH</option>
+            <option value="01">JAN</option><option value="02">FEB</option><option value="03">MAR</option>
+            <option value="04">APR</option><option value="05">MAY</option><option value="06">JUN</option>
+            <option value="07">JUL</option><option value="08">AUG</option><option value="09">SEP</option>
+            <option value="10">OCT</option><option value="11">NOV</option><option value="12">DEC</option>
+          </select>
+          <select id="inp-bday-d" style="font-size:7px;padding:11px 6px;">
+            <option value="">DAY</option>
+          </select>
+          <select id="inp-bday-y" style="font-size:7px;padding:11px 6px;" onchange="populateDays()">
+            <option value="">YEAR</option>
+          </select>
+        </div>
       </div>
     </div>
     <button class="btn btn-g" onclick="doSignup()">▶ CREATE PLAYER ◀</button>
@@ -253,6 +267,7 @@ select option{background:#0a0a0f;color:var(--g);}
         <div class="stat-num" style="color:var(--o);" id="r-pastries">0</div>
       </div>
     </div>
+    <button class="btn btn-p" style="font-size:8px;" onclick="go('s-profile')">👤 VIEW PLAYER PROFILE</button>
     <!-- ADVENTURE LOG -->
     <div class="card-p" style="margin-bottom:0;">
       <div style="font-size:6px;color:var(--p);letter-spacing:.1em;margin-bottom:8px;">📜 ADVENTURE LOG</div>
@@ -293,6 +308,7 @@ select option{background:#0a0a0f;color:var(--g);}
     <div style="font-size:6px;color:rgba(0,229,255,.4);margin-bottom:12px;letter-spacing:.08em;">SCAN PLAYER LOYALTY CARD</div>
 
     <!-- Real camera scanner -->
+    <button class="btn btn-p" onclick="go('s-dashboard')" style="margin-bottom:12px;">📊 OWNER DASHBOARD</button>
     <div class="scan-box" id="camera-box">
       <div id="qr-reader"></div>
       <div id="scan-placeholder">
@@ -381,6 +397,101 @@ select option{background:#0a0a0f;color:var(--g);}
     <div style="font-size:6px;color:rgba(0,255,136,.25);text-align:center;margin-top:8px;letter-spacing:.06em;">SORTED BY REWARDS REDEEMED</div>
   </div>
 
+  <!-- ══════════════════════════════════════
+       OWNER DASHBOARD
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-dashboard" style="padding-top:4px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <button class="back" style="margin-bottom:0;" onclick="go('s-scanner')">◀ BACK</button>
+      <span class="staff-tag">OWNER VIEW</span>
+    </div>
+    <div style="font-size:16px;color:var(--p);text-shadow:0 0 10px var(--p);margin-bottom:14px;text-align:center;letter-spacing:.06em;" class="glow">📊 DASHBOARD</div>
+    <!-- Big stats -->
+    <div class="g2" style="margin-bottom:8px;">
+      <div class="card-p" style="text-align:center;margin-bottom:0;">
+        <div style="font-size:5px;color:var(--p);letter-spacing:.12em;margin-bottom:6px;">TOTAL MEMBERS</div>
+        <div style="font-size:26px;color:var(--p);text-shadow:0 0 12px rgba(255,0,255,.8);" id="db-members">0</div>
+      </div>
+      <div class="card" style="text-align:center;margin-bottom:0;">
+        <div style="font-size:5px;color:var(--g);letter-spacing:.12em;margin-bottom:6px;">TOTAL VISITS</div>
+        <div style="font-size:26px;color:var(--g);text-shadow:0 0 12px rgba(0,255,136,.8);" id="db-visits">0</div>
+      </div>
+    </div>
+    <div class="g2" style="margin-bottom:8px;">
+      <div class="card-y" style="text-align:center;margin-ننg:0;margin-bottom:0;">
+        <div style="font-size:5px;color:var(--y);letter-spacing:.12em;margin-bottom:6px;">☕ REDEEMED</div>
+        <div style="font-size:26px;color:var(--y);text-shadow:0 0 12px rgba(255,238,0,.8);" id="db-coffees">0</div>
+      </div>
+      <div class="card-b" style="text-align:center;margin-bottom:0;">
+        <div style="font-size:5px;color:var(--o);letter-spacing:.12em;margin-bottom:6px;">🥐 REDEEMED</div>
+        <div style="font-size:26px;color:var(--o);text-shadow:0 0 12px rgba(255,136,0,.8);" id="db-pastries">0</div>
+      </div>
+    </div>
+    <!-- Avg stamps -->
+    <div class="card" style="margin-bottom:8px;">
+      <div style="font-size:6px;color:var(--b);letter-spacing:.12em;margin-bottom:10px;">AVG STAMP PROGRESS</div>
+      <div class="prog-wrap" style="height:18px;">
+        <div class="prog-fill" id="db-avg-bar"></div>
+        <div class="prog-text" id="db-avg-text"></div>
+      </div>
+    </div>
+    <!-- Top 3 -->
+    <div class="card-p" style="margin-bottom:8px;padding:10px 12px;">
+      <div style="font-size:6px;color:var(--p);letter-spacing:.12em;margin-bottom:10px;">👑 TOP 3 PLAYERS</div>
+      <div id="db-top3"></div>
+    </div>
+    <!-- Activity feed -->
+    <div class="card-b" style="padding:10px 12px;">
+      <div style="font-size:6px;color:var(--b);letter-spacing:.12em;margin-bottom:10px;">📜 RECENT ACTIVITY</div>
+      <div id="db-activity" class="scroll" style="max-height:120px;"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PLAYER PROFILE
+  ══════════════════════════════════════ -->
+  <div class="screen" id="s-profile" style="padding-top:4px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <button class="back" style="margin-bottom:0;" onclick="go('s-rewards')">◀ BACK</button>
+      <span style="font-size:6px;color:var(--p);letter-spacing:.1em;">PLAYER PROFILE</span>
+    </div>
+    <!-- Player card header -->
+    <div class="card-p" style="text-align:center;margin-bottom:10px;">
+      <div style="font-size:32px;margin-bottom:6px;" id="pr-avatar-big">☕</div>
+      <div style="font-size:12px;color:var(--y);text-shadow:0 0 8px var(--y);margin-bottom:4px;" id="pr-name"></div>
+      <div style="font-size:7px;color:rgba(0,229,255,.5);margin-bottom:8px;" id="pr-id"></div>
+      <div id="pr-level-badge" style="display:inline-block;padding:6px 12px;border:2px solid;font-size:7px;letter-spacing:.08em;"></div>
+    </div>
+    <!-- Stats row -->
+    <div class="g2" style="margin-bottom:8px;">
+      <div class="card" style="text-align:center;margin-bottom:0;">
+        <div style="font-size:5px;color:var(--b);letter-spacing:.1em;margin-bottom:6px;">TOTAL VISITS</div>
+        <div style="font-size:22px;color:var(--g);text-shadow:0 0 10px var(--g);" id="pr-visits">0</div>
+      </div>
+      <div class="card" style="text-align:center;margin-bottom:0;">
+        <div style="font-size:5px;color:var(--b);letter-spacing:.1em;margin-bottom:6px;">FREE COFFEES</div>
+        <div style="font-size:22px;color:var(--y);text-shadow:0 0 10px var(--y);" id="pr-rewards">0</div>
+      </div>
+    </div>
+    <!-- XP bar -->
+    <div class="card-b" style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+        <span style="font-size:6px;color:var(--b);">XP TO NEXT RANK</span>
+        <span style="font-size:6px;color:var(--b);" id="pr-xp-label"></span>
+      </div>
+      <div class="prog-wrap" style="height:16px;">
+        <div class="prog-fill" id="pr-xp-bar" style="background:var(--b);box-shadow:0 0 8px rgba(0,229,255,.6);"></div>
+        <div class="prog-text" id="pr-xp-text"></div>
+      </div>
+      <div style="font-size:6px;color:rgba(0,229,255,.35);margin-top:8px;" id="pr-next-rank"></div>
+    </div>
+    <!-- Achievements -->
+    <div class="card" style="padding:12px;">
+      <div style="font-size:6px;color:var(--g);letter-spacing:.12em;margin-bottom:10px;">🏆 ACHIEVEMENTS</div>
+      <div id="pr-achievements" style="display:flex;flex-direction:column;gap:6px;"></div>
+    </div>
+  </div>
+
 </div><!-- /phone -->
 
 <script>
@@ -421,25 +532,8 @@ loadData();
 // ═══════════════════════════════════════════
 // NAVIGATION
 // ═══════════════════════════════════════════
-function go(id){
-  // Stop camera if leaving scanner
-  if(id !== 's-scanner') stopCamera();
+// navigation handled by go() override below
 
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-
-  if(id==='s-rewards')   renderRewards();
-  if(id==='s-stamp')     renderStamp();
-  if(id==='s-signup')    renderDemoList();
-  if(id==='s-scanner')   renderQuickList();
-  if(id==='s-leaderboard') renderLeaderboard();
-  if(id==='s-welcome' && currentCustomer)
-    document.getElementById('my-rewards-btn').style.display='block';
-}
-
-// ═══════════════════════════════════════════
-// TOAST
-// ═══════════════════════════════════════════
 function showToast(msg, type='ok'){
   const t=document.getElementById('toast');
   t.textContent=msg;
@@ -502,7 +596,10 @@ function loadCustomer(id){ currentCustomer=customers.find(c=>c.id===id); }
 function doSignup(){
   const name = document.getElementById('inp-name').value.trim().toUpperCase();
   const phone = document.getElementById('inp-phone').value.trim();
-  const bday = document.getElementById('inp-bday').value;
+  const bm=document.getElementById('inp-bday-m').value;
+  const bd=document.getElementById('inp-bday-d').value;
+  const by=document.getElementById('inp-bday-y').value;
+  const bday=(bm&&bd&&by)?`${by}-${bm}-${bd}`:'';
   if(!name||!phone){ showToast('! FILL ALL FIELDS !','err'); return; }
   if(!phoneRegex.test(phone)){ showToast('INVALID PHONE NUMBER','err'); return; }
   if(customers.some(c=>c.phone===phone)){ showToast('PHONE ALREADY REGISTERED','err'); return; }
@@ -511,7 +608,9 @@ function doSignup(){
   saveData();
   document.getElementById('inp-name').value='';
   document.getElementById('inp-phone').value='';
-  document.getElementById('inp-bday').value='';
+  document.getElementById('inp-bday-m').value='';
+  document.getElementById('inp-bday-d').value='';
+  document.getElementById('inp-bday-y').value='';
   showToast('★ WELCOME '+nc.name+' ★');
   go('s-rewards');
 }
@@ -773,6 +872,129 @@ function redeemBirthday(){
 }
 
 // ═══════════════════════════════════════════
+// LEVELS & ACHIEVEMENTS
+// ═══════════════════════════════════════════
+function getLevel(c){
+  const v=totalVisits(c);
+  if(v>=30) return {name:'CAFFEINE LEGEND',icon:'👑',color:'var(--p)',next:null,cur:30,max:30};
+  if(v>=16) return {name:'ESPRESSO MASTER',icon:'⚡',color:'var(--y)',next:'CAFFEINE LEGEND',cur:v-16,max:14};
+  if(v>=6)  return {name:'LATTE WARRIOR',  icon:'☕',color:'var(--b)',next:'ESPRESSO MASTER',cur:v-6, max:10};
+  return           {name:'COFFEE ROOKIE',  icon:'🟢',color:'var(--g)',next:'LATTE WARRIOR',  cur:v,   max:6};
+}
+function totalVisits(c){ return (c.stamps||0)+(c.rewards||0)*10+(c.pastryStamps||0)+(c.pastryRewards||0)*15; }
+
+function getAchievements(c){
+  const v=totalVisits(c);
+  return [
+    {id:'first',  icon:'☕', title:'FIRST COFFEE',      desc:'Add your first stamp',         done:v>=1},
+    {id:'v5',     icon:'🌱', title:'REGULAR',           desc:'Reach 5 visits',               done:v>=5},
+    {id:'v10',    icon:'🔥', title:'10 VISITS',         desc:'Visit 10 times',               done:v>=10},
+    {id:'v25',    icon:'💪', title:'DEDICATED',         desc:'25 total visits',              done:v>=25},
+    {id:'reward', icon:'🏆', title:'FREE COFFEE',       desc:'Redeem your first reward',     done:(c.rewards||0)>=1},
+    {id:'pastry', icon:'🥐', title:'PASTRY LOVER',      desc:'Redeem a free pastry',         done:(c.pastryRewards||0)>=1},
+    {id:'bday',   icon:'🎂', title:'BIRTHDAY KID',      desc:'Use a birthday reward',        done:(c.history||[]).some(h=>h.type==='birthday')},
+    {id:'legend', icon:'👑', title:'CAFFEINE LEGEND',   desc:'Reach 30+ total visits',       done:v>=30},
+  ];
+}
+
+// ═══════════════════════════════════════════
+// PROFILE SCREEN
+// ═══════════════════════════════════════════
+function renderProfile(){
+  const c=currentCustomer; if(!c) return;
+  const v=totalVisits(c);
+  const lv=getLevel(c);
+  document.getElementById('pr-name').textContent=c.name;
+  document.getElementById('pr-id').textContent=c.id;
+  document.getElementById('pr-visits').textContent=v;
+  document.getElementById('pr-rewards').textContent=c.rewards||0;
+  // Level badge
+  const badge=document.getElementById('pr-level-badge');
+  badge.textContent=lv.icon+' '+lv.name;
+  badge.style.color=lv.color; badge.style.borderColor=lv.color;
+  badge.style.textShadow='0 0 8px '+lv.color;
+  // XP bar
+  const pct=lv.next ? Math.round(lv.cur/lv.max*100) : 100;
+  document.getElementById('pr-xp-bar').style.width=pct+'%';
+  document.getElementById('pr-xp-text').textContent=lv.next?lv.cur+'/'+lv.max:'MAX';
+  document.getElementById('pr-xp-label').textContent=pct+'%';
+  document.getElementById('pr-next-rank').textContent=lv.next?'NEXT: '+lv.next:'★ MAX RANK ACHIEVED ★';
+  // Achievements
+  const achs=getAchievements(c);
+  document.getElementById('pr-achievements').innerHTML=achs.map(a=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:7px 6px;border-bottom:1px solid rgba(0,255,136,.07);opacity:${a.done?1:.35};">
+      <span style="font-size:16px;flex-shrink:0;">${a.icon}</span>
+      <div style="flex:1;">
+        <div style="font-size:7px;color:${a.done?'var(--g)':'rgba(0,255,136,.4)'};margin-bottom:2px;">${a.title}</div>
+        <div style="font-size:6px;color:rgba(0,229,255,.4);letter-spacing:.04em;">${a.desc}</div>
+      </div>
+      <span style="font-size:10px;">${a.done?'✔':''}</span>
+    </div>`).join('');
+  // Avatar emoji based on level
+  const avatars={COFFEE_ROOKIE:'🌱','LATTE_WARRIOR':'☕','ESPRESSO_MASTER':'⚡','CAFFEINE_LEGEND':'👑'};
+  document.getElementById('pr-avatar-big').textContent=lv.icon;
+}
+
+// Override go() to also handle profile render
+const _go=go;
+function go(id){
+  if(id==='s-profile') renderProfile();
+  if(id==='s-dashboard') renderDashboard();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id)&&document.getElementById(id).classList.add('active');
+  if(id!=='s-scanner') stopCamera();
+  if(id==='s-rewards') renderRewards();
+  if(id==='s-stamp') renderStamp();
+  if(id==='s-signup') renderDemoList();
+  if(id==='s-scanner') renderQuickList();
+  if(id==='s-leaderboard') renderLeaderboard();
+  if(id==='s-welcome'&&currentCustomer) document.getElementById('my-rewards-btn').style.display='block';
+}
+
+// ═══════════════════════════════════════════
+// OWNER DASHBOARD
+// ═══════════════════════════════════════════
+function renderDashboard(){
+  const totalMembers=customers.length;
+  const totalVisitsAll=customers.reduce((s,c)=>s+totalVisits(c),0);
+  const totalCoffees=customers.reduce((s,c)=>s+(c.rewards||0),0);
+  const totalPastriesAll=customers.reduce((s,c)=>s+(c.pastryRewards||0),0);
+  const avgStamps=totalMembers?Math.round(customers.reduce((s,c)=>s+(c.stamps||0),0)/totalMembers*10)/10:0;
+
+  document.getElementById('db-members').textContent=totalMembers;
+  document.getElementById('db-visits').textContent=totalVisitsAll;
+  document.getElementById('db-coffees').textContent=totalCoffees;
+  document.getElementById('db-pastries').textContent=totalPastriesAll;
+  document.getElementById('db-avg-bar').style.width=(avgStamps/10*100)+'%';
+  document.getElementById('db-avg-text').textContent='AVG '+avgStamps+'/10';
+
+  // Top 3
+  const top3=[...customers].sort((a,b)=>b.rewards-a.rewards).slice(0,3);
+  const medals=['🥇','🥈','🥉'];
+  document.getElementById('db-top3').innerHTML=top3.length
+    ? top3.map((c,i)=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,0,255,.1);">
+          <span style="font-size:16px;">${medals[i]}</span>
+          <div style="flex:1;"><div style="font-size:7px;color:var(--g);">${c.name}</div><div style="font-size:5px;color:rgba(255,0,255,.4);margin-top:2px;">${c.id}</div></div>
+          <div style="text-align:right;"><div style="font-size:8px;color:var(--y);">${c.rewards}☕</div><div style="font-size:6px;color:rgba(255,136,0,.5);">${c.pastryRewards||0}🥐</div></div>
+        </div>`).join('')
+    : '<div style="font-size:7px;color:rgba(0,255,136,.2);padding:8px;">NO PLAYERS YET</div>';
+
+  // Recent activity — gather all history, sort by date desc
+  const allEvents=[];
+  customers.forEach(c=>(c.history||[]).forEach(h=>allEvents.push({...h,name:c.name})));
+  allEvents.sort((a,b)=>b.date.localeCompare(a.date));
+  const icons={stamp:'☕',reward:'🏆',pastry:'🥐',birthday:'🎂'};
+  const labels={stamp:'STAMP',reward:'FREE COFFEE',pastry:'FREE PASTRY',birthday:'BDAY DRINK'};
+  document.getElementById('db-activity').innerHTML=allEvents.slice(0,12).map(e=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,229,255,.07);">
+      <span style="font-size:13px;">${icons[e.type]||'•'}</span>
+      <div style="flex:1;"><span style="font-size:6px;color:var(--g);">${e.name}</span><span style="font-size:6px;color:rgba(0,229,255,.4);margin-left:8px;">${labels[e.type]||e.type}</span></div>
+      <span style="font-size:5px;color:rgba(0,229,255,.3);">${e.date}</span>
+    </div>`).join('')||'<div style="font-size:6px;color:rgba(0,255,136,.2);padding:6px;">NO ACTIVITY YET</div>';
+}
+
+// ═══════════════════════════════════════════
 // LEADERBOARD
 // ═══════════════════════════════════════════
 function renderLeaderboard(){
@@ -796,8 +1018,33 @@ function renderLeaderboard(){
 // ═══════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════
-renderDemoList();
-window.addEventListener("beforeunload", stopCamera);
+// Populate year dropdown on load
+(function(){
+  const yEl=document.getElementById('inp-bday-y');
+  const cur=new Date().getFullYear();
+  for(let y=cur-5;y>=cur-100;y--){
+    const o=document.createElement('option');
+    o.value=y;o.textContent=y;yEl.appendChild(o);
+  }
+})();
+
+function populateDays(){
+  const m=parseInt(document.getElementById('inp-bday-m').value)||0;
+  const y=parseInt(document.getElementById('inp-bday-y').value)||2000;
+  const days=new Date(y,m,0).getDate()||31;
+  const dEl=document.getElementById('inp-bday-d');
+  const cur=dEl.value;
+  dEl.innerHTML='<option value="">DAY</option>';
+  for(let d=1;d<=days;d++){
+    const o=document.createElement('option');
+    o.value=String(d).padStart(2,'0');
+    o.textContent=d;
+    dEl.appendChild(o);
+  }
+  if(cur) dEl.value=cur;
+}
+document.getElementById('inp-bday-m').addEventListener('change',populateDays);
+populateDays();
 // Update ticker with day info
 if(isTuesday()) document.getElementById('ticker-text').textContent=
   '⚡ TODAY IS DOUBLE STAMP TUESDAY! ⚡ ALL STAMPS COUNT DOUBLE ⚡ COFFEE: 10 STAMPS ⚡ PASTRY: 15 STAMPS ⚡ BIRTHDAY = FREE DRINK ⚡';
