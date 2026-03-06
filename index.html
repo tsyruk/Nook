@@ -6,6 +6,7 @@
 <title>THE NOOK – Loyalty Arcade</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap" rel="stylesheet"/>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{
   --bg:#0a0a0f; --bg2:#0f0f1a;
@@ -240,7 +241,7 @@ select option{background:#0a0a0f;color:var(--g);}
     <div id="r-offers"></div>
     <div class="card-b" style="text-align:center;margin-bottom:10px;">
       <div style="font-size:6px;color:var(--b);letter-spacing:.12em;margin-bottom:8px;">SCAN AT CHECKOUT</div>
-      <div class="qr-wrap"><canvas id="qr-canvas" width="100" height="100"></canvas></div>
+      <div class="qr-wrap"><div id="qr-canvas" style="width:110px;height:110px;"></div></div>
       <div style="font-size:6px;color:rgba(0,229,255,.3);margin-top:8px;" id="r-id"></div>
     </div>
     <div class="card" style="margin-bottom:8px;">
@@ -565,22 +566,19 @@ function renderOffers(container, customer){
 }
 
 // ═══════════════════════════════════════════
-// QR CODE GENERATOR
+// QR CODE GENERATOR (real, scannable)
 // ═══════════════════════════════════════════
-function drawQR(id, canvas){
-  const ctx=canvas.getContext('2d'),S=canvas.width,G=13,cs=S/G;
-  ctx.fillStyle='#fff'; ctx.fillRect(0,0,S,S);
-  let h=0; for(let i=0;i<id.length;i++) h=((h<<5)-h)+id.charCodeAt(i);
-  const rnd=()=>{h=(h*1664525+1013904223)|0;return Math.abs(h)%2};
-  const grid=Array.from({length:G},()=>Array.from({length:G},()=>rnd()));
-  [[0,0],[0,G-7],[G-7,0]].forEach(([br,bc])=>{
-    for(let r=0;r<7;r++) for(let c=0;c<7;c++){
-      const o=(r===0||r===6||c===0||c===6),inn=(r>=2&&r<=4&&c>=2&&c<=4);
-      if(grid[br+r]) grid[br+r][bc+c]=(o||inn)?1:0;
-    }
+let qrInstance = null;
+function drawQR(id, el){
+  el.innerHTML = '';
+  qrInstance = new QRCode(el, {
+    text: id,
+    width: 110,
+    height: 110,
+    colorDark: '#000000',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
   });
-  ctx.fillStyle='#000';
-  grid.forEach((row,r)=>row.forEach((v,c)=>{if(v) ctx.fillRect(c*cs,r*cs,cs,cs)}));
 }
 
 // ═══════════════════════════════════════════
