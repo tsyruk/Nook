@@ -3,27 +3,36 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>THE NOOK – Loyalty Arcade</title>
+<title>THE NOOK – Loyalty</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap" rel="stylesheet"/>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-:root{
-  --bg:#0a0a0f; --bg2:#0f0f1a;
-  --g:#00ff88; --b:#00e5ff; --p:#ff00ff; --y:#ffee00; --r:#ff3366; --o:#ff8800;
-}
+:root{--bg:#0a0a0f;--bg2:#0f0f1a;--g:#00ff88;--b:#00e5ff;--p:#ff00ff;--y:#ffee00;--r:#ff3366;--o:#ff8800;}
 *{box-sizing:border-box;margin:0;padding:0;image-rendering:pixelated}
 body{background:var(--bg);font-family:'Press Start 2P',monospace;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px 0 40px;}
 body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.09) 0,rgba(0,0,0,.09) 1px,transparent 1px,transparent 2px);pointer-events:none;z-index:9999;}
 body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.75) 100%);pointer-events:none;z-index:9998;}
 @keyframes flicker{0%,100%{opacity:1}93%{opacity:.97}96%{opacity:.99}}
 
-.phone{width:360px;background:var(--bg2);border:4px solid var(--g);box-shadow:0 0 0 2px var(--bg),0 0 0 4px #003322,0 0 30px rgba(0,255,136,.35),0 0 70px rgba(0,255,136,.1),inset 0 0 40px rgba(0,255,136,.03);position:relative;overflow:hidden;padding:18px 16px 28px;animation:flicker 9s infinite;}
+.phone{width:360px;min-height:660px;background:var(--bg2);border:4px solid var(--g);box-shadow:0 0 0 2px var(--bg),0 0 0 4px #003322,0 0 30px rgba(0,255,136,.35),0 0 70px rgba(0,255,136,.1),inset 0 0 40px rgba(0,255,136,.03);position:relative;overflow:hidden;padding:18px 16px 0;animation:flicker 9s infinite;}
 .phone::before{content:'';position:absolute;inset:8px;border:1px solid rgba(0,255,136,.1);pointer-events:none;z-index:0;}
 
-.screen{display:none;flex-direction:column;animation:pixIn .12s steps(3) forwards;position:relative;z-index:1;}
+.screen-body{overflow-y:auto;flex:1;padding-bottom:16px;}
+.screen-body::-webkit-scrollbar{width:3px}.screen-body::-webkit-scrollbar-track{background:transparent}.screen-body::-webkit-scrollbar-thumb{background:rgba(0,255,136,.3)}
+
+.screen{display:none;flex-direction:column;min-height:620px;animation:pixIn .12s steps(3) forwards;position:relative;z-index:1;}
 .screen.active{display:flex;}
 @keyframes pixIn{0%{opacity:0;transform:scale(1.03)}100%{opacity:1;transform:scale(1)}}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{display:flex;border-top:2px solid rgba(0,255,136,.2);margin:0 -16px;background:rgba(0,0,0,.9);flex-shrink:0;}
+.nav-btn{flex:1;padding:10px 4px 14px;background:none;border:none;font-family:'Press Start 2P',monospace;font-size:6px;color:rgba(0,255,136,.3);cursor:pointer;text-align:center;letter-spacing:.04em;border-top:2px solid transparent;transition:all .1s;line-height:2;}
+.nav-btn.active{color:var(--g);border-top-color:var(--g);text-shadow:0 0 8px var(--g);}
+.nav-btn .ni{font-size:13px;display:block;margin-bottom:2px;}
+.staff-nav{display:flex;border-top:2px solid rgba(255,0,255,.2);margin:0 -16px;background:rgba(0,0,0,.9);flex-shrink:0;}
+.staff-nav .nav-btn{color:rgba(255,0,255,.3);}
+.staff-nav .nav-btn.active{color:var(--p);border-top-color:var(--p);text-shadow:0 0 8px var(--p);}
 
 /* ── CARDS ── */
 .card{position:relative;background:rgba(0,255,136,.04);border:2px solid var(--g);box-shadow:inset 0 0 10px rgba(0,255,136,.04),3px 3px 0 #003322;padding:14px;margin-bottom:10px;}
@@ -40,7 +49,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .card-y::before{top:-2px;left:-2px}.card-y::after{bottom:-2px;right:-2px}
 
 /* ── BUTTONS ── */
-.btn{font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:.04em;border:none;cursor:pointer;width:100%;padding:13px 10px;text-align:center;position:relative;transition:transform .05s;text-transform:uppercase;margin-bottom:8px;line-height:1.7;}
+.btn{font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:.04em;border:none;cursor:pointer;width:100%;padding:13px 10px;text-align:center;transition:transform .05s;text-transform:uppercase;margin-bottom:8px;line-height:1.7;}
 .btn:active{transform:translate(2px,2px)!important;box-shadow:none!important}
 .btn:disabled{cursor:not-allowed;opacity:.3;}
 .btn-g{background:var(--g);color:#000;box-shadow:3px 3px 0 #005522,0 0 12px rgba(0,255,136,.45);}
@@ -48,11 +57,9 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .btn-b{background:var(--b);color:#000;box-shadow:3px 3px 0 #004455,0 0 12px rgba(0,229,255,.45);}
 .btn-b:not(:disabled):hover{box-shadow:4px 4px 0 #004455,0 0 22px rgba(0,229,255,.7);}
 .btn-p{background:var(--p);color:#000;box-shadow:3px 3px 0 #550055,0 0 12px rgba(255,0,255,.45);}
-.btn-p:not(:disabled):hover{box-shadow:4px 4px 0 #550055,0 0 22px rgba(255,0,255,.7);}
 .btn-r{background:var(--r);color:#fff;box-shadow:3px 3px 0 #550011,0 0 12px rgba(255,51,102,.45);}
 .btn-r:not(:disabled):hover{box-shadow:4px 4px 0 #550011,0 0 22px rgba(255,51,102,.7);}
 .btn-y{background:var(--y);color:#000;box-shadow:3px 3px 0 #443300,0 0 12px rgba(255,238,0,.45);}
-.btn-y:not(:disabled):hover{box-shadow:4px 4px 0 #443300,0 0 22px rgba(255,238,0,.7);}
 .btn-o{background:var(--o);color:#000;box-shadow:3px 3px 0 #442200,0 0 12px rgba(255,136,0,.45);}
 .btn-o:not(:disabled):hover{box-shadow:4px 4px 0 #442200,0 0 22px rgba(255,136,0,.7);}
 .btn-out{background:transparent;color:var(--g);border:2px solid var(--g);box-shadow:2px 2px 0 #003322;font-family:'Press Start 2P',monospace;font-size:8px;padding:11px;cursor:pointer;width:100%;text-align:center;margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em;transition:background .1s;}
@@ -64,10 +71,8 @@ input::placeholder{color:rgba(0,255,136,.22);font-size:7px}
 input:focus,select:focus{box-shadow:inset 0 0 6px rgba(0,255,136,.15),2px 2px 0 #003322,0 0 10px rgba(0,255,136,.25);}
 select option{background:#0a0a0f;color:var(--g);}
 
-/* ── LABELS / TEXT ── */
+/* ── LABELS ── */
 .lbl{font-size:6px;color:var(--b);letter-spacing:.15em;display:block;margin-bottom:5px;text-transform:uppercase;}
-.lbl-p{font-size:6px;color:var(--p);letter-spacing:.15em;display:block;margin-bottom:5px;text-transform:uppercase;}
-.lbl-y{font-size:6px;color:var(--y);letter-spacing:.15em;display:block;margin-bottom:5px;text-transform:uppercase;}
 .title{color:var(--g);text-shadow:0 0 10px var(--g),0 0 22px rgba(0,255,136,.4);line-height:1.5;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .blink{animation:blink 1s step-end infinite}
@@ -82,7 +87,7 @@ select option{background:#0a0a0f;color:var(--g);}
 
 /* ── HP PIPS ── */
 .hp-bar{display:flex;gap:4px;flex-wrap:wrap;}
-.hp-pip{width:18px;height:18px;border:2px solid rgba(0,255,136,.2);background:rgba(0,0,0,.5);transition:all .1s steps(2);position:relative;}
+.hp-pip{width:18px;height:18px;border:2px solid rgba(0,255,136,.2);background:rgba(0,0,0,.5);transition:all .1s steps(2);}
 .hp-pip.on{background:var(--y);border-color:var(--y);box-shadow:0 0 7px rgba(255,238,0,.7);}
 @keyframes pop{0%{transform:scale(.5)}60%{transform:scale(1.35)}80%{transform:scale(.9)}100%{transform:scale(1)}}
 .hp-pip.pop{animation:pop .4s ease forwards;}
@@ -96,7 +101,7 @@ select option{background:#0a0a0f;color:var(--g);}
 .prog-fill-o{background:var(--o);box-shadow:0 0 8px rgba(255,136,0,.6);}
 
 /* ── SCANNER ── */
-.scan-box{background:#000;border:2px solid var(--b);box-shadow:0 0 14px rgba(0,229,255,.25),inset 0 0 20px rgba(0,229,255,.04);padding:20px;text-align:center;margin-bottom:10px;position:relative;overflow:hidden;}
+.scan-box{background:#000;border:2px solid var(--b);box-shadow:0 0 14px rgba(0,229,255,.25);padding:20px;text-align:center;margin-bottom:10px;position:relative;overflow:hidden;}
 .scan-corners{width:110px;height:110px;margin:0 auto;position:relative;}
 .corner{position:absolute;width:18px;height:18px;border:3px solid var(--b);}
 .corner.tl{top:0;left:0;border-right:none;border-bottom:none}
@@ -108,10 +113,6 @@ select option{background:#0a0a0f;color:var(--g);}
 #qr-reader{width:100%;max-width:280px;margin:0 auto;}
 #qr-reader video{border:2px solid var(--b)!important;}
 #qr-reader img{display:none!important;}
-
-/* ── STAFF ── */
-.staff-tag{background:#000;border:2px solid var(--p);color:var(--p);font-size:7px;padding:4px 8px;box-shadow:0 0 8px rgba(255,0,255,.4);letter-spacing:.08em;}
-.avatar{width:42px;height:42px;flex-shrink:0;background:#000;border:2px solid var(--p);box-shadow:0 0 10px rgba(255,0,255,.35);display:flex;align-items:center;justify-content:center;color:var(--p);font-size:17px;}
 
 /* ── PIN ── */
 .pin-row{display:flex;justify-content:center;gap:10px;margin:16px 0;}
@@ -128,12 +129,9 @@ select option{background:#0a0a0f;color:var(--g);}
 /* ── MISC ── */
 .back{background:none;border:none;color:rgba(0,255,136,.5);font-family:'Press Start 2P',monospace;font-size:7px;cursor:pointer;padding:0;margin-bottom:16px;text-transform:uppercase;letter-spacing:.1em;}
 .back:hover{color:var(--g);}
-.divider{border-top:2px solid rgba(0,255,136,.2);margin:10px 0;box-shadow:0 0 4px rgba(0,255,136,.3);}
+.divider{border-top:2px solid rgba(0,255,136,.2);margin:10px 0;}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.stat-num{font-size:22px;text-shadow:0 0 10px currentColor;}
 .qr-wrap{display:inline-block;padding:10px;background:#fff;border:3px solid var(--g);box-shadow:0 0 14px rgba(0,255,136,.5);}
-.scroll{overflow-y:auto;max-height:340px;}
-.scroll::-webkit-scrollbar{width:4px}.scroll::-webkit-scrollbar-track{background:#000}.scroll::-webkit-scrollbar-thumb{background:var(--g)}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
 .shake{animation:shake .35s ease}
 
@@ -144,525 +142,536 @@ select option{background:#0a0a0f;color:var(--g);}
 .offer-banner.bday{border-color:var(--p);box-shadow:0 0 10px rgba(255,0,255,.3),2px 2px 0 #220022;}
 .offer-banner.bday .text{color:var(--p);}
 
-/* ── LEADERBOARD ── */
-.lb-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(0,255,136,.1);}
-.lb-rank{font-size:14px;color:var(--y);width:24px;text-align:center;flex-shrink:0;}
-.lb-rank.first{color:var(--y);text-shadow:0 0 10px rgba(255,238,0,.8);}
-.lb-rank.second{color:rgba(200,200,200,.9);}
-.lb-rank.third{color:rgba(200,140,80,.9);}
-.lb-name{flex:1;color:var(--g);font-size:8px;letter-spacing:.04em;}
-.lb-score{font-size:8px;color:var(--y);text-shadow:0 0 6px rgba(255,238,0,.5);}
-
-/* ── HISTORY ── */
-.hist-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(0,255,136,.08);}
-.hist-icon{font-size:16px;flex-shrink:0;width:22px;text-align:center;}
-.hist-text{font-size:7px;color:rgba(0,255,136,.7);line-height:1.8;letter-spacing:.03em;}
-.hist-date{font-size:6px;color:rgba(0,229,255,.4);margin-top:1px;}
+/* ── STAFF CUSTOMER LIST ── */
+.cust-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(255,0,255,.1);cursor:pointer;transition:background .1s;}
+.cust-row:hover,.cust-row:active{background:rgba(255,0,255,.07);}
+.cust-av{width:36px;height:36px;flex-shrink:0;background:#000;border:2px solid var(--p);box-shadow:0 0 8px rgba(255,0,255,.3);display:flex;align-items:center;justify-content:center;color:var(--p);font-size:14px;}
 
 /* ── TICKER ── */
 .ticker-wrap{overflow:hidden;border-top:1px solid rgba(0,255,136,.15);border-bottom:1px solid rgba(0,255,136,.15);padding:6px 0;margin-bottom:12px;}
 .ticker{display:inline-block;white-space:nowrap;font-size:7px;color:rgba(0,255,136,.5);animation:ticker 18s linear infinite;letter-spacing:.08em;}
 @keyframes ticker{0%{transform:translateX(360px)}100%{transform:translateX(-100%)}}
+
+/* ── LEADERBOARD ── */
+.lb-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(0,255,136,.1);}
 </style>
 </head>
 <body>
 <div class="phone">
   <div class="toast" id="toast"></div>
 
-  <!-- ══════════════════════════════════════
-       WELCOME
-  ══════════════════════════════════════ -->
-  <div class="screen active" id="s-welcome" style="align-items:center;text-align:center;padding-top:24px;">
-    <div style="font-size:8px;color:var(--b);letter-spacing:.18em;margin-bottom:10px;text-shadow:0 0 8px var(--b)">PRESS START</div>
-    <div class="title" style="font-size:24px;margin-bottom:4px;">THE<br>NOOK</div>
-    <div style="font-size:7px;color:var(--p);text-shadow:0 0 8px var(--p);letter-spacing:.06em;margin-bottom:14px;">58 WASHINGTON ST, FAIRHAVEN</div>
-    <div style="font-size:30px;filter:drop-shadow(0 0 10px rgba(0,255,136,.6));margin-bottom:10px;">☕</div>
-    <div class="ticker-wrap" style="width:100%;margin-bottom:14px;">
-      <span class="ticker" id="ticker-text">★ COLLECT 10 STAMPS = FREE COFFEE ★ DOUBLE STAMP TUESDAYS ★ 15 STAMPS = FREE PASTRY ★ BIRTHDAY = FREE DRINK ★</span>
+  <!-- ══════ WELCOME ══════ -->
+  <div class="screen active" id="s-welcome" style="padding-top:28px;">
+    <div class="screen-body" style="display:flex;flex-direction:column;align-items:center;text-align:center;">
+      <div style="font-size:8px;color:var(--b);letter-spacing:.18em;margin-bottom:10px;text-shadow:0 0 8px var(--b)">PRESS START</div>
+      <div class="title" style="font-size:26px;margin-bottom:4px;">THE<br>NOOK</div>
+      <div style="font-size:7px;color:var(--p);text-shadow:0 0 8px var(--p);letter-spacing:.06em;margin-bottom:14px;">58 WASHINGTON ST, FAIRHAVEN</div>
+      <div style="font-size:34px;filter:drop-shadow(0 0 10px rgba(0,255,136,.6));margin-bottom:10px;">☕</div>
+      <div class="ticker-wrap" style="width:100%;margin-bottom:18px;">
+        <span class="ticker" id="ticker-text">★ COLLECT 10 STAMPS = FREE COFFEE ★ DOUBLE STAMP TUESDAYS ★ 15 STAMPS = FREE PASTRY ★ BIRTHDAY = FREE DRINK ★</span>
+      </div>
+      <div style="width:100%;">
+        <button class="btn btn-g" onclick="go('s-signin')">[ SIGN IN ]</button>
+        <button class="btn btn-b" onclick="go('s-signup')">[ CREATE ACCOUNT ]</button>
+        <button class="btn btn-y" onclick="go('s-leaderboard')">[ TOP PLAYERS ]</button>
+      </div>
+      <button onclick="go('s-stafflogin')" style="background:none;border:none;color:rgba(0,255,136,.1);font-family:'Press Start 2P',monospace;font-size:6px;cursor:pointer;margin-top:32px;letter-spacing:.1em;padding:8px;">staff</button>
     </div>
-    <div style="width:100%;">
-      <button class="btn btn-g" onclick="go('s-signup')">[ NEW PLAYER ]</button>
-      <button class="btn btn-b" id="my-rewards-btn" style="display:none" onclick="go('s-rewards')">[ MY REWARDS CARD ]</button>
-      <button class="btn btn-y" onclick="go('s-leaderboard')">[ TOP PLAYERS ]</button>
-      <button class="btn-out" onclick="go('s-stafflogin')">[ STAFF LOGIN ]</button>
-    </div>
-    <div style="font-size:6px;color:rgba(0,255,136,.2);margin-top:14px;letter-spacing:.08em;">© THE NOOK ARCADE 2026 · STAFF PIN: 1234</div>
   </div>
 
-  <!-- ══════════════════════════════════════
-       SIGN UP
-  ══════════════════════════════════════ -->
-  <div class="screen" id="s-signup" style="padding-top:4px;">
-    <button class="back" onclick="go('s-welcome')">◀ BACK</button>
-    <div style="font-size:7px;color:var(--b);letter-spacing:.15em;margin-bottom:6px;">CHARACTER CREATION</div>
-    <div style="color:var(--b);font-size:12px;text-shadow:0 0 8px var(--b);margin-bottom:14px;line-height:1.6;">ENTER YOUR DETAILS</div>
-    <div class="card" style="margin-bottom:12px;">
-      <div style="margin-bottom:12px;">
-        <label class="lbl">PLAYER NAME</label>
-        <input id="inp-name" placeholder="E.G. MARGARITA"/>
+  <!-- ══════ SIGN IN ══════ -->
+  <div class="screen" id="s-signin" style="padding-top:8px;">
+    <div class="screen-body">
+      <button class="back" onclick="go('s-welcome')">◀ BACK</button>
+      <div style="font-size:7px;color:var(--b);letter-spacing:.15em;margin-bottom:6px;">PLAYER LOGIN</div>
+      <div style="color:var(--b);font-size:11px;text-shadow:0 0 8px var(--b);margin-bottom:18px;line-height:1.7;">SIGN IN WITH YOUR<br>PHONE NUMBER</div>
+      <div class="card" style="margin-bottom:14px;">
+        <label class="lbl">PHONE NUMBER</label>
+        <input id="si-phone" placeholder="5081234567" type="tel" onkeydown="if(event.key==='Enter')doSignin()"/>
       </div>
-      <div style="margin-bottom:12px;">
-        <label class="lbl">PHONE (10 DIGITS)</label>
-        <input id="inp-phone" placeholder="E.G. 5081234567" type="tel"/>
-      </div>
-      <div>
-        <label class="lbl">BIRTHDAY (OPTIONAL)</label>
-        <div style="display:grid;grid-template-columns:2fr 1fr 2fr;gap:6px;">
-          <select id="inp-bday-m" style="font-size:7px;padding:11px 6px;">
-            <option value="">MONTH</option>
-            <option value="01">JAN</option><option value="02">FEB</option><option value="03">MAR</option>
-            <option value="04">APR</option><option value="05">MAY</option><option value="06">JUN</option>
-            <option value="07">JUL</option><option value="08">AUG</option><option value="09">SEP</option>
-            <option value="10">OCT</option><option value="11">NOV</option><option value="12">DEC</option>
-          </select>
-          <select id="inp-bday-d" style="font-size:7px;padding:11px 6px;">
-            <option value="">DAY</option>
-          </select>
-          <select id="inp-bday-y" style="font-size:7px;padding:11px 6px;" onchange="populateDays()">
-            <option value="">YEAR</option>
-          </select>
+      <button class="btn btn-g" onclick="doSignin()">▶ SIGN IN ◀</button>
+      <div class="divider"></div>
+      <div style="font-size:7px;color:rgba(0,255,136,.3);text-align:center;margin-bottom:12px;">NO ACCOUNT YET?</div>
+      <button class="btn-out" onclick="go('s-signup')">CREATE ACCOUNT</button>
+    </div>
+  </div>
+
+  <!-- ══════ SIGN UP ══════ -->
+  <div class="screen" id="s-signup" style="padding-top:8px;">
+    <div class="screen-body">
+      <button class="back" onclick="go('s-welcome')">◀ BACK</button>
+      <div style="font-size:7px;color:var(--b);letter-spacing:.15em;margin-bottom:6px;">CREATE ACCOUNT</div>
+      <div style="color:var(--b);font-size:11px;text-shadow:0 0 8px var(--b);margin-bottom:14px;line-height:1.7;">JOIN THE NOOK LOYALTY</div>
+      <div class="card" style="margin-bottom:12px;">
+        <div style="margin-bottom:12px;">
+          <label class="lbl">YOUR NAME</label>
+          <input id="inp-name" placeholder="E.G. MARGARITA"/>
         </div>
-      </div>
-    </div>
-    <button class="btn btn-g" onclick="doSignup()">▶ CREATE PLAYER ◀</button>
-    <div class="divider"></div>
-    <div style="font-size:6px;color:var(--p);letter-spacing:.1em;margin-bottom:8px;">— LOAD SAVED PLAYER —</div>
-    <div id="demo-list" class="scroll" style="width:100%;"></div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       MY REWARDS
-  ══════════════════════════════════════ -->
-  <div class="screen" id="s-rewards" style="padding-top:4px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <button class="back" style="margin-bottom:0;" onclick="go('s-welcome')">◀ HOME</button>
-      <span style="font-size:6px;color:var(--b);letter-spacing:.1em;">PLAYER CARD</span>
-    </div>
-    <div id="r-offers"></div>
-    <div class="card-b" style="text-align:center;margin-bottom:10px;">
-      <div style="font-size:6px;color:var(--b);letter-spacing:.12em;margin-bottom:8px;">SCAN AT CHECKOUT</div>
-      <div class="qr-wrap"><div id="qr-canvas" style="width:110px;height:110px;"></div></div>
-      <div style="font-size:6px;color:rgba(0,229,255,.3);margin-top:8px;" id="r-id"></div>
-    </div>
-    <div class="card" style="margin-bottom:8px;">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-        <span id="r-name" style="color:var(--y);font-size:9px;text-shadow:0 0 6px var(--y);"></span>
-        <span id="r-stamp-count" style="color:var(--y);font-size:9px;text-shadow:0 0 6px var(--y);"></span>
-      </div>
-      <div style="font-size:6px;color:rgba(0,255,136,.35);margin-bottom:7px;">☕ COFFEE QUEST (10 STAMPS)</div>
-      <div class="hp-bar" id="r-stamps"></div>
-      <div class="prog-wrap"><div class="prog-fill" id="r-prog"></div><div class="prog-text" id="r-prog-t"></div></div>
-    </div>
-    <div class="card-y" id="r-pastry-card" style="margin-bottom:8px;display:none;">
-      <div style="font-size:6px;color:var(--o);margin-bottom:7px;">🥐 PASTRY QUEST (15 STAMPS)</div>
-      <div class="hp-bar" id="r-pastry-stamps"></div>
-      <div class="prog-wrap"><div class="prog-fill prog-fill-o" id="r-pastry-prog"></div><div class="prog-text" id="r-pastry-t"></div></div>
-    </div>
-    <div class="g2" style="margin-bottom:8px;">
-      <div class="card" style="text-align:center;margin-bottom:0;">
-        <div style="font-size:5px;color:var(--b);letter-spacing:.1em;margin-bottom:6px;">COFFEES</div>
-        <div class="stat-num" style="color:var(--y);" id="r-total">0</div>
-      </div>
-      <div class="card" style="text-align:center;margin-bottom:0;">
-        <div style="font-size:5px;color:var(--b);letter-spacing:.1em;margin-bottom:6px;">PASTRIES</div>
-        <div class="stat-num" style="color:var(--o);" id="r-pastries">0</div>
-      </div>
-    </div>
-    <button class="btn btn-p" style="font-size:8px;" onclick="go('s-profile')">👤 VIEW PLAYER PROFILE</button>
-    <!-- ADVENTURE LOG -->
-    <div class="card-p" style="margin-bottom:0;">
-      <div style="font-size:6px;color:var(--p);letter-spacing:.1em;margin-bottom:8px;">📜 ADVENTURE LOG</div>
-      <div id="r-history" style="max-height:120px;overflow-y:auto;"></div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       STAFF LOGIN
-  ══════════════════════════════════════ -->
-  <div class="screen" id="s-stafflogin" style="align-items:center;justify-content:center;min-height:560px;text-align:center;padding-top:30px;">
-    <div style="font-size:32px;margin-bottom:12px;filter:drop-shadow(0 0 10px var(--p))">🔐</div>
-    <div style="font-size:10px;color:var(--p);text-shadow:0 0 10px var(--p);margin-bottom:4px;">STAFF ACCESS</div>
-    <div style="font-size:6px;color:rgba(255,0,255,.4);margin-bottom:4px;letter-spacing:.1em;">ENTER 4-DIGIT CODE</div>
-    <div class="pin-row" id="pin-row">
-      <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
-      <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
-    </div>
-    <div id="pin-err" style="font-size:7px;color:var(--r);min-height:16px;margin-bottom:10px;letter-spacing:.1em;"></div>
-    <div class="numpad">
-      <div class="num" onclick="pinPress(1)">1</div><div class="num" onclick="pinPress(2)">2</div><div class="num" onclick="pinPress(3)">3</div>
-      <div class="num" onclick="pinPress(4)">4</div><div class="num" onclick="pinPress(5)">5</div><div class="num" onclick="pinPress(6)">6</div>
-      <div class="num" onclick="pinPress(7)">7</div><div class="num" onclick="pinPress(8)">8</div><div class="num" onclick="pinPress(9)">9</div>
-      <div class="num blank"></div><div class="num" onclick="pinPress(0)">0</div><div class="num" onclick="pinPress('del')">⌫</div>
-    </div>
-    <button class="btn-out" style="width:200px;margin-top:8px;" onclick="go('s-welcome')">CANCEL</button>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       QR SCANNER
-  ══════════════════════════════════════ -->
-  <div class="screen" id="s-scanner" style="padding-top:4px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <button class="back" style="margin-bottom:0;" onclick="go('s-welcome')">◀ LOGOUT</button>
-      <span class="staff-tag">STAFF MODE</span>
-    </div>
-    <div style="color:var(--b);font-size:11px;text-shadow:0 0 8px var(--b);margin-bottom:4px;">QR SCANNER</div>
-    <div style="font-size:6px;color:rgba(0,229,255,.4);margin-bottom:12px;letter-spacing:.08em;">SCAN PLAYER LOYALTY CARD</div>
-
-    <!-- Real camera scanner -->
-    <button class="btn btn-p" onclick="go('s-dashboard')" style="margin-bottom:12px;">📊 OWNER DASHBOARD</button>
-    <div class="scan-box" id="camera-box">
-      <div id="qr-reader"></div>
-      <div id="scan-placeholder">
-        <div class="scan-corners">
-          <div class="corner tl"></div><div class="corner tr"></div>
-          <div class="corner bl"></div><div class="corner br"></div>
-          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:6px;">
-            <div style="font-size:28px;">📷</div>
-            <div style="font-size:6px;color:var(--b);letter-spacing:.1em;" class="blink">READY TO SCAN</div>
+        <div style="margin-bottom:12px;">
+          <label class="lbl">PHONE (10 DIGITS)</label>
+          <input id="inp-phone" placeholder="5081234567" type="tel"/>
+        </div>
+        <div>
+          <label class="lbl">BIRTHDAY (OPTIONAL)</label>
+          <div style="display:grid;grid-template-columns:2fr 1fr 2fr;gap:6px;">
+            <select id="inp-bday-m" style="font-size:7px;padding:11px 6px;">
+              <option value="">MONTH</option>
+              <option value="01">JAN</option><option value="02">FEB</option><option value="03">MAR</option>
+              <option value="04">APR</option><option value="05">MAY</option><option value="06">JUN</option>
+              <option value="07">JUL</option><option value="08">AUG</option><option value="09">SEP</option>
+              <option value="10">OCT</option><option value="11">NOV</option><option value="12">DEC</option>
+            </select>
+            <select id="inp-bday-d" style="font-size:7px;padding:11px 6px;"><option value="">DAY</option></select>
+            <select id="inp-bday-y" style="font-size:7px;padding:11px 6px;" onchange="populateDays()"><option value="">YEAR</option></select>
           </div>
-          <div class="scan-line"></div>
+        </div>
+      </div>
+      <button class="btn btn-g" onclick="doSignup()">▶ CREATE ACCOUNT ◀</button>
+      <div style="font-size:6px;color:rgba(0,255,136,.2);text-align:center;margin-top:4px;margin-bottom:8px;">FREE TO JOIN · NO SPAM</div>
+    </div>
+  </div>
+
+  <!-- ══════ CUSTOMER HOME (tabbed) ══════ -->
+  <div class="screen" id="s-customer-home" style="padding-top:8px;">
+
+    <!-- REWARDS TAB -->
+    <div class="screen-body" id="ctab-rewards">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div>
+          <div id="ch-greeting" style="font-size:9px;color:var(--y);text-shadow:0 0 6px var(--y);margin-bottom:3px;"></div>
+          <div id="ch-id" style="font-size:6px;color:rgba(0,229,255,.3);"></div>
+        </div>
+        <button onclick="doSignout()" style="background:none;border:1px solid rgba(255,51,102,.35);color:rgba(255,51,102,.6);font-family:'Press Start 2P',monospace;font-size:6px;padding:6px 10px;cursor:pointer;letter-spacing:.06em;">OUT</button>
+      </div>
+      <div id="ch-offers"></div>
+      <div class="card-b" style="text-align:center;margin-bottom:10px;">
+        <div style="font-size:6px;color:var(--b);letter-spacing:.12em;margin-bottom:8px;">YOUR QR CODE · SHOW AT CHECKOUT</div>
+        <div class="qr-wrap"><div id="ch-qr" style="width:110px;height:110px;"></div></div>
+      </div>
+      <div class="card" style="margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:6px;color:rgba(0,255,136,.5);">☕ COFFEE QUEST</span>
+          <span id="ch-stamp-count" style="color:var(--y);font-size:8px;text-shadow:0 0 6px var(--y);"></span>
+        </div>
+        <div class="hp-bar" id="ch-stamps"></div>
+        <div class="prog-wrap"><div class="prog-fill" id="ch-prog"></div><div class="prog-text" id="ch-prog-t"></div></div>
+        <div id="ch-coffee-ready" style="display:none;margin-top:10px;padding:8px;background:rgba(255,238,0,.06);border:1px solid rgba(255,238,0,.3);text-align:center;font-size:7px;color:var(--y);" class="blink">★ FREE COFFEE READY! SHOW STAFF ★</div>
+      </div>
+      <div class="card-y" style="margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:6px;color:rgba(255,136,0,.6);">🥐 PASTRY QUEST</span>
+          <span id="ch-pastry-count" style="color:var(--o);font-size:8px;text-shadow:0 0 6px var(--o);"></span>
+        </div>
+        <div class="hp-bar" id="ch-pastry-stamps"></div>
+        <div class="prog-wrap"><div class="prog-fill prog-fill-o" id="ch-pastry-prog"></div><div class="prog-text" id="ch-pastry-t"></div></div>
+        <div id="ch-pastry-ready" style="display:none;margin-top:10px;padding:8px;background:rgba(255,136,0,.06);border:1px solid rgba(255,136,0,.3);text-align:center;font-size:7px;color:var(--o);" class="blink">★ FREE PASTRY READY! SHOW STAFF ★</div>
+      </div>
+      <div class="g2">
+        <div class="card" style="text-align:center;margin-bottom:0;">
+          <div style="font-size:5px;color:var(--b);letter-spacing:.1em;margin-bottom:6px;">FREE COFFEES</div>
+          <div style="font-size:22px;color:var(--y);text-shadow:0 0 10px var(--y);" id="ch-rewards">0</div>
+        </div>
+        <div class="card" style="text-align:center;margin-bottom:0;">
+          <div style="font-size:5px;color:var(--b);letter-spacing:.1em;margin-bottom:6px;">PASTRIES</div>
+          <div style="font-size:22px;color:var(--o);text-shadow:0 0 10px var(--o);" id="ch-pastries">0</div>
         </div>
       </div>
     </div>
-    <button class="btn btn-b" id="btn-cam" onclick="toggleCamera()">▶ START CAMERA SCAN</button>
 
-    <div class="card-b" style="margin-top:4px;">
-      <div class="lbl">MANUAL PHONE LOOKUP</div>
-      <div style="display:flex;gap:6px;margin-bottom:12px;">
-        <input id="scan-input" placeholder="5081234567" type="tel" style="font-size:7px;" onkeydown="if(event.key==='Enter')doScan()"/>
-        <button class="btn btn-b" style="width:auto;padding:12px 12px;margin-bottom:0;flex-shrink:0;font-size:8px;" onclick="doScan()">GO</button>
+    <!-- HISTORY TAB -->
+    <div class="screen-body" id="ctab-history" style="display:none;">
+      <div style="font-size:8px;color:var(--p);text-shadow:0 0 8px var(--p);margin-bottom:14px;">📜 ADVENTURE LOG</div>
+      <div class="card-p" style="padding:8px 12px;"><div id="ch-history"></div></div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div class="screen-body" id="ctab-settings" style="display:none;">
+      <div style="font-size:8px;color:var(--b);text-shadow:0 0 8px var(--b);margin-bottom:14px;">⚙ ACCOUNT</div>
+      <div class="card" style="margin-bottom:12px;">
+        <div style="padding:10px 0;border-bottom:1px solid rgba(0,255,136,.1);display:flex;justify-content:space-between;">
+          <span style="font-size:6px;color:rgba(0,255,136,.5);">PLAYER ID</span>
+          <span style="font-size:6px;color:var(--b);" id="set-id"></span>
+        </div>
+        <div style="padding:10px 0;display:flex;justify-content:space-between;">
+          <span style="font-size:6px;color:rgba(0,255,136,.5);">PHONE</span>
+          <span style="font-size:6px;color:var(--b);" id="set-phone"></span>
+        </div>
       </div>
-      <div class="lbl-p">QUICK SELECT</div>
-      <div id="quick-list" class="scroll" style="max-height:130px;"></div>
+      <div class="card" style="margin-bottom:12px;">
+        <div style="font-size:6px;color:var(--b);letter-spacing:.1em;margin-bottom:12px;">EDIT DETAILS</div>
+        <div style="margin-bottom:10px;">
+          <label class="lbl">NAME</label>
+          <input id="set-inp-name" placeholder="YOUR NAME"/>
+        </div>
+        <div>
+          <label class="lbl">BIRTHDAY</label>
+          <div style="display:grid;grid-template-columns:2fr 1fr 2fr;gap:6px;">
+            <select id="set-bday-m" style="font-size:7px;padding:11px 6px;">
+              <option value="">MONTH</option>
+              <option value="01">JAN</option><option value="02">FEB</option><option value="03">MAR</option>
+              <option value="04">APR</option><option value="05">MAY</option><option value="06">JUN</option>
+              <option value="07">JUL</option><option value="08">AUG</option><option value="09">SEP</option>
+              <option value="10">OCT</option><option value="11">NOV</option><option value="12">DEC</option>
+            </select>
+            <select id="set-bday-d" style="font-size:7px;padding:11px 6px;"><option value="">DAY</option></select>
+            <select id="set-bday-y" style="font-size:7px;padding:11px 6px;" onchange="populateSetDays()"><option value="">YEAR</option></select>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-g" onclick="saveSettings()">▶ SAVE CHANGES ◀</button>
+      <div class="divider"></div>
+      <button class="btn btn-r" onclick="doSignout()">SIGN OUT</button>
+    </div>
+
+    <!-- CUSTOMER BOTTOM NAV -->
+    <div class="bottom-nav">
+      <button class="nav-btn active" id="cnav-rewards" onclick="switchCTab('rewards')"><span class="ni">☕</span>REWARDS</button>
+      <button class="nav-btn" id="cnav-history" onclick="switchCTab('history')"><span class="ni">📜</span>LOG</button>
+      <button class="nav-btn" id="cnav-settings" onclick="switchCTab('settings')"><span class="ni">⚙</span>SETTINGS</button>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════
-       STAMP (STAFF VIEW)
-  ══════════════════════════════════════ -->
-  <div class="screen" id="s-stamp" style="padding-top:4px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <button class="back" style="margin-bottom:0;" onclick="go('s-scanner')">◀ BACK</button>
-      <span class="staff-tag">STAFF VIEW</span>
-    </div>
-    <div id="st-offers" style="margin-bottom:8px;"></div>
-    <div class="card" style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-      <div class="avatar" id="st-avatar"></div>
-      <div>
-        <div id="st-name" style="color:var(--y);font-size:10px;text-shadow:0 0 6px var(--y);margin-bottom:4px;"></div>
-        <div id="st-meta" style="font-size:6px;color:rgba(255,0,255,.5);letter-spacing:.06em;"></div>
+  <!-- ══════ LEADERBOARD ══════ -->
+  <div class="screen" id="s-leaderboard" style="padding-top:8px;">
+    <div class="screen-body">
+      <button class="back" onclick="go('s-welcome')">◀ BACK</button>
+      <div style="text-align:center;margin-bottom:14px;">
+        <div style="font-size:16px;color:var(--y);letter-spacing:.08em;" class="glow">★ TOP PLAYERS ★</div>
       </div>
-    </div>
-    <!-- Coffee track -->
-    <div class="card" style="margin-bottom:8px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <span style="color:var(--g);font-size:8px;text-shadow:0 0 6px var(--g);">☕ COFFEE</span>
-        <span id="st-stamp-label" style="color:var(--y);font-size:8px;"></span>
-        <span id="st-ready-tag" style="display:none;font-size:6px;color:var(--y);" class="blink">★ READY ★</span>
-      </div>
-      <div class="hp-bar" id="st-stamps"></div>
-      <div class="prog-wrap" style="margin-top:6px;"><div class="prog-fill" id="st-prog"></div><div class="prog-text" id="st-prog-t"></div></div>
-    </div>
-    <!-- Pastry track -->
-    <div class="card-y" style="margin-bottom:8px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <span style="color:var(--o);font-size:8px;">🥐 PASTRY</span>
-        <span id="st-pastry-label" style="color:var(--o);font-size:8px;"></span>
-        <span id="st-pastry-ready" style="display:none;font-size:6px;color:var(--o);" class="blink">★ READY ★</span>
-      </div>
-      <div class="hp-bar" id="st-pastry-stamps"></div>
-      <div class="prog-wrap" style="margin-top:6px;"><div class="prog-fill prog-fill-o" id="st-pastry-prog"></div><div class="prog-text" id="st-pastry-t"></div></div>
-    </div>
-    <!-- Action buttons -->
-    <button class="btn btn-g" id="btn-add" onclick="addStamp()">+ ADD STAMP ☕</button>
-    <button class="btn btn-r" id="btn-redeem" onclick="redeemReward()">★ REDEEM FREE COFFEE ★</button>
-    <button class="btn btn-o" id="btn-pastry" onclick="redeemPastry()">🥐 REDEEM FREE PASTRY</button>
-    <button class="btn btn-p" id="btn-bday" style="display:none;" onclick="redeemBirthday()">🎂 BIRTHDAY FREE DRINK!</button>
-    <div style="font-size:6px;color:rgba(0,255,136,.3);text-align:center;margin-top:4px;" id="st-cooldown"></div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       LEADERBOARD
-  ══════════════════════════════════════ -->
-  <div class="screen" id="s-leaderboard" style="padding-top:4px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <button class="back" style="margin-bottom:0;" onclick="go('s-welcome')">◀ BACK</button>
-      <span style="font-size:6px;color:var(--y);letter-spacing:.1em;">HIGH SCORES</span>
-    </div>
-    <div style="text-align:center;margin-bottom:16px;">
-      <div style="font-size:18px;color:var(--y);text-shadow:0 0 14px rgba(255,238,0,.8);letter-spacing:.08em;" class="glow">★ TOP PLAYERS ★</div>
-    </div>
-    <div class="card" style="padding:6px 0;">
-      <div id="leaderboard-list"></div>
-    </div>
-    <div style="font-size:6px;color:rgba(0,255,136,.25);text-align:center;margin-top:8px;letter-spacing:.06em;">SORTED BY REWARDS REDEEMED</div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       OWNER DASHBOARD
-  ══════════════════════════════════════ -->
-  <div class="screen" id="s-dashboard" style="padding-top:4px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-      <button class="back" style="margin-bottom:0;" onclick="go('s-scanner')">◀ BACK</button>
-      <span class="staff-tag">OWNER VIEW</span>
-    </div>
-    <div style="font-size:16px;color:var(--p);text-shadow:0 0 10px var(--p);margin-bottom:14px;text-align:center;letter-spacing:.06em;" class="glow">📊 DASHBOARD</div>
-    <!-- Big stats -->
-    <div class="g2" style="margin-bottom:8px;">
-      <div class="card-p" style="text-align:center;margin-bottom:0;">
-        <div style="font-size:5px;color:var(--p);letter-spacing:.12em;margin-bottom:6px;">TOTAL MEMBERS</div>
-        <div style="font-size:26px;color:var(--p);text-shadow:0 0 12px rgba(255,0,255,.8);" id="db-members">0</div>
-      </div>
-      <div class="card" style="text-align:center;margin-bottom:0;">
-        <div style="font-size:5px;color:var(--g);letter-spacing:.12em;margin-bottom:6px;">TOTAL VISITS</div>
-        <div style="font-size:26px;color:var(--g);text-shadow:0 0 12px rgba(0,255,136,.8);" id="db-visits">0</div>
-      </div>
-    </div>
-    <div class="g2" style="margin-bottom:8px;">
-      <div class="card-y" style="text-align:center;margin-ننg:0;margin-bottom:0;">
-        <div style="font-size:5px;color:var(--y);letter-spacing:.12em;margin-bottom:6px;">☕ REDEEMED</div>
-        <div style="font-size:26px;color:var(--y);text-shadow:0 0 12px rgba(255,238,0,.8);" id="db-coffees">0</div>
-      </div>
-      <div class="card-b" style="text-align:center;margin-bottom:0;">
-        <div style="font-size:5px;color:var(--o);letter-spacing:.12em;margin-bottom:6px;">🥐 REDEEMED</div>
-        <div style="font-size:26px;color:var(--o);text-shadow:0 0 12px rgba(255,136,0,.8);" id="db-pastries">0</div>
-      </div>
-    </div>
-    <!-- Avg stamps -->
-    <div class="card" style="margin-bottom:8px;">
-      <div style="font-size:6px;color:var(--b);letter-spacing:.12em;margin-bottom:10px;">AVG STAMP PROGRESS</div>
-      <div class="prog-wrap" style="height:18px;">
-        <div class="prog-fill" id="db-avg-bar"></div>
-        <div class="prog-text" id="db-avg-text"></div>
-      </div>
-    </div>
-    <!-- Top 3 -->
-    <div class="card-p" style="margin-bottom:8px;padding:10px 12px;">
-      <div style="font-size:6px;color:var(--p);letter-spacing:.12em;margin-bottom:10px;">👑 TOP 3 PLAYERS</div>
-      <div id="db-top3"></div>
-    </div>
-    <!-- Activity feed -->
-    <div class="card-b" style="padding:10px 12px;">
-      <div style="font-size:6px;color:var(--b);letter-spacing:.12em;margin-bottom:10px;">📜 RECENT ACTIVITY</div>
-      <div id="db-activity" class="scroll" style="max-height:120px;"></div>
+      <div class="card" style="padding:6px 0;"><div id="leaderboard-list"></div></div>
+      <div style="font-size:6px;color:rgba(0,255,136,.2);text-align:center;margin-top:8px;">SORTED BY REWARDS REDEEMED</div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════
-       PLAYER PROFILE
-  ══════════════════════════════════════ -->
-  <div class="screen" id="s-profile" style="padding-top:4px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-      <button class="back" style="margin-bottom:0;" onclick="go('s-rewards')">◀ BACK</button>
-      <span style="font-size:6px;color:var(--p);letter-spacing:.1em;">PLAYER PROFILE</span>
-    </div>
-    <!-- Player card header -->
-    <div class="card-p" style="text-align:center;margin-bottom:10px;">
-      <div style="font-size:32px;margin-bottom:6px;" id="pr-avatar-big">☕</div>
-      <div style="font-size:12px;color:var(--y);text-shadow:0 0 8px var(--y);margin-bottom:4px;" id="pr-name"></div>
-      <div style="font-size:7px;color:rgba(0,229,255,.5);margin-bottom:8px;" id="pr-id"></div>
-      <div id="pr-level-badge" style="display:inline-block;padding:6px 12px;border:2px solid;font-size:7px;letter-spacing:.08em;"></div>
-    </div>
-    <!-- Stats row -->
-    <div class="g2" style="margin-bottom:8px;">
-      <div class="card" style="text-align:center;margin-bottom:0;">
-        <div style="font-size:5px;color:var(--b);letter-spacing:.1em;margin-bottom:6px;">TOTAL VISITS</div>
-        <div style="font-size:22px;color:var(--g);text-shadow:0 0 10px var(--g);" id="pr-visits">0</div>
+  <!-- ══════ STAFF LOGIN ══════ -->
+  <div class="screen" id="s-stafflogin" style="padding-top:8px;">
+    <div class="screen-body" style="display:flex;flex-direction:column;align-items:center;text-align:center;">
+      <button class="back" style="align-self:flex-start;margin-bottom:20px;" onclick="go('s-welcome')">◀ BACK</button>
+      <div style="font-size:32px;margin-bottom:12px;filter:drop-shadow(0 0 10px var(--p))">🔐</div>
+      <div style="font-size:10px;color:var(--p);text-shadow:0 0 10px var(--p);margin-bottom:4px;">STAFF ACCESS</div>
+      <div style="font-size:6px;color:rgba(255,0,255,.4);margin-bottom:4px;letter-spacing:.1em;">ENTER 4-DIGIT CODE</div>
+      <div class="pin-row" id="pin-row">
+        <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+        <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
       </div>
-      <div class="card" style="text-align:center;margin-bottom:0;">
-        <div style="font-size:5px;color:var(--b);letter-spacing:.1em;margin-bottom:6px;">FREE COFFEES</div>
-        <div style="font-size:22px;color:var(--y);text-shadow:0 0 10px var(--y);" id="pr-rewards">0</div>
+      <div id="pin-err" style="font-size:7px;color:var(--r);min-height:16px;margin-bottom:10px;letter-spacing:.1em;"></div>
+      <div class="numpad">
+        <div class="num" onclick="pinPress(1)">1</div><div class="num" onclick="pinPress(2)">2</div><div class="num" onclick="pinPress(3)">3</div>
+        <div class="num" onclick="pinPress(4)">4</div><div class="num" onclick="pinPress(5)">5</div><div class="num" onclick="pinPress(6)">6</div>
+        <div class="num" onclick="pinPress(7)">7</div><div class="num" onclick="pinPress(8)">8</div><div class="num" onclick="pinPress(9)">9</div>
+        <div class="num blank"></div><div class="num" onclick="pinPress(0)">0</div><div class="num" onclick="pinPress('del')">⌫</div>
       </div>
     </div>
-    <!-- XP bar -->
-    <div class="card-b" style="margin-bottom:10px;">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-        <span style="font-size:6px;color:var(--b);">XP TO NEXT RANK</span>
-        <span style="font-size:6px;color:var(--b);" id="pr-xp-label"></span>
-      </div>
-      <div class="prog-wrap" style="height:16px;">
-        <div class="prog-fill" id="pr-xp-bar" style="background:var(--b);box-shadow:0 0 8px rgba(0,229,255,.6);"></div>
-        <div class="prog-text" id="pr-xp-text"></div>
-      </div>
-      <div style="font-size:6px;color:rgba(0,229,255,.35);margin-top:8px;" id="pr-next-rank"></div>
+  </div>
+
+  <!-- ══════ STAFF HOME (customer list) ══════ -->
+  <div class="screen" id="s-staff-home" style="padding-top:8px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
+      <div style="font-size:9px;color:var(--p);text-shadow:0 0 8px var(--p);">THE NOOK</div>
+      <span style="background:#000;border:2px solid var(--p);color:var(--p);font-size:6px;padding:4px 8px;box-shadow:0 0 8px rgba(255,0,255,.4);">STAFF PANEL</span>
     </div>
-    <!-- Achievements -->
-    <div class="card" style="padding:12px;">
-      <div style="font-size:6px;color:var(--g);letter-spacing:.12em;margin-bottom:10px;">🏆 ACHIEVEMENTS</div>
-      <div id="pr-achievements" style="display:flex;flex-direction:column;gap:6px;"></div>
+    <input id="staff-search" placeholder="SEARCH NAME / PHONE..." style="margin-bottom:10px;flex-shrink:0;" oninput="renderStaffList()"/>
+    <div class="screen-body">
+      <div id="staff-cust-list" style="border:2px solid var(--p);box-shadow:inset 0 0 10px rgba(255,0,255,.04),3px 3px 0 #330033;overflow:hidden;"></div>
+    </div>
+    <div class="staff-nav">
+      <button class="nav-btn active" id="snav-list"><span class="ni">👥</span>CUSTOMERS</button>
+      <button class="nav-btn" id="snav-scan" onclick="go('s-staff-scan')"><span class="ni">📷</span>SCANNER</button>
+      <button class="nav-btn" onclick="go('s-welcome')"><span class="ni">🔒</span>LOGOUT</button>
+    </div>
+  </div>
+
+  <!-- ══════ STAFF SCANNER ══════ -->
+  <div class="screen" id="s-staff-scan" style="padding-top:8px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
+      <div style="font-size:9px;color:var(--p);text-shadow:0 0 8px var(--p);">QR SCANNER</div>
+      <span style="background:#000;border:2px solid var(--p);color:var(--p);font-size:6px;padding:4px 8px;box-shadow:0 0 8px rgba(255,0,255,.4);">STAFF</span>
+    </div>
+    <div class="screen-body">
+      <div class="scan-box">
+        <div id="qr-reader"></div>
+        <div id="scan-placeholder">
+          <div class="scan-corners">
+            <div class="corner tl"></div><div class="corner tr"></div>
+            <div class="corner bl"></div><div class="corner br"></div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:6px;">
+              <div style="font-size:28px;">📷</div>
+              <div style="font-size:6px;color:var(--b);letter-spacing:.1em;" class="blink">READY TO SCAN</div>
+            </div>
+            <div class="scan-line"></div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-b" id="btn-cam" onclick="toggleCamera()">▶ START CAMERA SCAN</button>
+      <div class="card-b" style="margin-top:4px;">
+        <div style="font-size:6px;color:var(--b);letter-spacing:.12em;margin-bottom:8px;">PHONE NUMBER LOOKUP</div>
+        <div style="display:flex;gap:6px;">
+          <input id="scan-phone" placeholder="5081234567" type="tel" style="font-size:7px;" onkeydown="if(event.key==='Enter')doPhoneScan()"/>
+          <button class="btn btn-b" style="width:auto;padding:12px 12px;margin-bottom:0;flex-shrink:0;font-size:8px;" onclick="doPhoneScan()">GO</button>
+        </div>
+      </div>
+    </div>
+    <div class="staff-nav">
+      <button class="nav-btn" onclick="go('s-staff-home')"><span class="ni">👥</span>CUSTOMERS</button>
+      <button class="nav-btn active"><span class="ni">📷</span>SCANNER</button>
+      <button class="nav-btn" onclick="go('s-welcome')"><span class="ni">🔒</span>LOGOUT</button>
+    </div>
+  </div>
+
+  <!-- ══════ STAMP SCREEN (staff → customer detail) ══════ -->
+  <div class="screen" id="s-stamp" style="padding-top:8px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
+      <button class="back" style="margin-bottom:0;" onclick="go('s-staff-home')">◀ CUSTOMERS</button>
+      <span style="background:#000;border:2px solid var(--p);color:var(--p);font-size:6px;padding:4px 8px;box-shadow:0 0 8px rgba(255,0,255,.4);">LOYALTY CARD</span>
+    </div>
+    <div class="screen-body">
+      <div id="st-offers" style="margin-bottom:6px;"></div>
+      <div class="card-p" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+        <div style="width:44px;height:44px;flex-shrink:0;background:#000;border:2px solid var(--p);box-shadow:0 0 10px rgba(255,0,255,.35);display:flex;align-items:center;justify-content:center;color:var(--p);font-size:18px;" id="st-avatar"></div>
+        <div>
+          <div id="st-name" style="color:var(--y);font-size:10px;text-shadow:0 0 6px var(--y);margin-bottom:4px;"></div>
+          <div id="st-phone" style="font-size:6px;color:rgba(0,229,255,.4);margin-bottom:2px;letter-spacing:.06em;"></div>
+          <div id="st-meta" style="font-size:6px;color:rgba(255,0,255,.4);letter-spacing:.06em;"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="color:var(--g);font-size:8px;">☕ COFFEE</span>
+          <span id="st-stamp-label" style="color:var(--y);font-size:8px;"></span>
+          <span id="st-ready-tag" style="display:none;font-size:6px;color:var(--y);" class="blink">★ READY ★</span>
+        </div>
+        <div class="hp-bar" id="st-stamps"></div>
+        <div class="prog-wrap"><div class="prog-fill" id="st-prog"></div><div class="prog-text" id="st-prog-t"></div></div>
+      </div>
+      <div class="card-y" style="margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="color:var(--o);font-size:8px;">🥐 PASTRY</span>
+          <span id="st-pastry-label" style="color:var(--o);font-size:8px;"></span>
+          <span id="st-pastry-ready" style="display:none;font-size:6px;color:var(--o);" class="blink">★ READY ★</span>
+        </div>
+        <div class="hp-bar" id="st-pastry-stamps"></div>
+        <div class="prog-wrap"><div class="prog-fill prog-fill-o" id="st-pastry-prog"></div><div class="prog-text" id="st-pastry-t"></div></div>
+      </div>
+      <button class="btn btn-g" id="btn-add" onclick="addStamp()">+ ADD STAMP ☕</button>
+      <button class="btn btn-r" id="btn-redeem" onclick="redeemReward()">★ REDEEM FREE COFFEE ★</button>
+      <button class="btn btn-o" id="btn-pastry" onclick="redeemPastry()">🥐 REDEEM FREE PASTRY</button>
+      <button class="btn btn-p" id="btn-bday" style="display:none;" onclick="redeemBirthday()">🎂 BIRTHDAY FREE DRINK!</button>
+      <div style="font-size:6px;color:rgba(0,255,136,.3);text-align:center;margin-top:4px;" id="st-cooldown"></div>
     </div>
   </div>
 
 </div><!-- /phone -->
 
 <script>
-// ═══════════════════════════════════════════
-// DATA & PERSISTENCE
-// ═══════════════════════════════════════════
-const STAFF_PIN = "1234";
-const phoneRegex = /^[0-9]{10}$/;
-let lastStampTime = 0;
-let pin = "";
-let currentCustomer = null;
-let scannedCustomer = null;
-let cameraActive = false;
-let html5QrCode = null;
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+const STAFF_PIN="1234";
+const phoneRegex=/^[0-9]{10}$/;
+let lastStampTime=0, pin="";
+let currentCustomer=null, scannedCustomer=null;
+let cameraActive=false, html5QrCode=null;
 
-let customers = [
-  {id:"NOOK-0001",name:"MARGARITA",phone:"5081234567",birthday:"1990-03-05",stamps:7,rewards:2,pastryStamps:4,pastryRewards:1,history:[
+let customers=[
+  {id:"NOOK-0001",name:"MARGARITA",phone:"5081234567",birthday:"1990-03-05",stamps:7,rewards:2,pastryStamps:4,pastryRewards:1,birthdayYear:0,history:[
     {date:"2026-02-28",type:"stamp"},{date:"2026-03-01",type:"stamp"},
-    {date:"2026-03-03",type:"reward"},{date:"2026-03-04",type:"stamp"},
-    {date:"2026-03-05",type:"stamp"}
+    {date:"2026-03-03",type:"reward"},{date:"2026-03-04",type:"stamp"},{date:"2026-03-05",type:"stamp"}
   ]},
-  {id:"NOOK-0042",name:"JAMES",phone:"5089876543",birthday:"1985-07-22",stamps:3,rewards:0,pastryStamps:3,pastryRewards:0,history:[
+  {id:"NOOK-0042",name:"JAMES",phone:"5089876543",birthday:"1985-07-22",stamps:3,rewards:0,pastryStamps:3,pastryRewards:0,birthdayYear:0,history:[
     {date:"2026-03-01",type:"stamp"},{date:"2026-03-03",type:"stamp"},{date:"2026-03-05",type:"stamp"}
   ]},
 ];
 
-function saveData(){
-  try{ localStorage.setItem("theNookCustomers", JSON.stringify(customers)); }catch(e){}
-}
+function saveData(){ try{localStorage.setItem("theNookCustomers",JSON.stringify(customers));}catch(e){} }
 function loadData(){
-  try{
-    const d = localStorage.getItem("theNookCustomers");
-    if(d){ const p=JSON.parse(d); if(Array.isArray(p)&&p.length) customers=p; }
-  }catch(e){}
+  try{const d=localStorage.getItem("theNookCustomers");if(d){const p=JSON.parse(d);if(Array.isArray(p)&&p.length)customers=p;}}catch(e){}
 }
 loadData();
 
-// ═══════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════
-// navigation handled by go() override below
+// ══════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════
+function go(id){
+  if(id!=='s-staff-scan') stopCamera();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id); if(el) el.classList.add('active');
+  if(id==='s-customer-home') renderCustomerHome();
+  if(id==='s-stamp') renderStamp();
+  if(id==='s-staff-home') renderStaffList();
+  if(id==='s-leaderboard') renderLeaderboard();
+}
 
-function showToast(msg, type='ok'){
+function showToast(msg,type='ok'){
   const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.className='toast'+(type==='err'?' err':type==='info'?' info':'');
+  t.textContent=msg; t.className='toast'+(type==='err'?' err':type==='info'?' info':'');
   setTimeout(()=>t.classList.add('show'),10);
   setTimeout(()=>t.classList.remove('show'),2900);
 }
 
-// ═══════════════════════════════════════════
-// OFFERS LOGIC
-// ═══════════════════════════════════════════
-function isTuesday(){ return new Date().getDay()===2; }
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+function isTuesday(){return new Date().getDay()===2;}
 function isBirthday(c){
   if(!c||!c.birthday) return false;
-  const t=new Date(), b=new Date(c.birthday+'T12:00:00');
-  return t.getMonth()===b.getMonth() && t.getDate()===b.getDate();
+  const t=new Date(),b=new Date(c.birthday+'T12:00:00');
+  return t.getMonth()===b.getMonth()&&t.getDate()===b.getDate();
 }
-function birthdayUsedThisYear(c){
-  return c.birthdayYear === new Date().getFullYear();
+function birthdayUsedThisYear(c){return c.birthdayYear===new Date().getFullYear();}
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function genId(){return "NOOK-"+String(Math.floor(Math.random()*9000)+1000);}
+
+function renderOffers(cid,customer){
+  let h='';
+  if(isTuesday()) h+=`<div class="offer-banner"><span class="icon">⚡</span><div class="text">DOUBLE STAMP TUESDAY!<br>EARN 2X STAMPS TODAY</div></div>`;
+  if(customer&&isBirthday(customer)&&!birthdayUsedThisYear(customer))
+    h+=`<div class="offer-banner bday"><span class="icon">🎂</span><div class="text" style="color:var(--p)">HAPPY BIRTHDAY ${customer.name}!<br>FREE DRINK WAITING!</div></div>`;
+  document.getElementById(cid).innerHTML=h;
+}
+function renderHP(el,stamps,max,cls=''){
+  el.innerHTML=Array.from({length:max},(_,i)=>`<div class="hp-pip ${cls} ${i<stamps?'on':''}"></div>`).join('');
+}
+let qrInst=null;
+function drawQR(id,el){
+  el.innerHTML='';
+  qrInst=new QRCode(el,{text:id,width:110,height:110,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
 }
 
-function renderOffers(container, customer){
-  let html='';
-  if(isTuesday())
-    html+=`<div class="offer-banner"><span class="icon">⚡</span><div class="text">DOUBLE STAMP TUESDAY!<br>EARN 2X STAMPS TODAY</div></div>`;
-  if(customer && isBirthday(customer) && !birthdayUsedThisYear(customer))
-    html+=`<div class="offer-banner bday"><span class="icon">🎂</span><div class="text" style="color:var(--p)">HAPPY BIRTHDAY ${customer.name}!<br>FREE DRINK WAITING!</div></div>`;
-  document.getElementById(container).innerHTML=html;
+// ══════════════════════════════════════════════
+// SIGN IN / OUT
+// ══════════════════════════════════════════════
+function doSignin(){
+  const phone=document.getElementById('si-phone').value.trim();
+  if(!phone){showToast('ENTER YOUR PHONE NUMBER','err');return;}
+  const found=customers.find(c=>c.phone===phone);
+  if(!found){showToast('ACCOUNT NOT FOUND','err');return;}
+  currentCustomer=found;
+  document.getElementById('si-phone').value='';
+  showToast('WELCOME BACK '+found.name+' ★');
+  go('s-customer-home');
 }
+function doSignout(){currentCustomer=null; go('s-welcome');}
 
-// ═══════════════════════════════════════════
-// QR CODE GENERATOR (real, scannable)
-// ═══════════════════════════════════════════
-let qrInstance = null;
-function drawQR(id, el){
-  el.innerHTML = '';
-  qrInstance = new QRCode(el, {
-    text: id,
-    width: 110,
-    height: 110,
-    colorDark: '#000000',
-    colorLight: '#ffffff',
-    correctLevel: QRCode.CorrectLevel.M
-  });
-}
-
-// ═══════════════════════════════════════════
-// SIGNUP
-// ═══════════════════════════════════════════
-function genId(){ return "NOOK-"+String(Math.floor(Math.random()*9000)+1000); }
-function renderDemoList(){
-  document.getElementById('demo-list').innerHTML = customers.map(c=>
-    `<button class="btn-out" style="font-size:7px;padding:9px;margin-bottom:6px;text-align:left;" onclick="loadCustomer('${c.id}');go('s-rewards')">▶ ${c.name} <span style="color:rgba(0,255,136,.3);font-size:6px;">${c.id} · ${c.stamps}/10 ☕</span></button>`
-  ).join('');
-}
-function loadCustomer(id){ currentCustomer=customers.find(c=>c.id===id); }
+// ══════════════════════════════════════════════
+// SIGN UP
+// ══════════════════════════════════════════════
 function doSignup(){
-  const name = document.getElementById('inp-name').value.trim().toUpperCase();
-  const phone = document.getElementById('inp-phone').value.trim();
-  const bm=document.getElementById('inp-bday-m').value;
-  const bd=document.getElementById('inp-bday-d').value;
-  const by=document.getElementById('inp-bday-y').value;
+  const name=document.getElementById('inp-name').value.trim().toUpperCase();
+  const phone=document.getElementById('inp-phone').value.trim();
+  const bm=document.getElementById('inp-bday-m').value,bd=document.getElementById('inp-bday-d').value,by=document.getElementById('inp-bday-y').value;
   const bday=(bm&&bd&&by)?`${by}-${bm}-${bd}`:'';
-  if(!name||!phone){ showToast('! FILL ALL FIELDS !','err'); return; }
-  if(!phoneRegex.test(phone)){ showToast('INVALID PHONE NUMBER','err'); return; }
-  if(customers.some(c=>c.phone===phone)){ showToast('PHONE ALREADY REGISTERED','err'); return; }
-  const nc = {id:genId(),name,phone,birthday:bday||'',stamps:0,rewards:0,pastryStamps:0,pastryRewards:0,birthdayYear:0,history:[]};
-  customers.push(nc); currentCustomer=nc;
-  saveData();
+  if(!name||!phone){showToast('FILL ALL FIELDS','err');return;}
+  if(!phoneRegex.test(phone)){showToast('INVALID PHONE NUMBER','err');return;}
+  if(customers.some(c=>c.phone===phone)){showToast('PHONE ALREADY REGISTERED','err');return;}
+  const nc={id:genId(),name,phone,birthday:bday,stamps:0,rewards:0,pastryStamps:0,pastryRewards:0,birthdayYear:0,history:[]};
+  customers.push(nc); currentCustomer=nc; saveData();
   document.getElementById('inp-name').value='';
   document.getElementById('inp-phone').value='';
-  document.getElementById('inp-bday-m').value='';
-  document.getElementById('inp-bday-d').value='';
-  document.getElementById('inp-bday-y').value='';
+  ['inp-bday-m','inp-bday-d','inp-bday-y'].forEach(id=>document.getElementById(id).value='');
   showToast('★ WELCOME '+nc.name+' ★');
-  go('s-rewards');
+  go('s-customer-home');
 }
 
-// ═══════════════════════════════════════════
-// REWARDS SCREEN
-// ═══════════════════════════════════════════
-function renderHPBar(el, stamps, max, cls=''){
-  el.innerHTML = Array.from({length:max},(_,i)=>`<div class="hp-pip ${cls} ${i<stamps?'on':''}"></div>`).join('');
+// ══════════════════════════════════════════════
+// CUSTOMER HOME TABS
+// ══════════════════════════════════════════════
+function switchCTab(tab){
+  ['rewards','history','settings'].forEach(t=>{
+    document.getElementById('ctab-'+t).style.display=t===tab?'block':'none';
+    document.getElementById('cnav-'+t).classList.toggle('active',t===tab);
+  });
+  if(tab==='rewards') renderCustomerHome();
+  if(tab==='history') renderCustomerHistory();
+  if(tab==='settings') renderSettings();
 }
-function renderRewards(){
+
+function renderCustomerHome(){
+  const fresh=customers.find(x=>x.id===currentCustomer?.id);
+  if(fresh) currentCustomer=fresh;
   const c=currentCustomer; if(!c) return;
-  renderOffers('r-offers', c);
-  document.getElementById('r-name').textContent=c.name;
-  document.getElementById('r-id').textContent=c.id;
-  document.getElementById('r-stamp-count').textContent=c.stamps+'/10';
-  document.getElementById('r-total').textContent=c.rewards;
-  document.getElementById('r-pastries').textContent=c.pastryRewards||0;
-  // Coffee stamps
-  renderHPBar(document.getElementById('r-stamps'), c.stamps, 10);
-  document.getElementById('r-prog').style.width=(c.stamps/10*100)+'%';
-  document.getElementById('r-prog-t').textContent=c.stamps>=10?'MAX!':c.stamps+'/10';
-  // Pastry stamps
+  document.getElementById('ch-greeting').textContent='HI, '+c.name;
+  document.getElementById('ch-id').textContent=c.id;
+  renderOffers('ch-offers',c);
+  drawQR(c.id,document.getElementById('ch-qr'));
+  document.getElementById('ch-stamp-count').textContent=c.stamps+'/10';
+  renderHP(document.getElementById('ch-stamps'),c.stamps,10);
+  document.getElementById('ch-prog').style.width=(c.stamps/10*100)+'%';
+  document.getElementById('ch-prog-t').textContent=c.stamps>=10?'MAX!':c.stamps+'/10';
+  document.getElementById('ch-coffee-ready').style.display=c.stamps>=10?'block':'none';
   const ps=c.pastryStamps||0;
-  document.getElementById('r-pastry-card').style.display='block';
-  renderHPBar(document.getElementById('r-pastry-stamps'), ps, 15, 'p15');
-  document.getElementById('r-pastry-prog').style.width=(ps/15*100)+'%';
-  document.getElementById('r-pastry-t').textContent=ps>=15?'MAX!':ps+'/15';
-  // QR
-  drawQR(c.id, document.getElementById('qr-canvas'));
-  // History
-  renderHistory('r-history', c);
+  document.getElementById('ch-pastry-count').textContent=ps+'/15';
+  renderHP(document.getElementById('ch-pastry-stamps'),ps,15,'p15');
+  document.getElementById('ch-pastry-prog').style.width=(ps/15*100)+'%';
+  document.getElementById('ch-pastry-t').textContent=ps>=15?'MAX!':ps+'/15';
+  document.getElementById('ch-pastry-ready').style.display=ps>=15?'block':'none';
+  document.getElementById('ch-rewards').textContent=c.rewards;
+  document.getElementById('ch-pastries').textContent=c.pastryRewards||0;
 }
-function renderHistory(elId, c){
-  const h=(c.history||[]).slice().reverse().slice(0,8);
-  if(!h.length){ document.getElementById(elId).innerHTML='<div style="font-size:7px;color:rgba(0,255,136,.25);padding:6px 0;">NO ACTIVITY YET</div>'; return; }
+
+function renderCustomerHistory(){
+  const c=currentCustomer; if(!c) return;
+  const h=(c.history||[]).slice().reverse().slice(0,20);
   const icons={stamp:'☕',reward:'🏆',pastry:'🥐',birthday:'🎂'};
   const labels={stamp:'STAMP ADDED',reward:'FREE COFFEE REDEEMED',pastry:'FREE PASTRY REDEEMED',birthday:'BIRTHDAY REWARD'};
-  document.getElementById(elId).innerHTML=h.map(e=>`
-    <div class="hist-item">
-      <span class="hist-icon">${icons[e.type]||'•'}</span>
-      <div><div class="hist-text">${labels[e.type]||e.type}</div><div class="hist-date">${e.date}</div></div>
-    </div>`).join('');
+  document.getElementById('ch-history').innerHTML=h.length
+    ?h.map(e=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,0,255,.08);">
+        <span style="font-size:14px;flex-shrink:0;">${icons[e.type]||'•'}</span>
+        <div><div style="font-size:7px;color:rgba(0,255,136,.7);margin-bottom:2px;">${labels[e.type]||e.type}</div>
+        <div style="font-size:6px;color:rgba(0,229,255,.35);">${e.date}</div></div>
+      </div>`).join('')
+    :'<div style="font-size:7px;color:rgba(255,0,255,.25);padding:12px 0;text-align:center;">NO ACTIVITY YET</div>';
 }
 
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════
+function renderSettings(){
+  const c=currentCustomer; if(!c) return;
+  document.getElementById('set-id').textContent=c.id;
+  document.getElementById('set-phone').textContent=c.phone;
+  document.getElementById('set-inp-name').value=c.name;
+  if(c.birthday){
+    const p=c.birthday.split('-');
+    document.getElementById('set-bday-m').value=p[1]||'';
+    populateSetDays();
+    document.getElementById('set-bday-d').value=p[2]||'';
+    document.getElementById('set-bday-y').value=p[0]||'';
+  }
+}
+function saveSettings(){
+  const name=document.getElementById('set-inp-name').value.trim().toUpperCase();
+  const bm=document.getElementById('set-bday-m').value,bd=document.getElementById('set-bday-d').value,by=document.getElementById('set-bday-y').value;
+  const bday=(bm&&bd&&by)?`${by}-${bm}-${bd}`:(currentCustomer.birthday||'');
+  if(!name){showToast('NAME CANNOT BE EMPTY','err');return;}
+  const idx=customers.findIndex(x=>x.id===currentCustomer.id);
+  customers[idx].name=name; customers[idx].birthday=bday;
+  currentCustomer=customers[idx]; saveData();
+  showToast('★ SETTINGS SAVED ★');
+}
+
+// ══════════════════════════════════════════════
+// LEADERBOARD
+// ══════════════════════════════════════════════
+function renderLeaderboard(){
+  const sorted=[...customers].sort((a,b)=>b.rewards-a.rewards);
+  const medals=['🥇','🥈','🥉'],rc=['first','second','third'];
+  document.getElementById('leaderboard-list').innerHTML=sorted.length===0
+    ?'<div style="font-size:7px;color:rgba(0,255,136,.25);padding:12px;text-align:center;">NO PLAYERS YET</div>'
+    :sorted.map((c,i)=>`<div class="lb-row">
+        <div style="font-size:14px;color:var(--y);width:24px;text-align:center;flex-shrink:0;${i===1?'color:rgba(200,200,200,.9)':i===2?'color:rgba(200,140,80,.9)':''}">${i<3?medals[i]:(i+1)}</div>
+        <div style="flex:1;"><div style="font-size:8px;color:var(--g);">${c.name}</div><div style="font-size:5px;color:rgba(0,229,255,.35);margin-top:2px;">${c.id}</div></div>
+        <div style="text-align:right;"><div style="font-size:8px;color:var(--y);">${c.rewards}☕</div><div style="font-size:5px;color:rgba(255,136,0,.5);margin-top:2px;">${c.pastryRewards||0}🥐</div></div>
+      </div>`).join('');
+}
+
+// ══════════════════════════════════════════════
 // STAFF PIN
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════════
 function updatePinUI(){
   for(let i=0;i<4;i++){
     const d=document.getElementById('pd'+i);
     d.innerHTML=i<pin.length?'<div class="pin-pip"></div>':'';
-    d.classList.toggle('on',i<pin.length);
-    d.classList.remove('err');
+    d.classList.toggle('on',i<pin.length); d.classList.remove('err');
   }
 }
 function pinPress(k){
@@ -671,383 +680,190 @@ function pinPress(k){
   pin+=String(k); updatePinUI();
   if(pin.length===4){
     setTimeout(()=>{
-      if(pin===STAFF_PIN){ pin=''; updatePinUI(); go('s-scanner'); }
+      if(pin===STAFF_PIN){pin='';updatePinUI();go('s-staff-home');}
       else{
         document.getElementById('pin-err').textContent='!! WRONG PIN !!';
         document.getElementById('pin-row').classList.add('shake');
         for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.add('err');
-        setTimeout(()=>{
-          pin=''; updatePinUI();
-          document.getElementById('pin-err').textContent='';
-          document.getElementById('pin-row').classList.remove('shake');
-        },900);
+        setTimeout(()=>{pin='';updatePinUI();document.getElementById('pin-err').textContent='';document.getElementById('pin-row').classList.remove('shake');},900);
       }
     },120);
   }
 }
 
-// ═══════════════════════════════════════════
-// CAMERA SCANNER
-// ═══════════════════════════════════════════
-function toggleCamera(){
-  if(cameraActive) stopCamera();
-  else startCamera();
+// ══════════════════════════════════════════════
+// STAFF CUSTOMER LIST
+// ══════════════════════════════════════════════
+function renderStaffList(){
+  const q=(document.getElementById('staff-search')||{}).value||'';
+  const filtered=customers.filter(c=>
+    c.name.includes(q.toUpperCase())||c.phone.includes(q)||c.id.includes(q.toUpperCase())
+  ).sort((a,b)=>a.name.localeCompare(b.name));
+  document.getElementById('staff-cust-list').innerHTML=filtered.length===0
+    ?'<div style="font-size:7px;color:rgba(255,0,255,.25);padding:16px;text-align:center;">NO CUSTOMERS FOUND</div>'
+    :filtered.map(c=>`
+      <div class="cust-row" onclick="openStamp('${c.id}')">
+        <div class="cust-av">${c.name.charAt(0)}</div>
+        <div style="flex:1;">
+          <div style="font-size:8px;color:var(--g);margin-bottom:3px;">${c.name}</div>
+          <div style="font-size:6px;color:rgba(0,229,255,.35);letter-spacing:.06em;">${c.id} · ${c.phone}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:7px;color:var(--y);text-shadow:0 0 5px rgba(255,238,0,.4);">☕ ${c.stamps}/10</div>
+          <div style="font-size:5px;color:rgba(255,136,0,.5);margin-top:2px;">🥐 ${c.pastryStamps||0}/15</div>
+          ${c.rewards>0?`<div style="font-size:5px;color:rgba(255,238,0,.4);margin-top:2px;">★${c.rewards}</div>`:''}
+        </div>
+      </div>`).join('');
 }
-function startCamera(){
-  const readerEl=document.getElementById('qr-reader');
-  const placeholder=document.getElementById('scan-placeholder');
-  const btn=document.getElementById('btn-cam');
-  if(typeof Html5Qrcode==='undefined'){ showToast('SCANNER NOT LOADED','err'); return; }
-  placeholder.style.display='none';
-  readerEl.style.display='block';
-  html5QrCode = new Html5Qrcode("qr-reader");
-  html5QrCode.start(
-    {facingMode:"environment"},
-    {fps:10, qrbox:{width:200,height:200}},
-    (decoded)=>{ stopCamera(); selectCustomer(decoded); },
-    ()=>{}
-  ).then(()=>{
-    cameraActive=true;
-    btn.textContent='■ STOP CAMERA';
-    btn.className='btn btn-r';
-  }).catch(()=>{
-    readerEl.style.display='none';
-    placeholder.style.display='block';
-    showToast('CAMERA UNAVAILABLE','err');
-  });
-}
-function stopCamera(){
-  if(html5QrCode && cameraActive){
-    html5QrCode.stop().catch(()=>{}).finally(()=>{
-      html5QrCode=null; cameraActive=false;
-      const btn=document.getElementById('btn-cam');
-      if(btn){ btn.textContent='▶ START CAMERA SCAN'; btn.className='btn btn-b'; }
-      const ph=document.getElementById('scan-placeholder');
-      const rd=document.getElementById('qr-reader');
-      if(ph) ph.style.display='block';
-      if(rd){ rd.style.display='none'; rd.innerHTML=''; }
-    });
-  }
-}
-
-// ═══════════════════════════════════════════
-// SCANNER SCREEN
-// ═══════════════════════════════════════════
-function renderQuickList(){
-  document.getElementById('quick-list').innerHTML=customers.map(c=>
-    `<button class="btn-out" style="font-size:6px;padding:8px 10px;margin-bottom:5px;text-align:left;" onclick="selectCustomer('${c.id}')">▶ ${c.name} <span style="color:rgba(0,229,255,.35);">${c.id}</span> · ${c.stamps}/10☕ ${c.pastryStamps||0}/15🥐</button>`
-  ).join('');
-}
-function doScan(){
-  const val=document.getElementById('scan-input').value.trim();
-  const found=customers.find(c=>c.phone===val);
-  if(found) selectCustomer(found.id);
-  else showToast('!! PLAYER NOT FOUND !!','err');
-  document.getElementById('scan-input').value='';
-}
-function selectCustomer(id){
-  const c=customers.find(c=>c.id===id);
-  if(!c){ showToast('PLAYER NOT FOUND','err'); return; }
-  scannedCustomer=c;
+function openStamp(id){
+  scannedCustomer=customers.find(c=>c.id===id);
   go('s-stamp');
 }
 
-// ═══════════════════════════════════════════
-// STAMP SCREEN
-// ═══════════════════════════════════════════
-function getC(){ return customers.find(x=>x.id===scannedCustomer.id); }
-function syncC(id){
-  const c=customers.find(x=>x.id===id);
-  if(currentCustomer&&currentCustomer.id===id) currentCustomer=c;
-  scannedCustomer=c;
+// ══════════════════════════════════════════════
+// STAFF SCANNER
+// ══════════════════════════════════════════════
+function toggleCamera(){if(cameraActive)stopCamera();else startCamera();}
+function startCamera(){
+  const re=document.getElementById('qr-reader'),ph=document.getElementById('scan-placeholder'),btn=document.getElementById('btn-cam');
+  if(typeof Html5Qrcode==='undefined'){showToast('SCANNER NOT LOADED','err');return;}
+  ph.style.display='none'; re.style.display='block';
+  html5QrCode=new Html5Qrcode("qr-reader");
+  html5QrCode.start({facingMode:"environment"},{fps:10,qrbox:{width:200,height:200}},
+    (decoded)=>{stopCamera();openStamp(decoded);},()=>{}
+  ).then(()=>{cameraActive=true;btn.textContent='■ STOP CAMERA';btn.className='btn btn-r';})
+   .catch(()=>{re.style.display='none';ph.style.display='block';showToast('CAMERA UNAVAILABLE','err');});
 }
-function todayStr(){
-  const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+function stopCamera(){
+  if(html5QrCode&&cameraActive){
+    html5QrCode.stop().catch(()=>{}).finally(()=>{
+      html5QrCode=null;cameraActive=false;
+      const btn=document.getElementById('btn-cam');
+      if(btn){btn.textContent='▶ START CAMERA SCAN';btn.className='btn btn-b';}
+      const ph=document.getElementById('scan-placeholder'),rd=document.getElementById('qr-reader');
+      if(ph)ph.style.display='block';if(rd){rd.style.display='none';rd.innerHTML='';}
+    });
+  }
 }
-function addHistory(idx, type){
-  if(!customers[idx].history) customers[idx].history=[];
-  customers[idx].history.push({date:todayStr(),type});
+function doPhoneScan(){
+  const phone=document.getElementById('scan-phone').value.trim();
+  const found=customers.find(c=>c.phone===phone);
+  if(found)openStamp(found.id);
+  else showToast('!! PLAYER NOT FOUND !!','err');
+  document.getElementById('scan-phone').value='';
 }
 
+// ══════════════════════════════════════════════
+// STAMP ACTIONS
+// ══════════════════════════════════════════════
+function syncScanned(id){
+  const c=customers.find(x=>x.id===id);
+  if(currentCustomer?.id===id) currentCustomer=c;
+  scannedCustomer=c;
+}
+function addHist(idx,type){
+  if(!customers[idx].history)customers[idx].history=[];
+  customers[idx].history.push({date:todayStr(),type});
+}
 function renderStamp(){
-  const c=scannedCustomer; if(!c) return;
-  renderOffers('st-offers', c);
+  const c=scannedCustomer;if(!c)return;
+  renderOffers('st-offers',c);
   document.getElementById('st-avatar').textContent=c.name.charAt(0);
   document.getElementById('st-name').textContent=c.name;
-  document.getElementById('st-meta').textContent=c.id+' · '+c.rewards+' COFFEES · '+(c.pastryRewards||0)+' PASTRIES';
-  // Coffee
+  document.getElementById('st-phone').textContent='📞 '+c.phone;
+  document.getElementById('st-meta').textContent=c.id+' · '+c.rewards+' coffees · '+(c.pastryRewards||0)+' pastries';
   document.getElementById('st-stamp-label').textContent=c.stamps+'/10';
   document.getElementById('st-ready-tag').style.display=c.stamps>=10?'inline':'none';
-  renderHPBar(document.getElementById('st-stamps'),c.stamps,10);
+  renderHP(document.getElementById('st-stamps'),c.stamps,10);
   document.getElementById('st-prog').style.width=(c.stamps/10*100)+'%';
   document.getElementById('st-prog-t').textContent=c.stamps>=10?'MAX!':c.stamps+'/10';
-  // Pastry
   const ps=c.pastryStamps||0;
   document.getElementById('st-pastry-label').textContent=ps+'/15';
   document.getElementById('st-pastry-ready').style.display=ps>=15?'inline':'none';
-  renderHPBar(document.getElementById('st-pastry-stamps'),ps,15,'p15');
+  renderHP(document.getElementById('st-pastry-stamps'),ps,15,'p15');
   document.getElementById('st-pastry-prog').style.width=(ps/15*100)+'%';
   document.getElementById('st-pastry-t').textContent=ps>=15?'MAX!':ps+'/15';
-  // Buttons
   document.getElementById('btn-add').disabled=c.stamps>=10;
   document.getElementById('btn-redeem').disabled=c.stamps<10;
   document.getElementById('btn-pastry').disabled=(ps<15);
   document.getElementById('btn-bday').style.display=(isBirthday(c)&&!birthdayUsedThisYear(c))?'block':'none';
-  // Cooldown hint
-  const rem=Math.ceil((5000-(Date.now()-lastStampTime))/1000);
-  document.getElementById('st-cooldown').textContent=rem>0&&rem<=5?'COOLDOWN: '+rem+'s':'';
 }
-
 function addStamp(){
   const now=Date.now();
-  if(now-lastStampTime < 5000){
-    const rem=Math.ceil((5000-(now-lastStampTime))/1000);
-    showToast('WAIT '+rem+'s BEFORE ADDING','err'); return;
-  }
+  if(now-lastStampTime<5000){showToast('WAIT '+Math.ceil((5000-(now-lastStampTime))/1000)+'s BEFORE ADDING','err');return;}
   lastStampTime=now;
   const idx=customers.findIndex(x=>x.id===scannedCustomer.id);
-  if(customers[idx].stamps>=10) return;
-
-  const double=isTuesday();
-  const add=double?2:1;
+  if(customers[idx].stamps>=10)return;
+  const add=isTuesday()?2:1;
   customers[idx].stamps=Math.min(customers[idx].stamps+add,10);
   customers[idx].pastryStamps=Math.min((customers[idx].pastryStamps||0)+add,15);
-  for(let i=0;i<add;i++) addHistory(idx,'stamp');
-  syncC(customers[idx].id);
-  saveData();
-  renderStamp();
-  animateNewStamp();
-  if(double) showToast('⚡ DOUBLE STAMP! +2 TODAY');
-  else if(scannedCustomer.stamps>=10) showToast('★ FREE COFFEE UNLOCKED! ★');
+  for(let i=0;i<add;i++)addHist(idx,'stamp');
+  syncScanned(customers[idx].id);saveData();renderStamp();
+  const pips=document.querySelectorAll('#st-stamps .hp-pip');
+  const pi=Math.min(scannedCustomer.stamps-1,9);
+  if(pips[pi]){pips[pi].classList.remove('pop');void pips[pi].offsetWidth;pips[pi].classList.add('pop');}
+  if(isTuesday())showToast('⚡ DOUBLE STAMP! +2 TODAY');
+  else if(scannedCustomer.stamps>=10)showToast('★ FREE COFFEE UNLOCKED! ★');
   else showToast('☕ STAMP ADDED! ('+scannedCustomer.stamps+'/10)');
-
-  // start cooldown countdown
   let t=setInterval(()=>{
     const r=Math.ceil((5000-(Date.now()-lastStampTime))/1000);
     const el=document.getElementById('st-cooldown');
-    if(el){ el.textContent=r>0?'COOLDOWN: '+r+'s':''; }
-    if(r<=0) clearInterval(t);
+    if(el)el.textContent=r>0?'COOLDOWN: '+r+'s':'';
+    if(r<=0)clearInterval(t);
   },500);
 }
-
-function animateNewStamp(){
-  // Pop animation on the last filled pip
-  const c=scannedCustomer;
-  const pips=document.querySelectorAll('#st-stamps .hp-pip');
-  const idx=Math.min(c.stamps-1,9);
-  if(pips[idx]){ pips[idx].classList.remove('pop'); void pips[idx].offsetWidth; pips[idx].classList.add('pop'); }
-  // Also pastry pip
-  const ppips=document.querySelectorAll('#st-pastry-stamps .hp-pip');
-  const pidx=Math.min((c.pastryStamps||1)-1,14);
-  if(ppips[pidx]){ ppips[pidx].classList.remove('pop'); void ppips[pidx].offsetWidth; ppips[pidx].classList.add('pop'); }
-}
-
 function redeemReward(){
   const idx=customers.findIndex(x=>x.id===scannedCustomer.id);
-  if(customers[idx].stamps<10){ showToast('NOT ENOUGH STAMPS','err'); return; }
-  customers[idx].stamps=0;
-  customers[idx].rewards+=1;
-  addHistory(idx,'reward');
-  syncC(customers[idx].id); saveData(); renderStamp();
-  showToast('★★ FREE COFFEE REDEEMED! ★★');
+  if(customers[idx].stamps<10){showToast('NOT ENOUGH STAMPS','err');return;}
+  customers[idx].stamps=0;customers[idx].rewards+=1;addHist(idx,'reward');
+  syncScanned(customers[idx].id);saveData();renderStamp();showToast('★★ FREE COFFEE REDEEMED! ★★');
 }
 function redeemPastry(){
   const idx=customers.findIndex(x=>x.id===scannedCustomer.id);
-  if((customers[idx].pastryStamps||0)<15){ showToast('NEED 15 PASTRY STAMPS','err'); return; }
-  customers[idx].pastryStamps=0;
-  customers[idx].pastryRewards=(customers[idx].pastryRewards||0)+1;
-  addHistory(idx,'pastry');
-  syncC(customers[idx].id); saveData(); renderStamp();
-  showToast('🥐 FREE PASTRY REDEEMED!');
+  if((customers[idx].pastryStamps||0)<15){showToast('NEED 15 PASTRY STAMPS','err');return;}
+  customers[idx].pastryStamps=0;customers[idx].pastryRewards=(customers[idx].pastryRewards||0)+1;addHist(idx,'pastry');
+  syncScanned(customers[idx].id);saveData();renderStamp();showToast('🥐 FREE PASTRY REDEEMED!');
 }
 function redeemBirthday(){
   const idx=customers.findIndex(x=>x.id===scannedCustomer.id);
-  customers[idx].rewards+=1;
-  customers[idx].birthdayYear=new Date().getFullYear();
-  addHistory(idx,'birthday');
-  syncC(customers[idx].id); saveData(); renderStamp();
-  showToast('🎂 HAPPY BIRTHDAY FREE DRINK!','info');
+  customers[idx].rewards+=1;customers[idx].birthdayYear=new Date().getFullYear();addHist(idx,'birthday');
+  syncScanned(customers[idx].id);saveData();renderStamp();showToast('🎂 HAPPY BIRTHDAY FREE DRINK!','info');
 }
 
-// ═══════════════════════════════════════════
-// LEVELS & ACHIEVEMENTS
-// ═══════════════════════════════════════════
-function getLevel(c){
-  const v=totalVisits(c);
-  if(v>=30) return {name:'CAFFEINE LEGEND',icon:'👑',color:'var(--p)',next:null,cur:30,max:30};
-  if(v>=16) return {name:'ESPRESSO MASTER',icon:'⚡',color:'var(--y)',next:'CAFFEINE LEGEND',cur:v-16,max:14};
-  if(v>=6)  return {name:'LATTE WARRIOR',  icon:'☕',color:'var(--b)',next:'ESPRESSO MASTER',cur:v-6, max:10};
-  return           {name:'COFFEE ROOKIE',  icon:'🟢',color:'var(--g)',next:'LATTE WARRIOR',  cur:v,   max:6};
+// ══════════════════════════════════════════════
+// BIRTHDAY DROPDOWNS
+// ══════════════════════════════════════════════
+function buildYear(id){
+  const el=document.getElementById(id),cur=new Date().getFullYear();
+  for(let y=cur-5;y>=cur-100;y--){const o=document.createElement('option');o.value=y;o.textContent=y;el.appendChild(o);}
 }
-function totalVisits(c){ return (c.stamps||0)+(c.rewards||0)*10+(c.pastryStamps||0)+(c.pastryRewards||0)*15; }
-
-function getAchievements(c){
-  const v=totalVisits(c);
-  return [
-    {id:'first',  icon:'☕', title:'FIRST COFFEE',      desc:'Add your first stamp',         done:v>=1},
-    {id:'v5',     icon:'🌱', title:'REGULAR',           desc:'Reach 5 visits',               done:v>=5},
-    {id:'v10',    icon:'🔥', title:'10 VISITS',         desc:'Visit 10 times',               done:v>=10},
-    {id:'v25',    icon:'💪', title:'DEDICATED',         desc:'25 total visits',              done:v>=25},
-    {id:'reward', icon:'🏆', title:'FREE COFFEE',       desc:'Redeem your first reward',     done:(c.rewards||0)>=1},
-    {id:'pastry', icon:'🥐', title:'PASTRY LOVER',      desc:'Redeem a free pastry',         done:(c.pastryRewards||0)>=1},
-    {id:'bday',   icon:'🎂', title:'BIRTHDAY KID',      desc:'Use a birthday reward',        done:(c.history||[]).some(h=>h.type==='birthday')},
-    {id:'legend', icon:'👑', title:'CAFFEINE LEGEND',   desc:'Reach 30+ total visits',       done:v>=30},
-  ];
-}
-
-// ═══════════════════════════════════════════
-// PROFILE SCREEN
-// ═══════════════════════════════════════════
-function renderProfile(){
-  const c=currentCustomer; if(!c) return;
-  const v=totalVisits(c);
-  const lv=getLevel(c);
-  document.getElementById('pr-name').textContent=c.name;
-  document.getElementById('pr-id').textContent=c.id;
-  document.getElementById('pr-visits').textContent=v;
-  document.getElementById('pr-rewards').textContent=c.rewards||0;
-  // Level badge
-  const badge=document.getElementById('pr-level-badge');
-  badge.textContent=lv.icon+' '+lv.name;
-  badge.style.color=lv.color; badge.style.borderColor=lv.color;
-  badge.style.textShadow='0 0 8px '+lv.color;
-  // XP bar
-  const pct=lv.next ? Math.round(lv.cur/lv.max*100) : 100;
-  document.getElementById('pr-xp-bar').style.width=pct+'%';
-  document.getElementById('pr-xp-text').textContent=lv.next?lv.cur+'/'+lv.max:'MAX';
-  document.getElementById('pr-xp-label').textContent=pct+'%';
-  document.getElementById('pr-next-rank').textContent=lv.next?'NEXT: '+lv.next:'★ MAX RANK ACHIEVED ★';
-  // Achievements
-  const achs=getAchievements(c);
-  document.getElementById('pr-achievements').innerHTML=achs.map(a=>`
-    <div style="display:flex;align-items:center;gap:10px;padding:7px 6px;border-bottom:1px solid rgba(0,255,136,.07);opacity:${a.done?1:.35};">
-      <span style="font-size:16px;flex-shrink:0;">${a.icon}</span>
-      <div style="flex:1;">
-        <div style="font-size:7px;color:${a.done?'var(--g)':'rgba(0,255,136,.4)'};margin-bottom:2px;">${a.title}</div>
-        <div style="font-size:6px;color:rgba(0,229,255,.4);letter-spacing:.04em;">${a.desc}</div>
-      </div>
-      <span style="font-size:10px;">${a.done?'✔':''}</span>
-    </div>`).join('');
-  // Avatar emoji based on level
-  const avatars={COFFEE_ROOKIE:'🌱','LATTE_WARRIOR':'☕','ESPRESSO_MASTER':'⚡','CAFFEINE_LEGEND':'👑'};
-  document.getElementById('pr-avatar-big').textContent=lv.icon;
-}
-
-// Override go() to also handle profile render
-const _go=go;
-function go(id){
-  if(id==='s-profile') renderProfile();
-  if(id==='s-dashboard') renderDashboard();
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id)&&document.getElementById(id).classList.add('active');
-  if(id!=='s-scanner') stopCamera();
-  if(id==='s-rewards') renderRewards();
-  if(id==='s-stamp') renderStamp();
-  if(id==='s-signup') renderDemoList();
-  if(id==='s-scanner') renderQuickList();
-  if(id==='s-leaderboard') renderLeaderboard();
-  if(id==='s-welcome'&&currentCustomer) document.getElementById('my-rewards-btn').style.display='block';
-}
-
-// ═══════════════════════════════════════════
-// OWNER DASHBOARD
-// ═══════════════════════════════════════════
-function renderDashboard(){
-  const totalMembers=customers.length;
-  const totalVisitsAll=customers.reduce((s,c)=>s+totalVisits(c),0);
-  const totalCoffees=customers.reduce((s,c)=>s+(c.rewards||0),0);
-  const totalPastriesAll=customers.reduce((s,c)=>s+(c.pastryRewards||0),0);
-  const avgStamps=totalMembers?Math.round(customers.reduce((s,c)=>s+(c.stamps||0),0)/totalMembers*10)/10:0;
-
-  document.getElementById('db-members').textContent=totalMembers;
-  document.getElementById('db-visits').textContent=totalVisitsAll;
-  document.getElementById('db-coffees').textContent=totalCoffees;
-  document.getElementById('db-pastries').textContent=totalPastriesAll;
-  document.getElementById('db-avg-bar').style.width=(avgStamps/10*100)+'%';
-  document.getElementById('db-avg-text').textContent='AVG '+avgStamps+'/10';
-
-  // Top 3
-  const top3=[...customers].sort((a,b)=>b.rewards-a.rewards).slice(0,3);
-  const medals=['🥇','🥈','🥉'];
-  document.getElementById('db-top3').innerHTML=top3.length
-    ? top3.map((c,i)=>`
-        <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,0,255,.1);">
-          <span style="font-size:16px;">${medals[i]}</span>
-          <div style="flex:1;"><div style="font-size:7px;color:var(--g);">${c.name}</div><div style="font-size:5px;color:rgba(255,0,255,.4);margin-top:2px;">${c.id}</div></div>
-          <div style="text-align:right;"><div style="font-size:8px;color:var(--y);">${c.rewards}☕</div><div style="font-size:6px;color:rgba(255,136,0,.5);">${c.pastryRewards||0}🥐</div></div>
-        </div>`).join('')
-    : '<div style="font-size:7px;color:rgba(0,255,136,.2);padding:8px;">NO PLAYERS YET</div>';
-
-  // Recent activity — gather all history, sort by date desc
-  const allEvents=[];
-  customers.forEach(c=>(c.history||[]).forEach(h=>allEvents.push({...h,name:c.name})));
-  allEvents.sort((a,b)=>b.date.localeCompare(a.date));
-  const icons={stamp:'☕',reward:'🏆',pastry:'🥐',birthday:'🎂'};
-  const labels={stamp:'STAMP',reward:'FREE COFFEE',pastry:'FREE PASTRY',birthday:'BDAY DRINK'};
-  document.getElementById('db-activity').innerHTML=allEvents.slice(0,12).map(e=>`
-    <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,229,255,.07);">
-      <span style="font-size:13px;">${icons[e.type]||'•'}</span>
-      <div style="flex:1;"><span style="font-size:6px;color:var(--g);">${e.name}</span><span style="font-size:6px;color:rgba(0,229,255,.4);margin-left:8px;">${labels[e.type]||e.type}</span></div>
-      <span style="font-size:5px;color:rgba(0,229,255,.3);">${e.date}</span>
-    </div>`).join('')||'<div style="font-size:6px;color:rgba(0,255,136,.2);padding:6px;">NO ACTIVITY YET</div>';
-}
-
-// ═══════════════════════════════════════════
-// LEADERBOARD
-// ═══════════════════════════════════════════
-function renderLeaderboard(){
-  const sorted=[...customers].sort((a,b)=>b.rewards-a.rewards);
-  const medals=['🥇','🥈','🥉'];
-  const rankClass=['first','second','third'];
-  document.getElementById('leaderboard-list').innerHTML=
-    sorted.length===0
-      ? '<div style="font-size:7px;color:rgba(0,255,136,.25);padding:12px;text-align:center;">NO PLAYERS YET</div>'
-      : sorted.map((c,i)=>`
-        <div class="lb-row">
-          <div class="lb-rank ${rankClass[i]||''}">${i<3?medals[i]:(i+1)}</div>
-          <div class="lb-name">${c.name}<div style="font-size:5px;color:rgba(0,229,255,.35);margin-top:3px;">${c.id}</div></div>
-          <div style="text-align:right;">
-            <div class="lb-score">${c.rewards}☕</div>
-            <div style="font-size:5px;color:rgba(255,136,0,.6);margin-top:2px;">${c.pastryRewards||0}🥐</div>
-          </div>
-        </div>`).join('');
-}
-
-// ═══════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════
-// Populate year dropdown on load
-(function(){
-  const yEl=document.getElementById('inp-bday-y');
-  const cur=new Date().getFullYear();
-  for(let y=cur-5;y>=cur-100;y--){
-    const o=document.createElement('option');
-    o.value=y;o.textContent=y;yEl.appendChild(o);
-  }
-})();
-
 function populateDays(){
-  const m=parseInt(document.getElementById('inp-bday-m').value)||0;
-  const y=parseInt(document.getElementById('inp-bday-y').value)||2000;
-  const days=new Date(y,m,0).getDate()||31;
-  const dEl=document.getElementById('inp-bday-d');
-  const cur=dEl.value;
-  dEl.innerHTML='<option value="">DAY</option>';
-  for(let d=1;d<=days;d++){
-    const o=document.createElement('option');
-    o.value=String(d).padStart(2,'0');
-    o.textContent=d;
-    dEl.appendChild(o);
-  }
-  if(cur) dEl.value=cur;
+  _populateDayEl('inp-bday-m','inp-bday-y','inp-bday-d');
 }
+function populateSetDays(){
+  _populateDayEl('set-bday-m','set-bday-y','set-bday-d');
+}
+function _populateDayEl(mId,yId,dId){
+  const m=parseInt(document.getElementById(mId).value)||0;
+  const y=parseInt(document.getElementById(yId).value)||2000;
+  const days=new Date(y,m,0).getDate()||31;
+  const dEl=document.getElementById(dId),cur=dEl.value;
+  dEl.innerHTML='<option value="">DAY</option>';
+  for(let d=1;d<=days;d++){const o=document.createElement('option');o.value=String(d).padStart(2,'0');o.textContent=d;dEl.appendChild(o);}
+  if(cur)dEl.value=cur;
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+buildYear('inp-bday-y'); buildYear('set-bday-y');
 document.getElementById('inp-bday-m').addEventListener('change',populateDays);
-populateDays();
-// Update ticker with day info
+document.getElementById('set-bday-m').addEventListener('change',populateSetDays);
+populateDays(); populateSetDays();
+document.getElementById('qr-reader').style.display='none';
+window.addEventListener('beforeunload',stopCamera);
 if(isTuesday()) document.getElementById('ticker-text').textContent=
   '⚡ TODAY IS DOUBLE STAMP TUESDAY! ⚡ ALL STAMPS COUNT DOUBLE ⚡ COFFEE: 10 STAMPS ⚡ PASTRY: 15 STAMPS ⚡ BIRTHDAY = FREE DRINK ⚡';
-// Hide QR reader div initially
-document.getElementById('qr-reader').style.display='none';
 </script>
 </body>
 </html>
