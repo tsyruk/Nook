@@ -9,10 +9,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{
-  --bg:#0a0a0f; --panel:#0f0f1a;
-  --g:#00ff88; --b:#00e5ff; --p:#ff00ff; --y:#ffee00; --r:#ff3366; --o:#ff8800;
-  --admin:#b060ff;
-  --dim-g:rgba(0,255,136,.08); --dim-b:rgba(0,229,255,.08);
+  --bg:#0a0a0f;--panel:#0f0f1a;
+  --g:#00ff88;--b:#00e5ff;--p:#ff00ff;--y:#ffee00;--r:#ff3366;--o:#ff8800;
+  --adm:#b060ff;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);font-family:'Press Start 2P',monospace;min-height:100vh;
@@ -24,53 +23,53 @@ body::after{content:'';position:fixed;inset:0;
   background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.7) 100%);
   pointer-events:none;z-index:9998;}
 
-/* ── PHONE SHELL ── */
-.phone{
-  width:360px;min-height:680px;background:var(--panel);
+/* SHELL */
+.phone{width:360px;min-height:680px;background:var(--panel);
   border:4px solid var(--g);
   box-shadow:0 0 0 2px var(--bg),0 0 0 4px #003322,
-             0 0 28px rgba(0,255,136,.3),0 0 60px rgba(0,255,136,.08),
-             inset 0 0 40px rgba(0,255,136,.02);
-  position:relative;overflow:hidden;
-  display:flex;flex-direction:column;
-}
+    0 0 28px rgba(0,255,136,.3),0 0 60px rgba(0,255,136,.08),
+    inset 0 0 40px rgba(0,255,136,.02);
+  position:relative;overflow:hidden;display:flex;flex-direction:column;
+  animation:flicker 10s infinite;}
 .phone::before{content:'';position:absolute;inset:7px;
   border:1px solid rgba(0,255,136,.08);pointer-events:none;z-index:0;}
 @keyframes flicker{0%,100%{opacity:1}94%{opacity:.97}97%{opacity:.99}}
-.phone{animation:flicker 10s infinite;}
 
-/* ── SCREENS ── */
+/* SCREENS */
 .screen{display:none;flex-direction:column;flex:1;
   animation:pixIn .1s steps(3) forwards;position:relative;z-index:1;padding:18px 16px 0;}
 .screen.active{display:flex;}
 @keyframes pixIn{from{opacity:0;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}
+.sa{overflow-y:auto;flex:1;padding-bottom:12px;}
+.sa::-webkit-scrollbar{width:3px}
+.sa::-webkit-scrollbar-thumb{background:rgba(0,255,136,.2)}
 
-.scroll-area{overflow-y:auto;flex:1;padding-bottom:12px;}
-.scroll-area::-webkit-scrollbar{width:3px}
-.scroll-area::-webkit-scrollbar-thumb{background:rgba(0,255,136,.2)}
-
-/* ── BOTTOM NAV ── */
+/* BOTTOM NAV */
 .bnav{display:flex;border-top:2px solid rgba(0,255,136,.15);
-  background:rgba(0,0,0,.92);flex-shrink:0;}
-.bnav.staff-mode{border-top-color:rgba(255,0,255,.2);}
-.bnav.admin-mode{border-top-color:rgba(176,96,255,.2);}
-.nb{flex:1;padding:10px 2px 13px;background:none;border:none;
+  background:rgba(0,0,0,.93);flex-shrink:0;}
+.bnav.sm{border-top-color:rgba(255,0,255,.2);}
+.bnav.am{border-top-color:rgba(176,96,255,.2);}
+.nb{flex:1;padding:9px 2px 13px;background:none;border:none;
   font-family:'Press Start 2P',monospace;font-size:5px;
-  color:rgba(0,255,136,.25);cursor:pointer;text-align:center;
-  border-top:2px solid transparent;transition:all .1s;line-height:2.2;letter-spacing:.04em;}
-.nb .ni{font-size:13px;display:block;margin-bottom:2px;}
-.nb.on{color:var(--g);border-top-color:var(--g);text-shadow:0 0 8px var(--g);}
-.bnav.staff-mode .nb{color:rgba(255,0,255,.25);}
-.bnav.staff-mode .nb.on{color:var(--p);border-top-color:var(--p);text-shadow:0 0 8px var(--p);}
-.bnav.admin-mode .nb{color:rgba(176,96,255,.25);}
-.bnav.admin-mode .nb.on{color:var(--admin);border-top-color:var(--admin);text-shadow:0 0 8px var(--admin);}
+  cursor:pointer;text-align:center;border-top:2px solid transparent;
+  transition:all .1s;line-height:2.2;letter-spacing:.04em;}
+.nb .ni{font-size:12px;display:block;margin-bottom:2px;}
+/* customer nav */
+.bnav:not(.sm):not(.am) .nb{color:rgba(0,255,136,.25);}
+.bnav:not(.sm):not(.am) .nb.on{color:var(--g);border-top-color:var(--g);text-shadow:0 0 8px var(--g);}
+/* staff nav */
+.bnav.sm .nb{color:rgba(255,0,255,.25);}
+.bnav.sm .nb.on{color:var(--p);border-top-color:var(--p);text-shadow:0 0 8px var(--p);}
+/* admin nav */
+.bnav.am .nb{color:rgba(176,96,255,.25);}
+.bnav.am .nb.on{color:var(--adm);border-top-color:var(--adm);text-shadow:0 0 8px var(--adm);}
 
-/* ── CARDS ── */
-.card{position:relative;background:var(--dim-g);border:2px solid var(--g);
+/* CARDS */
+.card{position:relative;background:rgba(0,255,136,.06);border:2px solid var(--g);
   box-shadow:3px 3px 0 #003322;padding:14px;margin-bottom:10px;}
 .card::before,.card::after{content:'';position:absolute;width:6px;height:6px;background:var(--g);}
 .card::before{top:-2px;left:-2px}.card::after{bottom:-2px;right:-2px}
-.card-b{position:relative;background:var(--dim-b);border:2px solid var(--b);
+.card-b{position:relative;background:rgba(0,229,255,.06);border:2px solid var(--b);
   box-shadow:3px 3px 0 #001a22;padding:14px;margin-bottom:10px;}
 .card-b::before,.card-b::after{content:'';position:absolute;width:6px;height:6px;background:var(--b);}
 .card-b::before{top:-2px;left:-2px}.card-b::after{bottom:-2px;right:-2px}
@@ -78,16 +77,15 @@ body::after{content:'';position:fixed;inset:0;
   box-shadow:3px 3px 0 #330033;padding:14px;margin-bottom:10px;}
 .card-p::before,.card-p::after{content:'';position:absolute;width:6px;height:6px;background:var(--p);}
 .card-p::before{top:-2px;left:-2px}.card-p::after{bottom:-2px;right:-2px}
-.card-adm{position:relative;background:rgba(176,96,255,.05);border:2px solid var(--admin);
-  box-shadow:3px 3px 0 #220044;padding:14px;margin-bottom:10px;}
-.card-adm::before,.card-adm::after{content:'';position:absolute;width:6px;height:6px;background:var(--admin);}
-.card-adm::before{top:-2px;left:-2px}.card-adm::after{bottom:-2px;right:-2px}
+.card-a{position:relative;background:rgba(176,96,255,.05);border:2px solid var(--adm);
+  box-shadow:3px 3px 0 #1a0033;padding:14px;margin-bottom:10px;}
+.card-a::before,.card-a::after{content:'';position:absolute;width:6px;height:6px;background:var(--adm);}
+.card-a::before{top:-2px;left:-2px}.card-a::after{bottom:-2px;right:-2px}
 
-/* ── BUTTONS ── */
+/* BUTTONS */
 .btn{font-family:'Press Start 2P',monospace;font-size:9px;letter-spacing:.04em;
-  border:none;cursor:pointer;width:100%;padding:13px 10px;
-  text-align:center;transition:transform .05s;text-transform:uppercase;
-  margin-bottom:8px;line-height:1.7;}
+  border:none;cursor:pointer;width:100%;padding:13px 10px;text-align:center;
+  transition:transform .05s;text-transform:uppercase;margin-bottom:8px;line-height:1.7;}
 .btn:active{transform:translate(2px,2px)!important;box-shadow:none!important}
 .btn:disabled{cursor:not-allowed;opacity:.28;}
 .btn-g{background:var(--g);color:#000;box-shadow:3px 3px 0 #005522,0 0 10px rgba(0,255,136,.4);}
@@ -98,8 +96,8 @@ body::after{content:'';position:fixed;inset:0;
 .btn-p:not(:disabled):hover{box-shadow:4px 4px 0 #550055,0 0 20px rgba(255,0,255,.65);}
 .btn-r{background:var(--r);color:#fff;box-shadow:3px 3px 0 #550011,0 0 10px rgba(255,51,102,.4);}
 .btn-r:not(:disabled):hover{box-shadow:4px 4px 0 #550011,0 0 20px rgba(255,51,102,.65);}
-.btn-adm{background:var(--admin);color:#000;box-shadow:3px 3px 0 #220044,0 0 10px rgba(176,96,255,.4);}
-.btn-adm:not(:disabled):hover{box-shadow:4px 4px 0 #220044,0 0 20px rgba(176,96,255,.65);}
+.btn-a{background:var(--adm);color:#000;box-shadow:3px 3px 0 #1a0033,0 0 10px rgba(176,96,255,.4);}
+.btn-a:not(:disabled):hover{box-shadow:4px 4px 0 #1a0033,0 0 20px rgba(176,96,255,.65);}
 .btn-ghost{background:transparent;color:var(--g);border:2px solid rgba(0,255,136,.3);
   box-shadow:2px 2px 0 #003322;font-family:'Press Start 2P',monospace;font-size:8px;
   padding:11px;cursor:pointer;width:100%;text-align:center;margin-bottom:8px;
@@ -108,31 +106,31 @@ body::after{content:'';position:fixed;inset:0;
 .btn-sm{font-family:'Press Start 2P',monospace;font-size:7px;border:none;cursor:pointer;
   padding:8px 12px;text-transform:uppercase;letter-spacing:.04em;transition:transform .05s;}
 .btn-sm:active{transform:translate(1px,1px);}
+.btn-sm:disabled{opacity:.3;cursor:not-allowed;}
 .btn-sm-g{background:var(--g);color:#000;box-shadow:2px 2px 0 #005522;}
 .btn-sm-r{background:var(--r);color:#fff;box-shadow:2px 2px 0 #550011;}
-.btn-sm-adm{background:var(--admin);color:#000;box-shadow:2px 2px 0 #220044;}
+.btn-sm-a{background:var(--adm);color:#000;box-shadow:2px 2px 0 #1a0033;}
 
-/* ── INPUTS ── */
-input,select{
-  background:rgba(0,0,0,.65);border:2px solid var(--g);
+/* INPUTS */
+input,select{background:rgba(0,0,0,.65);border:2px solid var(--g);
   box-shadow:inset 0 0 6px rgba(0,255,136,.06),2px 2px 0 #003322;
   color:var(--g);font-family:'Press Start 2P',monospace;font-size:8px;
   padding:12px 10px;width:100%;outline:none;caret-color:var(--g);letter-spacing:.04em;}
 input::placeholder{color:rgba(0,255,136,.2);font-size:7px}
 input:focus,select:focus{box-shadow:inset 0 0 6px rgba(0,255,136,.12),2px 2px 0 #003322,0 0 8px rgba(0,255,136,.2);}
 select option{background:#0a0a0f;color:var(--g);}
+input[readonly]{color:rgba(0,229,255,.5);border-color:rgba(0,229,255,.25);cursor:default;
+  box-shadow:inset 0 0 4px rgba(0,229,255,.04),2px 2px 0 #001a22;}
 
-/* ── LABELS / TYPE ── */
+/* TYPE */
 .lbl{font-size:6px;color:var(--b);letter-spacing:.15em;display:block;margin-bottom:5px;text-transform:uppercase;}
-.section-title{font-size:8px;color:var(--g);text-shadow:0 0 8px var(--g);margin-bottom:14px;letter-spacing:.06em;}
-.title-p{color:var(--p);text-shadow:0 0 8px var(--p);}
-.title-adm{color:var(--admin);text-shadow:0 0 8px var(--admin);}
+.stitle{font-size:8px;color:var(--g);text-shadow:0 0 8px var(--g);margin-bottom:14px;letter-spacing:.06em;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .blink{animation:blink 1s step-end infinite}
 @keyframes glow{0%,100%{text-shadow:0 0 6px currentColor}50%{text-shadow:0 0 18px currentColor,0 0 36px currentColor}}
 .glow{animation:glow 2.5s ease infinite}
 
-/* ── TOAST ── */
+/* TOAST */
 .toast{position:absolute;top:10px;left:8px;right:8px;background:#000;
   border:2px solid var(--y);box-shadow:0 0 12px rgba(255,238,0,.5),2px 2px 0 #333300;
   color:var(--y);padding:10px 12px;font-size:8px;line-height:1.8;text-align:center;
@@ -142,29 +140,27 @@ select option{background:#0a0a0f;color:var(--g);}
 .toast.err{border-color:var(--r);color:var(--r);box-shadow:0 0 12px rgba(255,51,102,.5),2px 2px 0 #330011}
 .toast.info{border-color:var(--b);color:var(--b);box-shadow:0 0 12px rgba(0,229,255,.5),2px 2px 0 #001a22}
 
-/* ── HP PIPS (stamps) ── */
+/* STAMPS */
 .hp-bar{display:flex;gap:5px;flex-wrap:wrap;}
-.hp-pip{width:20px;height:20px;border:2px solid rgba(0,255,136,.18);
-  background:rgba(0,0,0,.5);transition:all .1s steps(2);}
+.hp-pip{width:20px;height:20px;border:2px solid rgba(0,255,136,.18);background:rgba(0,0,0,.5);transition:all .1s steps(2);}
 .hp-pip.on{background:var(--y);border-color:var(--y);box-shadow:0 0 6px rgba(255,238,0,.6);}
 @keyframes pop{0%{transform:scale(.4)}60%{transform:scale(1.3)}80%{transform:scale(.92)}100%{transform:scale(1)}}
 .hp-pip.pop{animation:pop .35s ease forwards;}
 
-/* ── PROGRESS BAR ── */
+/* PROGRESS */
 .prog-wrap{background:#000;border:2px solid rgba(0,255,136,.18);
   height:14px;position:relative;overflow:hidden;margin-top:6px;}
-.prog-fill{height:100%;background:var(--g);box-shadow:0 0 8px rgba(0,255,136,.5);
-  transition:width .2s steps(8);}
+.prog-fill{height:100%;background:var(--g);box-shadow:0 0 8px rgba(0,255,136,.5);transition:width .2s steps(8);}
 .prog-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   font-size:6px;color:#000;filter:invert(1);font-family:'Press Start 2P',monospace;}
 
-/* ── PIN PAD ── */
+/* PIN */
 .pin-row{display:flex;justify-content:center;gap:10px;margin:16px 0;}
 .pin-dot{width:44px;height:50px;background:#000;border:2px solid rgba(0,255,136,.2);
   display:flex;align-items:center;justify-content:center;transition:all .1s steps(2);}
 .pin-dot.on{border-color:var(--g);box-shadow:0 0 10px rgba(0,255,136,.45);}
 .pin-dot.err{border-color:var(--r);box-shadow:0 0 10px rgba(255,51,102,.45);}
-.pin-pip{width:12px;height:12px;background:var(--g);box-shadow:0 0 6px var(--g);}
+.pin-pip{width:12px;height:12px;}
 .numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:220px;}
 .num{background:#000;border:2px solid rgba(0,255,136,.2);color:var(--g);
   font-family:'Press Start 2P',monospace;font-size:15px;padding:14px 0;
@@ -173,28 +169,26 @@ select option{background:#0a0a0f;color:var(--g);}
 .num:active{transform:translate(1px,1px);}
 .num.blank{background:transparent;border:none;cursor:default;}
 
-/* ── MISC ── */
+/* MISC */
 .back{background:none;border:none;color:rgba(0,255,136,.45);
   font-family:'Press Start 2P',monospace;font-size:7px;cursor:pointer;
   padding:0;margin-bottom:16px;text-transform:uppercase;letter-spacing:.1em;}
 .back:hover{color:var(--g);}
-.divider{border-top:2px solid rgba(0,255,136,.12);margin:12px 0;}
+.divider{border-top:2px solid rgba(0,255,136,.1);margin:12px 0;}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.g2-3{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
 .qr-wrap{display:inline-block;padding:10px;background:#fff;
   border:3px solid var(--g);box-shadow:0 0 12px rgba(0,255,136,.4);}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}
   40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
 .shake{animation:shake .3s ease}
 
-/* ── REWARD CHIPS ── */
-.reward-chip{display:flex;align-items:center;justify-content:space-between;
-  padding:10px 12px;border:2px solid rgba(0,255,136,.25);background:rgba(0,255,136,.04);
-  margin-bottom:6px;}
-.reward-chip.expiring{border-color:rgba(255,136,0,.5);background:rgba(255,136,0,.05);}
-.reward-chip.expired{border-color:rgba(255,51,102,.3);background:rgba(255,51,102,.04);opacity:.6;}
+/* REWARD CHIPS */
+.rchip{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 12px;border:2px solid rgba(0,255,136,.25);background:rgba(0,255,136,.04);margin-bottom:6px;}
+.rchip.expiring{border-color:rgba(255,136,0,.5);background:rgba(255,136,0,.05);}
+.rchip.expired{border-color:rgba(255,51,102,.3);background:rgba(255,51,102,.04);opacity:.6;}
 
-/* ── OFFER BANNER ── */
+/* OFFER BANNERS */
 .offer-banner{background:rgba(0,0,0,.8);border:2px solid var(--o);
   padding:8px 10px;margin-bottom:8px;display:flex;align-items:center;gap:8px;
   box-shadow:0 0 10px rgba(255,136,0,.25),2px 2px 0 #221100;}
@@ -203,7 +197,7 @@ select option{background:#0a0a0f;color:var(--g);}
 .offer-banner.bday{border-color:var(--p);box-shadow:0 0 10px rgba(255,0,255,.25),2px 2px 0 #220022;}
 .offer-banner.bday .txt{color:var(--p);}
 
-/* ── SCANNER ── */
+/* SCANNER */
 .scan-box{background:#000;border:2px solid var(--b);
   box-shadow:0 0 12px rgba(0,229,255,.2);padding:20px;
   text-align:center;margin-bottom:10px;position:relative;overflow:hidden;}
@@ -221,635 +215,641 @@ select option{background:#0a0a0f;color:var(--g);}
 #qr-reader video{border:2px solid var(--b)!important;}
 #qr-reader img{display:none!important;}
 
-/* ── CUSTOMER LIST ROWS ── */
+/* CUSTOMER ROWS */
 .c-row{display:flex;align-items:center;gap:10px;padding:10px 12px;
   border-bottom:1px solid rgba(255,0,255,.08);cursor:pointer;transition:background .1s;}
-.c-row:hover,.c-row:active{background:rgba(255,0,255,.06);}
+.c-row:hover,.c-row:active{background:rgba(255,0,255,.07);}
 .c-av{width:34px;height:34px;flex-shrink:0;background:#000;border:2px solid var(--p);
   box-shadow:0 0 6px rgba(255,0,255,.25);display:flex;align-items:center;
   justify-content:center;color:var(--p);font-size:13px;}
+.c-av.adm{border-color:var(--adm);color:var(--adm);box-shadow:0 0 6px rgba(176,96,255,.25);}
 
-/* ── STAT CARDS ── */
-.stat-card{background:rgba(0,0,0,.4);border:2px solid;padding:12px;text-align:center;}
-.stat-val{font-size:22px;margin-top:6px;text-shadow:0 0 10px currentColor;}
+/* STAT CARDS */
+.scard{background:rgba(0,0,0,.4);border:2px solid;padding:12px;text-align:center;}
+.sval{font-size:22px;margin-top:6px;text-shadow:0 0 10px currentColor;}
 
-/* ── TICKER ── */
+/* TICKER */
 .ticker-wrap{overflow:hidden;border-top:1px solid rgba(0,255,136,.1);
   border-bottom:1px solid rgba(0,255,136,.1);padding:6px 0;margin-bottom:14px;}
 .ticker{display:inline-block;white-space:nowrap;font-size:7px;
-  color:rgba(0,255,136,.4);animation:tickerAnim 20s linear infinite;letter-spacing:.08em;}
-@keyframes tickerAnim{0%{transform:translateX(360px)}100%{transform:translateX(-100%)}}
+  color:rgba(0,255,136,.4);animation:tickAnim 20s linear infinite;letter-spacing:.08em;}
+@keyframes tickAnim{0%{transform:translateX(360px)}100%{transform:translateX(-100%)}}
 
-/* ── HISTORY ROWS ── */
+/* HISTORY */
 .h-row{display:flex;align-items:flex-start;gap:8px;padding:8px 0;
   border-bottom:1px solid rgba(0,229,255,.07);}
-.h-row-icon{font-size:14px;flex-shrink:0;width:20px;text-align:center;margin-top:1px;}
-.h-row-text{flex:1;font-size:7px;color:rgba(0,255,136,.65);line-height:2;}
-.h-row-date{font-size:6px;color:rgba(0,229,255,.3);margin-top:2px;white-space:nowrap;}
+.h-ico{font-size:14px;flex-shrink:0;width:20px;text-align:center;margin-top:1px;}
+.h-txt{flex:1;font-size:7px;color:rgba(0,255,136,.65);line-height:2;}
+.h-date{font-size:6px;color:rgba(0,229,255,.3);white-space:nowrap;}
 
-/* ── ADMIN REDEMPTION TABLE ── */
+/* REDEMPTION TABLE */
 .rdm-row{display:flex;align-items:center;gap:8px;padding:8px 10px;
   border-bottom:1px solid rgba(176,96,255,.08);}
-.rdm-name{flex:1;font-size:7px;color:var(--g);}
-.rdm-type{font-size:6px;color:var(--admin);letter-spacing:.06em;}
-.rdm-date{font-size:6px;color:rgba(0,229,255,.35);}
 </style>
 </head>
 <body>
 <div class="phone">
-  <div class="toast" id="toast"></div>
+<div class="toast" id="toast"></div>
 
-  <!-- ════════════════════════════════
-       WELCOME
-  ════════════════════════════════ -->
-  <div class="screen active" id="s-welcome"
-       style="align-items:center;text-align:center;justify-content:center;">
-    <div style="font-size:8px;color:var(--b);letter-spacing:.18em;margin-bottom:12px;text-shadow:0 0 8px var(--b)">PRESS START</div>
-    <div style="color:var(--g);font-size:26px;line-height:1.5;
-         text-shadow:0 0 10px var(--g),0 0 20px rgba(0,255,136,.35);margin-bottom:4px;">THE<br>NOOK</div>
-    <div style="font-size:7px;color:var(--p);text-shadow:0 0 8px var(--p);letter-spacing:.06em;margin-bottom:16px;">
-      58 WASHINGTON ST, FAIRHAVEN</div>
-    <div style="font-size:32px;filter:drop-shadow(0 0 10px rgba(0,255,136,.5));margin-bottom:12px;">☕</div>
-    <div class="ticker-wrap" style="width:100%">
-      <span class="ticker">★ COLLECT 10 STAMPS = FREE COFFEE ★ EARN STAMPS EVERY VISIT ★ BIRTHDAY MONTH = FREE COFFEE ★</span>
-    </div>
-    <div style="width:100%">
-      <button class="btn btn-g" onclick="go('s-signin')">[ SIGN IN ]</button>
-      <button class="btn btn-b" onclick="go('s-signup')">[ CREATE ACCOUNT ]</button>
-      <button class="btn-ghost" onclick="go('s-leaderboard')">[ TOP PLAYERS ]</button>
-    </div>
-    <div style="display:flex;gap:24px;margin-top:28px;">
-      <button onclick="go('s-staff-login')"
-        style="background:none;border:none;color:rgba(255,0,255,.15);
-               font-family:'Press Start 2P',monospace;font-size:6px;cursor:pointer;letter-spacing:.1em;padding:6px;">
-        staff
-      </button>
-      <button onclick="go('s-admin-login')"
-        style="background:none;border:none;color:rgba(176,96,255,.12);
-               font-family:'Press Start 2P',monospace;font-size:6px;cursor:pointer;letter-spacing:.1em;padding:6px;">
-        admin
-      </button>
-    </div>
+<!-- ══════ WELCOME ══════ -->
+<div class="screen active" id="s-welcome"
+     style="align-items:center;text-align:center;justify-content:center;">
+  <div style="font-size:8px;color:var(--b);letter-spacing:.18em;margin-bottom:12px;text-shadow:0 0 8px var(--b)">PRESS START</div>
+  <div style="color:var(--g);font-size:26px;line-height:1.5;
+       text-shadow:0 0 10px var(--g),0 0 20px rgba(0,255,136,.35);margin-bottom:4px;">THE<br>NOOK</div>
+  <div style="font-size:7px;color:var(--p);text-shadow:0 0 8px var(--p);letter-spacing:.06em;margin-bottom:16px;">
+    58 WASHINGTON ST, FAIRHAVEN</div>
+  <div style="font-size:32px;filter:drop-shadow(0 0 10px rgba(0,255,136,.5));margin-bottom:12px;">☕</div>
+  <div class="ticker-wrap" style="width:100%">
+    <span class="ticker">★ COLLECT 10 STAMPS = FREE COFFEE ★ EARN STAMPS EVERY VISIT ★ BIRTHDAY MONTH = FREE COFFEE ★</span>
   </div>
+  <div style="width:100%">
+    <button class="btn btn-g" onclick="go('s-signin')">[ SIGN IN ]</button>
+    <button class="btn btn-b" onclick="go('s-signup')">[ CREATE ACCOUNT ]</button>
+    <button class="btn-ghost" onclick="go('s-leaderboard')">[ TOP PLAYERS ]</button>
+  </div>
+  <!-- Staff only — brighter, no admin hint -->
+  <button onclick="go('s-staff-login')"
+    style="background:none;border:none;color:rgba(255,0,255,.55);
+           font-family:'Press Start 2P',monospace;font-size:6px;cursor:pointer;
+           letter-spacing:.12em;padding:8px;margin-top:24px;
+           text-shadow:0 0 6px rgba(255,0,255,.3);">
+    staff
+  </button>
+</div>
 
-  <!-- ════════════════════════════════
-       SIGN IN
-  ════════════════════════════════ -->
-  <div class="screen" id="s-signin" style="padding-top:8px;">
-    <div class="scroll-area">
-      <button class="back" onclick="go('s-welcome')">◀ BACK</button>
-      <div class="section-title">PLAYER LOGIN</div>
-      <div style="font-size:7px;color:rgba(0,229,255,.5);margin-bottom:18px;line-height:2;">
-        SIGN IN WITH YOUR PHONE NUMBER</div>
-      <div class="card" style="margin-bottom:14px;">
-        <label class="lbl">PHONE NUMBER</label>
-        <input id="si-phone" placeholder="5081234567" type="tel"
-               onkeydown="if(event.key==='Enter')doSignin()"/>
+<!-- ══════ SIGN IN ══════ -->
+<div class="screen" id="s-signin" style="padding-top:8px;">
+  <div class="sa">
+    <button class="back" onclick="go('s-welcome')">◀ BACK</button>
+    <div class="stitle">PLAYER LOGIN</div>
+    <div style="font-size:7px;color:rgba(0,229,255,.5);margin-bottom:18px;line-height:2;">SIGN IN WITH YOUR PHONE NUMBER</div>
+    <div class="card" style="margin-bottom:14px;">
+      <label class="lbl">PHONE NUMBER</label>
+      <input id="si-phone" placeholder="5081234567" type="tel" onkeydown="if(event.key==='Enter')doSignin()"/>
+    </div>
+    <button class="btn btn-g" onclick="doSignin()">▶ SIGN IN ◀</button>
+    <div class="divider"></div>
+    <div style="font-size:7px;color:rgba(0,255,136,.25);text-align:center;margin-bottom:12px;">NO ACCOUNT?</div>
+    <button class="btn-ghost" onclick="go('s-signup')">CREATE ACCOUNT</button>
+  </div>
+</div>
+
+<!-- ══════ SIGN UP ══════ -->
+<div class="screen" id="s-signup" style="padding-top:8px;">
+  <div class="sa">
+    <button class="back" onclick="go('s-welcome')">◀ BACK</button>
+    <div class="stitle">CREATE ACCOUNT</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div style="margin-bottom:12px;">
+        <label class="lbl">YOUR NAME</label>
+        <input id="su-name" placeholder="E.G. MARGARITA"/>
       </div>
-      <button class="btn btn-g" onclick="doSignin()">▶ SIGN IN ◀</button>
-      <div class="divider"></div>
-      <div style="font-size:7px;color:rgba(0,255,136,.25);text-align:center;margin-bottom:12px;">NO ACCOUNT?</div>
-      <button class="btn-ghost" onclick="go('s-signup')">CREATE ACCOUNT</button>
+      <div style="margin-bottom:12px;">
+        <label class="lbl">PHONE (10 DIGITS)</label>
+        <input id="su-phone" placeholder="5081234567" type="tel"/>
+      </div>
+      <div>
+        <label class="lbl">BIRTHDAY (OPTIONAL — CANNOT BE CHANGED LATER)</label>
+        <div style="display:grid;grid-template-columns:2fr 1fr 2fr;gap:6px;">
+          <select id="su-bm" style="font-size:7px;padding:11px 6px;" onchange="buildDays('su')">
+            <option value="">MONTH</option>
+            <option value="1">JAN</option><option value="2">FEB</option><option value="3">MAR</option>
+            <option value="4">APR</option><option value="5">MAY</option><option value="6">JUN</option>
+            <option value="7">JUL</option><option value="8">AUG</option><option value="9">SEP</option>
+            <option value="10">OCT</option><option value="11">NOV</option><option value="12">DEC</option>
+          </select>
+          <select id="su-bd" style="font-size:7px;padding:11px 6px;"><option value="">DAY</option></select>
+          <select id="su-by" style="font-size:7px;padding:11px 6px;" onchange="buildDays('su')"><option value="">YEAR</option></select>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-g" onclick="doSignup()">▶ CREATE ACCOUNT ◀</button>
+    <div style="font-size:6px;color:rgba(0,255,136,.18);text-align:center;margin-top:2px;">FREE TO JOIN · NO SPAM</div>
+  </div>
+</div>
+
+<!-- ══════ CUSTOMER HOME (3 tabs) ══════ -->
+<div class="screen" id="s-cust-home" style="padding-top:8px;">
+
+  <!-- REWARDS TAB -->
+  <div class="sa" id="ctab-rewards">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div>
+        <div id="ch-name" style="font-size:9px;color:var(--y);text-shadow:0 0 6px var(--y);"></div>
+        <div id="ch-id"   style="font-size:6px;color:rgba(0,229,255,.3);margin-top:3px;"></div>
+      </div>
+      <button onclick="doSignout()"
+        style="background:none;border:1px solid rgba(255,51,102,.3);color:rgba(255,51,102,.55);
+               font-family:'Press Start 2P',monospace;font-size:6px;padding:6px 10px;cursor:pointer;">OUT</button>
+    </div>
+    <div id="ch-offers"></div>
+    <div class="card-b" style="text-align:center;margin-bottom:10px;">
+      <div style="font-size:6px;color:var(--b);letter-spacing:.1em;margin-bottom:8px;">SHOW THIS AT CHECKOUT</div>
+      <div class="qr-wrap"><div id="ch-qr" style="width:110px;height:110px;"></div></div>
+    </div>
+    <div class="card" style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:7px;color:rgba(0,255,136,.5);">☕ STAMP PROGRESS</span>
+        <span id="ch-sc" style="color:var(--y);font-size:8px;text-shadow:0 0 6px var(--y);"></span>
+      </div>
+      <div class="hp-bar" id="ch-stamps"></div>
+      <div class="prog-wrap"><div class="prog-fill" id="ch-prog"></div>
+        <div class="prog-text" id="ch-prog-t"></div></div>
+    </div>
+    <div class="card" style="margin-bottom:10px;">
+      <div style="font-size:7px;color:rgba(0,255,136,.5);margin-bottom:10px;">🏆 FREE COFFEES EARNED</div>
+      <div id="ch-rewards-list"></div>
+    </div>
+    <div class="g2">
+      <div class="card" style="text-align:center;margin-bottom:0;">
+        <div style="font-size:5px;color:var(--b);margin-bottom:6px;">REDEEMED</div>
+        <div style="font-size:22px;color:var(--y);text-shadow:0 0 10px var(--y);" id="ch-total-r">0</div>
+      </div>
+      <div class="card" style="text-align:center;margin-bottom:0;">
+        <div style="font-size:5px;color:var(--b);margin-bottom:6px;">TOTAL VISITS</div>
+        <div style="font-size:22px;color:var(--g);text-shadow:0 0 10px var(--g);" id="ch-visits">0</div>
+      </div>
     </div>
   </div>
 
-  <!-- ════════════════════════════════
-       SIGN UP
-  ════════════════════════════════ -->
-  <div class="screen" id="s-signup" style="padding-top:8px;">
-    <div class="scroll-area">
-      <button class="back" onclick="go('s-welcome')">◀ BACK</button>
-      <div class="section-title">CREATE ACCOUNT</div>
-      <div class="card" style="margin-bottom:12px;">
-        <div style="margin-bottom:12px;">
-          <label class="lbl">YOUR NAME</label>
-          <input id="su-name" placeholder="E.G. MARGARITA"/>
+  <!-- HISTORY TAB -->
+  <div class="sa" id="ctab-hist" style="display:none;">
+    <div class="stitle">📜 VISIT HISTORY</div>
+    <div class="card-b" style="padding:8px 12px;"><div id="ch-hist-list"></div></div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div class="sa" id="ctab-settings" style="display:none;">
+    <div class="stitle">⚙ ACCOUNT</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div style="padding:8px 0;border-bottom:1px solid rgba(0,255,136,.08);
+           display:flex;justify-content:space-between;">
+        <span style="font-size:6px;color:rgba(0,255,136,.4);">PLAYER ID</span>
+        <span style="font-size:6px;color:var(--b);" id="set-id"></span>
+      </div>
+      <div style="padding:8px 0;display:flex;justify-content:space-between;">
+        <span style="font-size:6px;color:rgba(0,255,136,.4);">PHONE</span>
+        <span style="font-size:6px;color:var(--b);" id="set-phone"></span>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div style="font-size:6px;color:var(--b);margin-bottom:12px;">EDIT DETAILS</div>
+      <div style="margin-bottom:12px;">
+        <label class="lbl">NAME</label>
+        <input id="set-name-inp"/>
+      </div>
+      <!-- Birthday: read-only if already set -->
+      <div id="set-bday-wrap">
+        <label class="lbl">BIRTHDAY</label>
+        <div id="set-bday-display" style="display:none;">
+          <input id="set-bday-ro" readonly style="cursor:default;"/>
+          <div style="font-size:6px;color:rgba(0,229,255,.3);margin-top:5px;line-height:2;">
+            BIRTHDAY CANNOT BE CHANGED AFTER ACCOUNT CREATION
+          </div>
         </div>
-        <div style="margin-bottom:12px;">
-          <label class="lbl">PHONE (10 DIGITS)</label>
-          <input id="su-phone" placeholder="5081234567" type="tel"/>
-        </div>
-        <div>
-          <label class="lbl">BIRTHDAY (OPTIONAL)</label>
+        <div id="set-bday-edit" style="display:none;">
           <div style="display:grid;grid-template-columns:2fr 1fr 2fr;gap:6px;">
-            <select id="su-bm" style="font-size:7px;padding:11px 6px;" onchange="buildDays('su')">
+            <select id="set-bm" style="font-size:7px;padding:11px 6px;" onchange="buildDays('set')">
               <option value="">MONTH</option>
               <option value="1">JAN</option><option value="2">FEB</option><option value="3">MAR</option>
               <option value="4">APR</option><option value="5">MAY</option><option value="6">JUN</option>
               <option value="7">JUL</option><option value="8">AUG</option><option value="9">SEP</option>
               <option value="10">OCT</option><option value="11">NOV</option><option value="12">DEC</option>
             </select>
-            <select id="su-bd" style="font-size:7px;padding:11px 6px;"><option value="">DAY</option></select>
-            <select id="su-by" style="font-size:7px;padding:11px 6px;" onchange="buildDays('su')"><option value="">YEAR</option></select>
+            <select id="set-bd" style="font-size:7px;padding:11px 6px;"><option value="">DAY</option></select>
+            <select id="set-by" style="font-size:7px;padding:11px 6px;" onchange="buildDays('set')"><option value="">YEAR</option></select>
           </div>
         </div>
       </div>
-      <button class="btn btn-g" onclick="doSignup()">▶ CREATE ACCOUNT ◀</button>
-      <div style="font-size:6px;color:rgba(0,255,136,.18);text-align:center;margin-top:2px;">FREE TO JOIN · NO SPAM</div>
     </div>
+    <button class="btn btn-g" onclick="saveSettings()">▶ SAVE CHANGES ◀</button>
+    <div class="divider"></div>
+    <button class="btn btn-r" onclick="doSignout()">SIGN OUT</button>
   </div>
 
-  <!-- ════════════════════════════════
-       CUSTOMER HOME  (3 tabs)
-  ════════════════════════════════ -->
-  <div class="screen" id="s-cust-home" style="padding-top:8px;">
+  <div class="bnav">
+    <button class="nb on" id="cnb-rewards"  onclick="cTab('rewards')"><span class="ni">☕</span>REWARDS</button>
+    <button class="nb"    id="cnb-hist"     onclick="cTab('hist')"><span class="ni">📜</span>HISTORY</button>
+    <button class="nb"    id="cnb-settings" onclick="cTab('settings')"><span class="ni">⚙</span>SETTINGS</button>
+  </div>
+</div>
 
-    <!-- TAB: REWARDS -->
-    <div class="scroll-area" id="ctab-rewards">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-        <div>
-          <div id="ch-name" style="font-size:9px;color:var(--y);text-shadow:0 0 6px var(--y);"></div>
-          <div id="ch-id" style="font-size:6px;color:rgba(0,229,255,.3);margin-top:3px;"></div>
-        </div>
-        <button onclick="doSignout()"
-          style="background:none;border:1px solid rgba(255,51,102,.3);color:rgba(255,51,102,.55);
-                 font-family:'Press Start 2P',monospace;font-size:6px;padding:6px 10px;cursor:pointer;">OUT</button>
-      </div>
-
-      <div id="ch-offers"></div>
-
-      <!-- QR code -->
-      <div class="card-b" style="text-align:center;margin-bottom:10px;">
-        <div style="font-size:6px;color:var(--b);letter-spacing:.1em;margin-bottom:8px;">SHOW THIS AT CHECKOUT</div>
-        <div class="qr-wrap"><div id="ch-qr" style="width:110px;height:110px;"></div></div>
-      </div>
-
-      <!-- Stamp progress -->
-      <div class="card" style="margin-bottom:10px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-          <span style="font-size:7px;color:rgba(0,255,136,.5);">☕ STAMP PROGRESS</span>
-          <span id="ch-sc" style="color:var(--y);font-size:8px;text-shadow:0 0 6px var(--y);"></span>
-        </div>
-        <div class="hp-bar" id="ch-stamps"></div>
-        <div class="prog-wrap"><div class="prog-fill" id="ch-prog"></div>
-          <div class="prog-text" id="ch-prog-t"></div></div>
-      </div>
-
-      <!-- Free coffees wallet -->
-      <div class="card" style="margin-bottom:10px;">
-        <div style="font-size:7px;color:rgba(0,255,136,.5);margin-bottom:10px;">🏆 FREE COFFEES EARNED</div>
-        <div id="ch-rewards-list"></div>
-      </div>
-
-      <div class="g2">
-        <div class="card" style="text-align:center;margin-bottom:0;">
-          <div style="font-size:5px;color:var(--b);margin-bottom:6px;">REDEEMED</div>
-          <div style="font-size:22px;color:var(--y);text-shadow:0 0 10px var(--y);" id="ch-total-r">0</div>
-        </div>
-        <div class="card" style="text-align:center;margin-bottom:0;">
-          <div style="font-size:5px;color:var(--b);margin-bottom:6px;">TOTAL VISITS</div>
-          <div style="font-size:22px;color:var(--g);text-shadow:0 0 10px var(--g);" id="ch-visits">0</div>
-        </div>
-      </div>
+<!-- ══════ LEADERBOARD ══════ -->
+<div class="screen" id="s-leaderboard" style="padding-top:8px;">
+  <div class="sa">
+    <button class="back" onclick="go('s-welcome')">◀ BACK</button>
+    <div style="text-align:center;margin-bottom:14px;">
+      <div style="font-size:15px;color:var(--y);letter-spacing:.08em;" class="glow">★ TOP PLAYERS ★</div>
     </div>
+    <div class="card" style="padding:4px 0;"><div id="lb-list"></div></div>
+  </div>
+</div>
 
-    <!-- TAB: HISTORY -->
-    <div class="scroll-area" id="ctab-hist" style="display:none;">
-      <div class="section-title">📜 VISIT HISTORY</div>
-      <div class="card-b" style="padding:8px 12px;"><div id="ch-hist-list"></div></div>
+<!-- ══════ STAFF LOGIN ══════ -->
+<div class="screen" id="s-staff-login" style="padding-top:8px;">
+  <div class="sa" style="display:flex;flex-direction:column;align-items:center;text-align:center;">
+    <button class="back" style="align-self:flex-start;margin-bottom:20px;" onclick="go('s-welcome')">◀ BACK</button>
+    <div style="font-size:28px;margin-bottom:12px;filter:drop-shadow(0 0 10px var(--p))">🔐</div>
+    <div style="font-size:10px;color:var(--p);text-shadow:0 0 10px var(--p);margin-bottom:4px;">STAFF ACCESS</div>
+    <div style="font-size:6px;color:rgba(255,0,255,.35);margin-bottom:4px;letter-spacing:.1em;">ENTER 4-DIGIT PIN</div>
+    <div class="pin-row" id="spin-row">
+      <div class="pin-dot" id="sp0"></div><div class="pin-dot" id="sp1"></div>
+      <div class="pin-dot" id="sp2"></div><div class="pin-dot" id="sp3"></div>
     </div>
+    <div id="spin-err" style="font-size:7px;color:var(--r);min-height:16px;margin-bottom:10px;"></div>
+    <div class="numpad">
+      <div class="num" onclick="pinPress('s',1)">1</div><div class="num" onclick="pinPress('s',2)">2</div><div class="num" onclick="pinPress('s',3)">3</div>
+      <div class="num" onclick="pinPress('s',4)">4</div><div class="num" onclick="pinPress('s',5)">5</div><div class="num" onclick="pinPress('s',6)">6</div>
+      <div class="num" onclick="pinPress('s',7)">7</div><div class="num" onclick="pinPress('s',8)">8</div><div class="num" onclick="pinPress('s',9)">9</div>
+      <div class="num blank"></div><div class="num" onclick="pinPress('s',0)">0</div>
+      <div class="num" onclick="pinPress('s','del')">⌫</div>
+    </div>
+  </div>
+</div>
 
-    <!-- TAB: SETTINGS -->
-    <div class="scroll-area" id="ctab-settings" style="display:none;">
-      <div class="section-title">⚙ ACCOUNT</div>
-      <div class="card" style="margin-bottom:12px;">
-        <div style="padding:8px 0;border-bottom:1px solid rgba(0,255,136,.08);
-             display:flex;justify-content:space-between;">
-          <span style="font-size:6px;color:rgba(0,255,136,.4);">PLAYER ID</span>
-          <span style="font-size:6px;color:var(--b);" id="st-id"></span>
-        </div>
-        <div style="padding:8px 0;display:flex;justify-content:space-between;">
-          <span style="font-size:6px;color:rgba(0,255,136,.4);">PHONE</span>
-          <span style="font-size:6px;color:var(--b);" id="st-phone"></span>
-        </div>
-      </div>
-      <div class="card" style="margin-bottom:12px;">
-        <div style="font-size:6px;color:var(--b);margin-bottom:12px;">EDIT DETAILS</div>
-        <div style="margin-bottom:10px;">
-          <label class="lbl">NAME</label>
-          <input id="st-name-inp"/>
-        </div>
-        <div>
-          <label class="lbl">BIRTHDAY</label>
-          <div style="display:grid;grid-template-columns:2fr 1fr 2fr;gap:6px;">
-            <select id="st-bm" style="font-size:7px;padding:11px 6px;" onchange="buildDays('st')">
-              <option value="">MONTH</option>
-              <option value="1">JAN</option><option value="2">FEB</option><option value="3">MAR</option>
-              <option value="4">APR</option><option value="5">MAY</option><option value="6">JUN</option>
-              <option value="7">JUL</option><option value="8">AUG</option><option value="9">SEP</option>
-              <option value="10">OCT</option><option value="11">NOV</option><option value="12">DEC</option>
-            </select>
-            <select id="st-bd" style="font-size:7px;padding:11px 6px;"><option value="">DAY</option></select>
-            <select id="st-by" style="font-size:7px;padding:11px 6px;" onchange="buildDays('st')"><option value="">YEAR</option></select>
+<!-- ══════ ADMIN LOGIN (reached from staff home) ══════ -->
+<div class="screen" id="s-admin-login" style="padding-top:8px;">
+  <div class="sa" style="display:flex;flex-direction:column;align-items:center;text-align:center;">
+    <button class="back" style="align-self:flex-start;margin-bottom:20px;" onclick="go('s-staff-home')">◀ STAFF</button>
+    <div style="font-size:28px;margin-bottom:12px;filter:drop-shadow(0 0 10px var(--adm))">🛡</div>
+    <div style="font-size:10px;color:var(--adm);text-shadow:0 0 10px var(--adm);margin-bottom:4px;">ADMIN ACCESS</div>
+    <div style="font-size:6px;color:rgba(176,96,255,.35);margin-bottom:4px;letter-spacing:.1em;">ENTER ADMIN PIN</div>
+    <div class="pin-row" id="apin-row">
+      <div class="pin-dot" id="ap0" style="border-color:rgba(176,96,255,.2);"></div>
+      <div class="pin-dot" id="ap1" style="border-color:rgba(176,96,255,.2);"></div>
+      <div class="pin-dot" id="ap2" style="border-color:rgba(176,96,255,.2);"></div>
+      <div class="pin-dot" id="ap3" style="border-color:rgba(176,96,255,.2);"></div>
+    </div>
+    <div id="apin-err" style="font-size:7px;color:var(--r);min-height:16px;margin-bottom:10px;"></div>
+    <div class="numpad">
+      <div class="num" onclick="pinPress('a',1)">1</div><div class="num" onclick="pinPress('a',2)">2</div><div class="num" onclick="pinPress('a',3)">3</div>
+      <div class="num" onclick="pinPress('a',4)">4</div><div class="num" onclick="pinPress('a',5)">5</div><div class="num" onclick="pinPress('a',6)">6</div>
+      <div class="num" onclick="pinPress('a',7)">7</div><div class="num" onclick="pinPress('a',8)">8</div><div class="num" onclick="pinPress('a',9)">9</div>
+      <div class="num blank"></div><div class="num" onclick="pinPress('a',0)">0</div>
+      <div class="num" onclick="pinPress('a','del')">⌫</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ STAFF HOME ══════ -->
+<div class="screen" id="s-staff-home" style="padding-top:8px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
+    <div style="font-size:9px;color:var(--p);text-shadow:0 0 8px var(--p);">THE NOOK</div>
+    <span style="background:#000;border:2px solid var(--p);color:var(--p);
+                 font-size:6px;padding:4px 8px;box-shadow:0 0 8px rgba(255,0,255,.3);">STAFF</span>
+  </div>
+
+  <!-- LIST TAB -->
+  <div class="sa" id="stab-list">
+    <input id="staff-search" placeholder="SEARCH NAME / PHONE..." style="margin-bottom:10px;" oninput="renderStaffList()"/>
+    <div id="staff-list" style="border:2px solid var(--p);box-shadow:3px 3px 0 #330033;overflow:hidden;"></div>
+  </div>
+
+  <!-- SCAN TAB -->
+  <div class="sa" id="stab-scan" style="display:none;">
+    <div class="scan-box">
+      <div id="qr-reader"></div>
+      <div id="scan-ph">
+        <div class="sc-corners">
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:6px;">
+            <div style="font-size:26px;">📷</div>
+            <div style="font-size:6px;color:var(--b);letter-spacing:.08em;" class="blink">READY</div>
           </div>
+          <div class="scan-line"></div>
         </div>
       </div>
-      <button class="btn btn-g" onclick="saveSettings()">▶ SAVE CHANGES ◀</button>
-      <div class="divider"></div>
-      <button class="btn btn-r" onclick="doSignout()">SIGN OUT</button>
     </div>
-
-    <div class="bnav" id="cust-bnav">
-      <button class="nb on" id="cnb-rewards" onclick="cTab('rewards')"><span class="ni">☕</span>REWARDS</button>
-      <button class="nb" id="cnb-hist" onclick="cTab('hist')"><span class="ni">📜</span>HISTORY</button>
-      <button class="nb" id="cnb-settings" onclick="cTab('settings')"><span class="ni">⚙</span>SETTINGS</button>
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════
-       LEADERBOARD (public)
-  ════════════════════════════════ -->
-  <div class="screen" id="s-leaderboard" style="padding-top:8px;">
-    <div class="scroll-area">
-      <button class="back" onclick="go('s-welcome')">◀ BACK</button>
-      <div style="text-align:center;margin-bottom:14px;">
-        <div style="font-size:15px;color:var(--y);letter-spacing:.08em;" class="glow">★ TOP PLAYERS ★</div>
-      </div>
-      <div class="card" style="padding:4px 0;"><div id="lb-list"></div></div>
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════
-       STAFF LOGIN
-  ════════════════════════════════ -->
-  <div class="screen" id="s-staff-login" style="padding-top:8px;">
-    <div class="scroll-area" style="display:flex;flex-direction:column;align-items:center;text-align:center;">
-      <button class="back" style="align-self:flex-start;margin-bottom:20px;" onclick="go('s-welcome')">◀ BACK</button>
-      <div style="font-size:28px;margin-bottom:12px;filter:drop-shadow(0 0 10px var(--p))">🔐</div>
-      <div style="font-size:10px;color:var(--p);text-shadow:0 0 10px var(--p);margin-bottom:4px;">STAFF ACCESS</div>
-      <div style="font-size:6px;color:rgba(255,0,255,.35);margin-bottom:4px;letter-spacing:.1em;">ENTER 4-DIGIT PIN</div>
-      <div class="pin-row" id="spin-row">
-        <div class="pin-dot" id="sp0"></div><div class="pin-dot" id="sp1"></div>
-        <div class="pin-dot" id="sp2"></div><div class="pin-dot" id="sp3"></div>
-      </div>
-      <div id="spin-err" style="font-size:7px;color:var(--r);min-height:16px;margin-bottom:10px;"></div>
-      <div class="numpad">
-        <div class="num" onclick="pinPress('s',1)">1</div><div class="num" onclick="pinPress('s',2)">2</div><div class="num" onclick="pinPress('s',3)">3</div>
-        <div class="num" onclick="pinPress('s',4)">4</div><div class="num" onclick="pinPress('s',5)">5</div><div class="num" onclick="pinPress('s',6)">6</div>
-        <div class="num" onclick="pinPress('s',7)">7</div><div class="num" onclick="pinPress('s',8)">8</div><div class="num" onclick="pinPress('s',9)">9</div>
-        <div class="num blank"></div><div class="num" onclick="pinPress('s',0)">0</div>
-        <div class="num" onclick="pinPress('s','del')">⌫</div>
+    <button class="btn btn-b" id="btn-cam" onclick="toggleCamera('s')">▶ START CAMERA SCAN</button>
+    <div class="card-b" style="margin-top:4px;">
+      <div style="font-size:6px;color:var(--b);letter-spacing:.1em;margin-bottom:8px;">PHONE LOOKUP</div>
+      <div style="display:flex;gap:6px;">
+        <input id="scan-phone" placeholder="5081234567" type="tel" style="font-size:7px;"
+               onkeydown="if(event.key==='Enter')doPhoneScan('s')"/>
+        <button class="btn btn-b" style="width:auto;padding:12px 12px;margin-bottom:0;flex-shrink:0;font-size:8px;"
+                onclick="doPhoneScan('s')">GO</button>
       </div>
     </div>
   </div>
 
-  <!-- ════════════════════════════════
-       ADMIN LOGIN
-  ════════════════════════════════ -->
-  <div class="screen" id="s-admin-login" style="padding-top:8px;">
-    <div class="scroll-area" style="display:flex;flex-direction:column;align-items:center;text-align:center;">
-      <button class="back" style="align-self:flex-start;margin-bottom:20px;" onclick="go('s-welcome')">◀ BACK</button>
-      <div style="font-size:28px;margin-bottom:12px;filter:drop-shadow(0 0 10px var(--admin))">🛡</div>
-      <div style="font-size:10px;color:var(--admin);text-shadow:0 0 10px var(--admin);margin-bottom:4px;">ADMIN ACCESS</div>
-      <div style="font-size:6px;color:rgba(176,96,255,.35);margin-bottom:4px;letter-spacing:.1em;">ENTER 4-DIGIT PIN</div>
-      <div class="pin-row" id="apin-row">
-        <div class="pin-dot" id="ap0" style="border-color:rgba(176,96,255,.2);"></div>
-        <div class="pin-dot" id="ap1" style="border-color:rgba(176,96,255,.2);"></div>
-        <div class="pin-dot" id="ap2" style="border-color:rgba(176,96,255,.2);"></div>
-        <div class="pin-dot" id="ap3" style="border-color:rgba(176,96,255,.2);"></div>
+  <div class="bnav sm">
+    <button class="nb on" id="snb-list" onclick="sTab('list')"><span class="ni">👥</span>CUSTOMERS</button>
+    <button class="nb"    id="snb-scan" onclick="sTab('scan')"><span class="ni">📷</span>SCANNER</button>
+    <button class="nb"    onclick="go('s-welcome')"><span class="ni">🔒</span>LOGOUT</button>
+    <button class="nb"    onclick="go('s-admin-login')"
+      style="border-top:2px solid transparent;"
+      onmouseover="this.style.color='var(--adm)'"
+      onmouseout="this.style.color='rgba(176,96,255,.4)'">
+      <span class="ni" style="color:var(--adm);opacity:.7;">🛡</span>
+      <span style="color:rgba(176,96,255,.45);">ADMIN</span>
+    </button>
+  </div>
+</div>
+
+<!-- ══════ STAMP SCREEN (staff + admin shared) ══════ -->
+<div class="screen" id="s-stamp" style="padding-top:8px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
+    <button class="back" style="margin-bottom:0;" id="stamp-back-btn" onclick="stampGoBack()">◀ BACK</button>
+    <span style="background:#000;border:2px solid var(--p);color:var(--p);
+                 font-size:6px;padding:4px 8px;box-shadow:0 0 8px rgba(255,0,255,.3);">LOYALTY CARD</span>
+  </div>
+  <div class="sa">
+    <div id="st-offers" style="margin-bottom:6px;"></div>
+    <div class="card-p" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+      <div style="width:42px;height:42px;flex-shrink:0;background:#000;border:2px solid var(--p);
+           box-shadow:0 0 8px rgba(255,0,255,.3);display:flex;align-items:center;
+           justify-content:center;color:var(--p);font-size:17px;" id="st-av"></div>
+      <div>
+        <div id="st-cname"  style="color:var(--y);font-size:10px;text-shadow:0 0 6px var(--y);margin-bottom:3px;"></div>
+        <div id="st-cphone" style="font-size:6px;color:rgba(0,229,255,.4);margin-bottom:2px;"></div>
+        <div id="st-cmeta"  style="font-size:6px;color:rgba(255,0,255,.35);"></div>
       </div>
-      <div id="apin-err" style="font-size:7px;color:var(--r);min-height:16px;margin-bottom:10px;"></div>
-      <div class="numpad">
-        <div class="num" onclick="pinPress('a',1)">1</div><div class="num" onclick="pinPress('a',2)">2</div><div class="num" onclick="pinPress('a',3)">3</div>
-        <div class="num" onclick="pinPress('a',4)">4</div><div class="num" onclick="pinPress('a',5)">5</div><div class="num" onclick="pinPress('a',6)">6</div>
-        <div class="num" onclick="pinPress('a',7)">7</div><div class="num" onclick="pinPress('a',8)">8</div><div class="num" onclick="pinPress('a',9)">9</div>
-        <div class="num blank"></div><div class="num" onclick="pinPress('a',0)">0</div>
-        <div class="num" onclick="pinPress('a','del')">⌫</div>
+    </div>
+    <div class="card" style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="color:var(--g);font-size:7px;">☕ STAMPS</span>
+        <span id="st-slabel" style="color:var(--y);font-size:8px;"></span>
+        <span id="st-ready" style="display:none;font-size:6px;color:var(--y);" class="blink">★ READY ★</span>
       </div>
+      <div class="hp-bar" id="st-stamps"></div>
+      <div class="prog-wrap"><div class="prog-fill" id="st-prog"></div>
+        <div class="prog-text" id="st-prog-t"></div></div>
+    </div>
+    <div class="card" style="margin-bottom:8px;">
+      <div style="font-size:7px;color:rgba(0,255,136,.4);margin-bottom:8px;">🏆 PENDING FREE COFFEES</div>
+      <div id="st-rewards-list"></div>
+    </div>
+    <button class="btn btn-g" id="btn-add"    onclick="addStamp()">+ ADD STAMP ☕</button>
+    <button class="btn btn-r" id="btn-redeem" onclick="redeemCoffee()">★ REDEEM FREE COFFEE ★</button>
+    <button class="btn btn-p" id="btn-bday"   style="display:none;" onclick="grantBirthday()">🎂 GRANT BIRTHDAY REWARD</button>
+    <div style="font-size:6px;color:rgba(0,255,136,.25);text-align:center;" id="st-cooldown"></div>
+  </div>
+</div>
+
+<!-- ══════ ADMIN HOME (4 tabs) ══════ -->
+<div class="screen" id="s-admin-home" style="padding-top:8px;">
+
+  <!-- DASHBOARD TAB -->
+  <div class="sa" id="atab-dash">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div style="font-size:9px;color:var(--adm);text-shadow:0 0 8px var(--adm);">📊 DASHBOARD</div>
+      <span style="background:#000;border:2px solid var(--adm);color:var(--adm);
+                   font-size:6px;padding:4px 8px;box-shadow:0 0 6px rgba(176,96,255,.3);">ADMIN</span>
+    </div>
+    <div class="g2" style="margin-bottom:8px;">
+      <div class="scard" style="border-color:var(--p);color:var(--p);">
+        <div style="font-size:5px;letter-spacing:.1em;">MEMBERS</div>
+        <div class="sval" id="db-members">0</div>
+      </div>
+      <div class="scard" style="border-color:var(--g);color:var(--g);">
+        <div style="font-size:5px;letter-spacing:.1em;">TOTAL VISITS</div>
+        <div class="sval" id="db-visits">0</div>
+      </div>
+    </div>
+    <div class="g2" style="margin-bottom:8px;">
+      <div class="scard" style="border-color:var(--y);color:var(--y);">
+        <div style="font-size:5px;letter-spacing:.1em;">COFFEES REDEEMED</div>
+        <div class="sval" id="db-redeemed">0</div>
+      </div>
+      <div class="scard" style="border-color:var(--b);color:var(--b);">
+        <div style="font-size:5px;letter-spacing:.1em;">ACTIVE REWARDS</div>
+        <div class="sval" id="db-active">0</div>
+      </div>
+    </div>
+    <div class="card-a" style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+        <span style="font-size:6px;color:var(--adm);">AVG STAMP PROGRESS</span>
+        <span style="font-size:6px;color:var(--adm);" id="db-avg-lbl">0/10</span>
+      </div>
+      <div class="prog-wrap" style="border-color:rgba(176,96,255,.3);">
+        <div id="db-avg-bar" style="height:100%;background:var(--adm);
+             box-shadow:0 0 8px rgba(176,96,255,.5);transition:width .3s steps(8);width:0%;"></div>
+        <div class="prog-text" id="db-avg-text"></div>
+      </div>
+      <div style="font-size:6px;color:rgba(176,96,255,.3);margin-top:6px;line-height:2.2;">
+        AVERAGE CURRENT STAMPS ACROSS ALL MEMBERS
+      </div>
+    </div>
+    <div class="card-a" style="margin-bottom:8px;">
+      <div style="font-size:6px;color:var(--adm);margin-bottom:8px;">🏆 TOP CUSTOMERS</div>
+      <div id="db-top"></div>
+    </div>
+    <div class="card-a">
+      <div style="font-size:6px;color:var(--adm);margin-bottom:8px;">🕐 RECENT ACTIVITY</div>
+      <div id="db-activity"></div>
     </div>
   </div>
 
-  <!-- ════════════════════════════════
-       STAFF HOME  (customer list + scanner tabs)
-  ════════════════════════════════ -->
-  <div class="screen" id="s-staff-home" style="padding-top:8px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
-      <div style="font-size:9px;color:var(--p);text-shadow:0 0 8px var(--p);">THE NOOK</div>
-      <span style="background:#000;border:2px solid var(--p);color:var(--p);
-                   font-size:6px;padding:4px 8px;box-shadow:0 0 8px rgba(255,0,255,.3);">STAFF</span>
-    </div>
+  <!-- CUSTOMERS TAB -->
+  <div class="sa" id="atab-custs" style="display:none;">
+    <div style="font-size:8px;color:var(--adm);text-shadow:0 0 8px var(--adm);margin-bottom:10px;">👥 CUSTOMERS</div>
+    <input id="admin-search" placeholder="SEARCH NAME / PHONE..." style="margin-bottom:10px;" oninput="renderAdminList()"/>
+    <div id="admin-list" style="border:2px solid rgba(176,96,255,.3);box-shadow:3px 3px 0 #1a0033;overflow:hidden;"></div>
+  </div>
 
-    <!-- LIST TAB -->
-    <div class="scroll-area" id="stab-list">
-      <input id="staff-search" placeholder="SEARCH NAME / PHONE..."
-             style="margin-bottom:10px;" oninput="renderStaffList()"/>
-      <div id="staff-list" style="border:2px solid var(--p);box-shadow:3px 3px 0 #330033;overflow:hidden;"></div>
-    </div>
+  <!-- REDEMPTIONS TAB -->
+  <div class="sa" id="atab-rdm" style="display:none;">
+    <div style="font-size:8px;color:var(--adm);text-shadow:0 0 8px var(--adm);margin-bottom:14px;">🎁 REDEMPTION HISTORY</div>
+    <div id="rdm-list" style="border:2px solid rgba(176,96,255,.25);overflow:hidden;"></div>
+  </div>
 
-    <!-- SCAN TAB -->
-    <div class="scroll-area" id="stab-scan" style="display:none;">
-      <div class="scan-box">
-        <div id="qr-reader"></div>
-        <div id="scan-ph">
-          <div class="sc-corners">
-            <div class="corner tl"></div><div class="corner tr"></div>
-            <div class="corner bl"></div><div class="corner br"></div>
-            <div style="display:flex;flex-direction:column;align-items:center;
-                 justify-content:center;height:100%;gap:6px;">
-              <div style="font-size:26px;">📷</div>
-              <div style="font-size:6px;color:var(--b);letter-spacing:.08em;" class="blink">READY</div>
-            </div>
-            <div class="scan-line"></div>
+  <!-- SCANNER TAB (admin) -->
+  <div class="sa" id="atab-scan" style="display:none;">
+    <div class="scan-box">
+      <div id="qr-reader-a"></div>
+      <div id="scan-ph-a">
+        <div class="sc-corners">
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:6px;">
+            <div style="font-size:26px;">📷</div>
+            <div style="font-size:6px;color:var(--b);letter-spacing:.08em;" class="blink">READY</div>
           </div>
-        </div>
-      </div>
-      <button class="btn btn-b" id="btn-cam" onclick="toggleCamera()">▶ START CAMERA SCAN</button>
-      <div class="card-b" style="margin-top:4px;">
-        <div style="font-size:6px;color:var(--b);letter-spacing:.1em;margin-bottom:8px;">PHONE LOOKUP</div>
-        <div style="display:flex;gap:6px;">
-          <input id="scan-phone" placeholder="5081234567" type="tel" style="font-size:7px;"
-                 onkeydown="if(event.key==='Enter')doPhoneScan()"/>
-          <button class="btn btn-b" style="width:auto;padding:12px 12px;margin-bottom:0;flex-shrink:0;font-size:8px;"
-                  onclick="doPhoneScan()">GO</button>
+          <div class="scan-line"></div>
         </div>
       </div>
     </div>
-
-    <div class="bnav staff-mode">
-      <button class="nb on" id="snb-list" onclick="sTab('list')"><span class="ni">👥</span>CUSTOMERS</button>
-      <button class="nb" id="snb-scan" onclick="sTab('scan')"><span class="ni">📷</span>SCANNER</button>
-      <button class="nb" onclick="go('s-welcome')"><span class="ni">🔒</span>LOGOUT</button>
+    <button class="btn btn-b" id="btn-cam-a" onclick="toggleCamera('a')">▶ START CAMERA SCAN</button>
+    <div class="card-b" style="margin-top:4px;">
+      <div style="font-size:6px;color:var(--b);letter-spacing:.1em;margin-bottom:8px;">PHONE LOOKUP</div>
+      <div style="display:flex;gap:6px;">
+        <input id="scan-phone-a" placeholder="5081234567" type="tel" style="font-size:7px;"
+               onkeydown="if(event.key==='Enter')doPhoneScan('a')"/>
+        <button class="btn btn-b" style="width:auto;padding:12px 12px;margin-bottom:0;flex-shrink:0;font-size:8px;"
+                onclick="doPhoneScan('a')">GO</button>
+      </div>
     </div>
   </div>
 
-  <!-- ════════════════════════════════
-       STAMP SCREEN  (staff → customer card)
-  ════════════════════════════════ -->
-  <div class="screen" id="s-stamp" style="padding-top:8px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
-      <button class="back" style="margin-bottom:0;" onclick="go('s-staff-home')">◀ CUSTOMERS</button>
-      <span style="background:#000;border:2px solid var(--p);color:var(--p);
-                   font-size:6px;padding:4px 8px;box-shadow:0 0 8px rgba(255,0,255,.3);">LOYALTY CARD</span>
+  <div class="bnav am">
+    <button class="nb on" id="anb-dash"  onclick="aTab('dash')"><span class="ni">📊</span>DASH</button>
+    <button class="nb"    id="anb-custs" onclick="aTab('custs')"><span class="ni">👥</span>CUSTOMERS</button>
+    <button class="nb"    id="anb-rdm"   onclick="aTab('rdm')"><span class="ni">🎁</span>HISTORY</button>
+    <button class="nb"    id="anb-scan"  onclick="aTab('scan')"><span class="ni">📷</span>SCANNER</button>
+    <button class="nb"    onclick="go('s-welcome')"><span class="ni">🔒</span>LOGOUT</button>
+  </div>
+</div>
+
+<!-- ══════ ADMIN CUSTOMER DETAIL ══════ -->
+<div class="screen" id="s-admin-cust" style="padding-top:8px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
+    <button class="back" style="margin-bottom:0;" onclick="go('s-admin-home')">◀ ADMIN</button>
+    <span style="background:#000;border:2px solid var(--adm);color:var(--adm);
+                 font-size:6px;padding:4px 8px;box-shadow:0 0 6px rgba(176,96,255,.3);">ADMIN VIEW</span>
+  </div>
+  <div class="sa">
+    <div id="ac-offers" style="margin-bottom:6px;"></div>
+    <div class="card-a" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+      <div style="width:42px;height:42px;flex-shrink:0;background:#000;border:2px solid var(--adm);
+           box-shadow:0 0 8px rgba(176,96,255,.3);display:flex;align-items:center;
+           justify-content:center;color:var(--adm);font-size:17px;" id="ac-av"></div>
+      <div>
+        <div id="ac-name"  style="color:var(--y);font-size:10px;text-shadow:0 0 6px var(--y);margin-bottom:3px;"></div>
+        <div id="ac-phone" style="font-size:6px;color:rgba(0,229,255,.4);margin-bottom:2px;"></div>
+        <div id="ac-meta"  style="font-size:6px;color:rgba(176,96,255,.4);"></div>
+      </div>
     </div>
-    <div class="scroll-area">
-      <div id="st-offers" style="margin-bottom:6px;"></div>
-
-      <!-- Customer header -->
-      <div class="card-p" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
-        <div style="width:42px;height:42px;flex-shrink:0;background:#000;border:2px solid var(--p);
-             box-shadow:0 0 8px rgba(255,0,255,.3);display:flex;align-items:center;
-             justify-content:center;color:var(--p);font-size:17px;" id="st-av"></div>
-        <div>
-          <div id="st-cname" style="color:var(--y);font-size:10px;text-shadow:0 0 6px var(--y);margin-bottom:3px;"></div>
-          <div id="st-cphone" style="font-size:6px;color:rgba(0,229,255,.4);margin-bottom:2px;"></div>
-          <div id="st-cmeta" style="font-size:6px;color:rgba(255,0,255,.35);"></div>
-        </div>
+    <!-- Stamps with admin controls -->
+    <div class="card" style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="color:var(--g);font-size:7px;">☕ STAMPS</span>
+        <span id="ac-slabel" style="color:var(--y);font-size:8px;"></span>
+        <span id="ac-ready" style="display:none;font-size:6px;color:var(--y);" class="blink">★ READY ★</span>
       </div>
-
-      <!-- Stamps -->
-      <div class="card" style="margin-bottom:8px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <span style="color:var(--g);font-size:7px;">☕ STAMPS</span>
-          <span id="st-slabel" style="color:var(--y);font-size:8px;"></span>
-          <span id="st-ready" style="display:none;font-size:6px;color:var(--y);" class="blink">★ READY ★</span>
-        </div>
-        <div class="hp-bar" id="st-stamps"></div>
-        <div class="prog-wrap"><div class="prog-fill" id="st-prog"></div>
-          <div class="prog-text" id="st-prog-t"></div></div>
+      <div class="hp-bar" id="ac-stamps"></div>
+      <div class="prog-wrap"><div class="prog-fill" id="ac-prog"></div>
+        <div class="prog-text" id="ac-prog-t"></div></div>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button class="btn-sm btn-sm-g" onclick="adminAddStamp()" style="flex:1;">+ ADD STAMP</button>
+        <button class="btn-sm btn-sm-r" id="ac-rm-btn" onclick="adminRemoveStamp()" style="flex:1;">- REMOVE STAMP</button>
       </div>
-
-      <!-- Pending rewards -->
-      <div class="card" style="margin-bottom:8px;">
-        <div style="font-size:7px;color:rgba(0,255,136,.4);margin-bottom:8px;">🏆 PENDING FREE COFFEES</div>
-        <div id="st-rewards-list"></div>
+    </div>
+    <!-- Rewards -->
+    <div class="card" style="margin-bottom:8px;">
+      <div style="font-size:7px;color:rgba(0,255,136,.4);margin-bottom:8px;">🏆 FREE COFFEES</div>
+      <div id="ac-rewards-list"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn-sm btn-sm-a" id="ac-redeem-btn" onclick="adminRedeemReward()" style="flex:1;">★ REDEEM COFFEE</button>
+        <button class="btn-sm btn-sm-a" onclick="adminGrantReward()" style="flex:1;">+ GRANT REWARD</button>
       </div>
-
-      <!-- Action buttons -->
-      <button class="btn btn-g" id="btn-add" onclick="addStamp()">+ ADD STAMP ☕</button>
-      <button class="btn btn-r" id="btn-redeem" onclick="redeemCoffee()">★ REDEEM FREE COFFEE ★</button>
-      <button class="btn btn-p" id="btn-bday" style="display:none;" onclick="grantBirthday()">🎂 GRANT BIRTHDAY REWARD</button>
-      <div style="font-size:6px;color:rgba(0,255,136,.25);text-align:center;" id="st-cooldown"></div>
+    </div>
+    <!-- Birthday -->
+    <div class="card" style="margin-bottom:8px;">
+      <div style="font-size:7px;color:rgba(255,0,255,.5);margin-bottom:8px;">🎂 BIRTHDAY REWARD</div>
+      <button class="btn btn-p" id="ac-bday-btn" onclick="adminGrantBirthday()" style="margin-bottom:0;">GRANT BIRTHDAY FREE COFFEE</button>
+    </div>
+    <!-- History -->
+    <div class="card-b">
+      <div style="font-size:6px;color:var(--b);margin-bottom:8px;">📜 FULL HISTORY</div>
+      <div id="ac-hist"></div>
     </div>
   </div>
-
-  <!-- ════════════════════════════════
-       ADMIN HOME  (3 tabs)
-  ════════════════════════════════ -->
-  <div class="screen" id="s-admin-home" style="padding-top:8px;">
-
-    <!-- TAB: DASHBOARD -->
-    <div class="scroll-area" id="atab-dash">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-        <div style="font-size:9px;color:var(--admin);text-shadow:0 0 8px var(--admin);">📊 DASHBOARD</div>
-        <span style="background:#000;border:2px solid var(--admin);color:var(--admin);
-                     font-size:6px;padding:4px 8px;box-shadow:0 0 6px rgba(176,96,255,.3);">ADMIN</span>
-      </div>
-
-      <!-- Stats grid -->
-      <div class="g2" style="margin-bottom:8px;">
-        <div class="stat-card" style="border-color:var(--p);color:var(--p);">
-          <div style="font-size:5px;letter-spacing:.1em;">MEMBERS</div>
-          <div class="stat-val" id="db-members">0</div>
-        </div>
-        <div class="stat-card" style="border-color:var(--g);color:var(--g);">
-          <div style="font-size:5px;letter-spacing:.1em;">TOTAL VISITS</div>
-          <div class="stat-val" id="db-visits">0</div>
-        </div>
-      </div>
-      <div class="g2" style="margin-bottom:8px;">
-        <div class="stat-card" style="border-color:var(--y);color:var(--y);">
-          <div style="font-size:5px;letter-spacing:.1em;">COFFEES REDEEMED</div>
-          <div class="stat-val" id="db-redeemed">0</div>
-        </div>
-        <div class="stat-card" style="border-color:var(--b);color:var(--b);">
-          <div style="font-size:5px;letter-spacing:.1em;">ACTIVE REWARDS</div>
-          <div class="stat-val" id="db-active">0</div>
-        </div>
-      </div>
-
-      <!-- Avg stamp progress -->
-      <div class="card-adm" style="margin-bottom:8px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-          <span style="font-size:6px;color:var(--admin);">AVG STAMP PROGRESS</span>
-          <span style="font-size:6px;color:var(--admin);" id="db-avg-label">0/10</span>
-        </div>
-        <div class="prog-wrap" style="border-color:rgba(176,96,255,.3);">
-          <div id="db-avg-bar" style="height:100%;background:var(--admin);
-               box-shadow:0 0 8px rgba(176,96,255,.5);transition:width .3s steps(8);"></div>
-          <div class="prog-text" id="db-avg-text"></div>
-        </div>
-        <div style="font-size:6px;color:rgba(176,96,255,.35);margin-top:6px;line-height:2;">
-          AVERAGE CURRENT STAMPS ACROSS ALL ACTIVE MEMBERS
-        </div>
-      </div>
-
-      <!-- Top customers -->
-      <div class="card-adm" style="margin-bottom:8px;">
-        <div style="font-size:6px;color:var(--admin);margin-bottom:8px;">🏆 TOP CUSTOMERS</div>
-        <div id="db-top"></div>
-      </div>
-
-      <!-- Recent activity -->
-      <div class="card-adm">
-        <div style="font-size:6px;color:var(--admin);margin-bottom:8px;">🕐 RECENT ACTIVITY</div>
-        <div id="db-activity"></div>
-      </div>
-    </div>
-
-    <!-- TAB: REDEMPTIONS -->
-    <div class="scroll-area" id="atab-rdm" style="display:none;">
-      <div style="font-size:8px;color:var(--admin);text-shadow:0 0 8px var(--admin);margin-bottom:14px;">
-        🎁 REDEMPTION HISTORY</div>
-      <div id="rdm-list" style="border:2px solid rgba(176,96,255,.25);overflow:hidden;"></div>
-    </div>
-
-    <!-- TAB: CUSTOMERS (admin view) -->
-    <div class="scroll-area" id="atab-custs" style="display:none;">
-      <div style="font-size:8px;color:var(--admin);text-shadow:0 0 8px var(--admin);margin-bottom:10px;">
-        👥 MANAGE CUSTOMERS</div>
-      <input id="admin-search" placeholder="SEARCH NAME / PHONE..."
-             style="margin-bottom:10px;" oninput="renderAdminList()"/>
-      <div id="admin-list" style="border:2px solid rgba(176,96,255,.25);overflow:hidden;"></div>
-    </div>
-
-    <div class="bnav admin-mode">
-      <button class="nb on" id="anb-dash" onclick="aTab('dash')"><span class="ni">📊</span>DASHBOARD</button>
-      <button class="nb" id="anb-rdm" onclick="aTab('rdm')"><span class="ni">🎁</span>HISTORY</button>
-      <button class="nb" id="anb-custs" onclick="aTab('custs')"><span class="ni">👥</span>CUSTOMERS</button>
-      <button class="nb" onclick="go('s-welcome')"><span class="ni">🔒</span>LOGOUT</button>
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════
-       ADMIN CUSTOMER DETAIL
-  ════════════════════════════════ -->
-  <div class="screen" id="s-admin-cust" style="padding-top:8px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
-      <button class="back" style="margin-bottom:0;" onclick="go('s-admin-home')">◀ ADMIN</button>
-      <span style="background:#000;border:2px solid var(--admin);color:var(--admin);
-                   font-size:6px;padding:4px 8px;box-shadow:0 0 6px rgba(176,96,255,.3);">ADMIN VIEW</span>
-    </div>
-    <div class="scroll-area">
-      <div class="card-adm" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
-        <div style="width:42px;height:42px;flex-shrink:0;background:#000;border:2px solid var(--admin);
-             box-shadow:0 0 8px rgba(176,96,255,.3);display:flex;align-items:center;
-             justify-content:center;color:var(--admin);font-size:17px;" id="ac-av"></div>
-        <div>
-          <div id="ac-name" style="color:var(--y);font-size:10px;text-shadow:0 0 6px var(--y);margin-bottom:3px;"></div>
-          <div id="ac-phone" style="font-size:6px;color:rgba(0,229,255,.4);margin-bottom:2px;"></div>
-          <div id="ac-meta" style="font-size:6px;color:rgba(176,96,255,.4);"></div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-bottom:8px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <span style="color:var(--g);font-size:7px;">☕ STAMPS</span>
-          <span id="ac-slabel" style="color:var(--y);font-size:8px;"></span>
-        </div>
-        <div class="hp-bar" id="ac-stamps"></div>
-        <div class="prog-wrap"><div class="prog-fill" id="ac-prog"></div>
-          <div class="prog-text" id="ac-prog-t"></div></div>
-        <!-- Admin stamp controls -->
-        <div style="display:flex;gap:8px;margin-top:12px;">
-          <button class="btn-sm btn-sm-g" onclick="adminAddStamp()" style="flex:1;">+ ADD STAMP</button>
-          <button class="btn-sm btn-sm-r" id="ac-rm-btn" onclick="adminRemoveStamp()" style="flex:1;">- REMOVE STAMP</button>
-        </div>
-      </div>
-
-      <div class="card" style="margin-bottom:8px;">
-        <div style="font-size:7px;color:rgba(0,255,136,.4);margin-bottom:8px;">🏆 PENDING FREE COFFEES</div>
-        <div id="ac-rewards-list"></div>
-        <button class="btn-sm btn-sm-adm" onclick="adminGrantReward()" style="width:100%;margin-top:10px;">+ GRANT FREE COFFEE</button>
-      </div>
-
-      <div class="card-b">
-        <div style="font-size:6px;color:var(--b);margin-bottom:8px;">📜 VISIT HISTORY</div>
-        <div id="ac-hist"></div>
-      </div>
-    </div>
-  </div>
+</div>
 
 </div><!-- /phone -->
-
 <script>
 'use strict';
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // CONFIG
-// ═══════════════════════════════════════════════════
-const STAFF_PIN  = "1234";
-const ADMIN_PIN  = "0000";
-const PHONE_RE   = /^[0-9]{10}$/;
-const REWARD_DAYS = 90;   // free coffee expiry in days
+// ═══════════════════════════════════════════
+const STAFF_PIN   = "1234";
+const ADMIN_PIN   = "0000";
+const PHONE_RE    = /^[0-9]{10}$/;
+const REWARD_DAYS = 90;
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // DATA
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 let customers = [
   { id:"NOOK-0001", name:"MARGARITA", phone:"5081234567",
-    birthday:"1990-03-05", stamps:7,
+    birthday:"1990-03-05", stamps:7, visits:18,
     rewards:[
-      { id:"r1", earned:"2026-01-10", expires:"2026-04-10", redeemed:false, redeemedDate:null },
+      { id:"r1", earned:"2026-01-10", expires:"2026-04-10",
+        redeemed:false, redeemedDate:null, source:"stamps" }
     ],
     birthdayRewardYear:0,
     history:[
-      {date:"2026-02-20",type:"stamp"},{date:"2026-02-25",type:"stamp"},
-      {date:"2026-03-01",type:"reward",note:"10-stamp reward"},
-      {date:"2026-03-04",type:"stamp"},{date:"2026-03-05",type:"stamp"},
-      {date:"2026-03-06",type:"stamp"},{date:"2026-03-07",type:"stamp"},
+      {date:"2026-02-20",type:"stamp"},{date:"2026-02-22",type:"stamp"},
+      {date:"2026-02-25",type:"stamp"},{date:"2026-02-27",type:"stamp"},
+      {date:"2026-03-01",type:"reward",note:"10-stamp reward earned"},
+      {date:"2026-03-03",type:"stamp"},{date:"2026-03-04",type:"stamp"},
+      {date:"2026-03-05",type:"stamp"},{date:"2026-03-06",type:"stamp"},
+      {date:"2026-03-07",type:"stamp"}
     ]
   },
   { id:"NOOK-0042", name:"JAMES", phone:"5089876543",
-    birthday:"1985-07-22", stamps:3,
-    rewards:[],
-    birthdayRewardYear:0,
+    birthday:"1985-07-22", stamps:3, visits:3,
+    rewards:[], birthdayRewardYear:0,
     history:[
-      {date:"2026-03-01",type:"stamp"},{date:"2026-03-03",type:"stamp"},{date:"2026-03-05",type:"stamp"}
+      {date:"2026-03-01",type:"stamp"},
+      {date:"2026-03-03",type:"stamp"},
+      {date:"2026-03-05",type:"stamp"}
     ]
   },
 ];
 
-function save(){ try{localStorage.setItem("theNookV3",JSON.stringify(customers));}catch(e){} }
+function save(){ try{localStorage.setItem("theNookV4",JSON.stringify(customers));}catch(e){} }
 function load(){
   try{
-    const d=localStorage.getItem("theNookV3");
+    const d=localStorage.getItem("theNookV4");
     if(d){const p=JSON.parse(d);if(Array.isArray(p)&&p.length)customers=p;}
   }catch(e){}
 }
 load();
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // UTILS
-// ═══════════════════════════════════════════════════
-function today(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
-function addDays(dateStr,n){ const d=new Date(dateStr+'T12:00:00'); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
-function daysLeft(dateStr){ return Math.ceil((new Date(dateStr+'T12:00:00')-new Date())/(1000*60*60*24)); }
+// ═══════════════════════════════════════════
+function today(){
+  const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function addDays(s,n){
+  const d=new Date(s+'T12:00:00'); d.setDate(d.getDate()+n);
+  return d.toISOString().slice(0,10);
+}
+function daysLeft(s){ return Math.ceil((new Date(s+'T12:00:00')-new Date())/(864e5)); }
 function genId(){ return "NOOK-"+String(Math.floor(Math.random()*9000)+1000); }
 function genRId(){ return "r"+Date.now().toString(36); }
 function isTuesday(){ return new Date().getDay()===2; }
-function isBirthdayMonth(c){ if(!c?.birthday)return false; const b=new Date(c.birthday+'T12:00:00'); return b.getMonth()===new Date().getMonth(); }
-function birthdayUsed(c){ 
-  return c.birthdayRewardYear === new Date().getFullYear(); }
-
-function totalVisits(c){
-  return (c.stamps||0) + (c.rewards||[]).filter(r=>r.redeemed).length * 10;
+function isBirthdayMonth(c){
+  if(!c?.birthday) return false;
+  return new Date(c.birthday+'T12:00:00').getMonth()===new Date().getMonth();
 }
+function birthdayUsed(c){ return c.birthdayRewardYear===new Date().getFullYear(); }
 function pendingRewards(c){
-  const t=today();
-  return (c.rewards||[]).filter(r=>!r.redeemed && r.expires>=t);
+  const t=today(); return (c.rewards||[]).filter(r=>!r.redeemed&&r.expires>=t);
 }
-function expiredRewards(c){
-  const t=today();
-  return (c.rewards||[]).filter(r=>!r.redeemed && r.expires<t);
+const MONTH_NAMES=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+function formatBirthday(s){
+  if(!s) return '';
+  const p=s.split('-');
+  return `${MONTH_NAMES[parseInt(p[1])-1]} ${parseInt(p[2])}, ${p[0]}`;
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // NAVIGATION
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 let currentCustomer=null, scannedCustomer=null, adminCustomer=null;
-let cameraActive=false, html5QrCode=null;
+let stampBackDest='s-staff-home'; // where stamp screen "back" goes
 
 function go(id){
-  if(id!=='s-staff-home' || document.getElementById('stab-scan').style.display==='none')
-    stopCamera();
+  // stop cameras when leaving their respective scan tabs
+  if(id!=='s-staff-home') stopCamera('s');
+  if(id!=='s-admin-home') stopCamera('a');
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el=document.getElementById(id); if(el) el.classList.add('active');
   if(id==='s-cust-home')   renderCustHome();
   if(id==='s-stamp')       renderStamp();
   if(id==='s-staff-home')  renderStaffList();
-  if(id==='s-admin-home')  renderAdmin();
+  if(id==='s-admin-home')  renderAdminDash();
   if(id==='s-admin-cust')  renderAdminCust();
   if(id==='s-leaderboard') renderLeaderboard();
 }
+
+function stampGoBack(){ go(stampBackDest); }
 
 function showToast(msg,type='ok'){
   const t=document.getElementById('toast');
@@ -858,80 +858,87 @@ function showToast(msg,type='ok'){
   setTimeout(()=>t.classList.remove('show'),3000);
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // QR CODE
-// ═══════════════════════════════════════════════════
-let _qrInst=null;
-function drawQR(id,el){
+// ═══════════════════════════════════════════
+function drawQR(text, elId){
+  const el=document.getElementById(elId);
+  if(!el) return;
   el.innerHTML='';
-  _qrInst=new QRCode(el,{text:id,width:110,height:110,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+  try{
+    new QRCode(el,{
+      text:text, width:110, height:110,
+      colorDark:'#000000', colorLight:'#ffffff',
+      correctLevel:QRCode.CorrectLevel.M
+    });
+  }catch(e){
+    el.innerHTML=`<div style="font-size:6px;color:var(--r);padding:10px;">QR ERROR</div>`;
+  }
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // OFFERS
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 function renderOffers(elId, c){
   let h='';
   if(isTuesday()) h+=`<div class="offer-banner"><span class="ico">⚡</span><div class="txt">DOUBLE STAMP TUESDAY!<br>EARN 2X STAMPS TODAY</div></div>`;
-  if(c && isBirthdayMonth(c) && !birthdayUsed(c))
-    h+=`<div class="offer-banner bday"><span class="ico">🎂</span><div class="txt" style="color:var(--p)">BIRTHDAY MONTH, ${c.name}!<br>1 FREE COFFEE WAITING</div></div>`;
+  if(c&&isBirthdayMonth(c)&&!birthdayUsed(c))
+    h+=`<div class="offer-banner bday"><span class="ico">🎂</span><div class="txt" style="color:var(--p)">BIRTHDAY MONTH, ${c.name}!<br>FREE COFFEE WAITING</div></div>`;
   document.getElementById(elId).innerHTML=h;
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // HP BAR
-// ═══════════════════════════════════════════════════
-function renderHP(el,stamps,max=10){
-  el.innerHTML=Array.from({length:max},(_,i)=>
-    `<div class="hp-pip ${i<stamps?'on':''}"></div>`).join('');
+// ═══════════════════════════════════════════
+function renderHP(elId, stamps){
+  document.getElementById(elId).innerHTML=
+    Array.from({length:10},(_,i)=>`<div class="hp-pip ${i<stamps?'on':''}"></div>`).join('');
 }
 
-// ═══════════════════════════════════════════════════
-// REWARD CHIP LIST
-// ═══════════════════════════════════════════════════
-function renderRewardChips(elId, c, showRedeemBtn=false){
-  const t=today();
-  const pending=(c.rewards||[]).filter(r=>!r.redeemed);
+// ═══════════════════════════════════════════
+// REWARD CHIPS
+// ═══════════════════════════════════════════
+function renderRewardChips(elId, c, showRedeem=false){
+  const t=today(), pending=(c.rewards||[]).filter(r=>!r.redeemed);
   if(!pending.length){
     document.getElementById(elId).innerHTML=
-      `<div style="font-size:7px;color:rgba(0,255,136,.2);padding:6px 0;">NO PENDING REWARDS</div>`;
+      `<div style="font-size:7px;color:rgba(0,255,136,.18);padding:6px 0;">NO PENDING REWARDS</div>`;
     return;
   }
   document.getElementById(elId).innerHTML=pending.map(r=>{
-    const left=daysLeft(r.expires);
-    const expired=left<=0;
-    const expiring=left>0&&left<=14;
+    const left=daysLeft(r.expires), expired=left<=0, expiring=left>0&&left<=14;
     const cls=expired?'expired':expiring?'expiring':'';
-    const color=expired?'var(--r)':expiring?'var(--o)':'var(--g)';
-    return `<div class="reward-chip ${cls}">
+    const col=expired?'var(--r)':expiring?'var(--o)':'var(--g)';
+    return `<div class="rchip ${cls}">
       <div>
-        <div style="font-size:7px;color:${color};margin-bottom:2px;">☕ FREE COFFEE</div>
+        <div style="font-size:7px;color:${col};margin-bottom:2px;">☕ FREE COFFEE</div>
         <div style="font-size:6px;color:rgba(0,229,255,.35);">
-          ${expired?'EXPIRED':'EXPIRES'} ${r.expires} ${!expired?'('+left+'d LEFT)':''}
+          ${expired?'EXPIRED':'EXPIRES'} ${r.expires}${!expired?' ('+left+'d)':''}
         </div>
       </div>
-      ${showRedeemBtn&&!expired?`<button class="btn-sm btn-sm-g" onclick="redeemSpecificReward('${r.id}')">REDEEM</button>`:''}
+      ${showRedeem&&!expired?`<button class="btn-sm btn-sm-g" onclick="redeemById('${c.id}','${r.id}')">REDEEM</button>`:''}
     </div>`;
   }).join('');
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // SIGN IN / OUT
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 function doSignin(){
   const phone=document.getElementById('si-phone').value.trim();
   if(!phone){showToast('ENTER YOUR PHONE NUMBER','err');return;}
   const found=customers.find(c=>c.phone===phone);
   if(!found){showToast('ACCOUNT NOT FOUND','err');return;}
-  currentCustomer=found; document.getElementById('si-phone').value='';
+  currentCustomer=found;
+  document.getElementById('si-phone').value='';
   showToast('WELCOME BACK '+found.name+' ★');
   go('s-cust-home');
 }
 function doSignout(){ currentCustomer=null; go('s-welcome'); }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // SIGN UP
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 function doSignup(){
   const name=document.getElementById('su-name').value.trim().toUpperCase();
   const phone=document.getElementById('su-phone').value.trim();
@@ -942,7 +949,8 @@ function doSignup(){
   if(!name||!phone){showToast('FILL ALL FIELDS','err');return;}
   if(!PHONE_RE.test(phone)){showToast('INVALID PHONE NUMBER','err');return;}
   if(customers.some(c=>c.phone===phone)){showToast('PHONE ALREADY REGISTERED','err');return;}
-  const nc={id:genId(),name,phone,birthday:bday,stamps:0,rewards:[],birthdayRewardYear:0,history:[]};
+  const nc={id:genId(),name,phone,birthday:bday,stamps:0,visits:0,
+            rewards:[],birthdayRewardYear:0,history:[]};
   customers.push(nc); currentCustomer=nc; save();
   ['su-name','su-phone'].forEach(id=>document.getElementById(id).value='');
   ['su-bm','su-bd','su-by'].forEach(id=>document.getElementById(id).value='');
@@ -950,236 +958,255 @@ function doSignup(){
   go('s-cust-home');
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // CUSTOMER HOME
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 function cTab(t){
   ['rewards','hist','settings'].forEach(k=>{
     document.getElementById('ctab-'+k).style.display=k===t?'block':'none';
     document.getElementById('cnb-'+k).classList.toggle('on',k===t);
   });
-  if(t==='rewards') renderCustHome();
-  if(t==='hist')    renderCustHist();
+  if(t==='rewards')  renderCustHome();
+  if(t==='hist')     renderCustHist();
   if(t==='settings') renderSettings();
 }
+function freshCust(c){ return customers.find(x=>x.id===c?.id)||c; }
 
 function renderCustHome(){
-  const fresh=customers.find(x=>x.id===currentCustomer?.id);
-  if(fresh) currentCustomer=fresh;
+  currentCustomer=freshCust(currentCustomer);
   const c=currentCustomer; if(!c) return;
   document.getElementById('ch-name').textContent='HI, '+c.name;
   document.getElementById('ch-id').textContent=c.id;
   renderOffers('ch-offers',c);
-  drawQR(c.id,document.getElementById('ch-qr'));
+  // QR — draw after short delay to ensure DOM is ready
+  setTimeout(()=>drawQR(c.id,'ch-qr'),50);
   document.getElementById('ch-sc').textContent=c.stamps+'/10';
-  renderHP(document.getElementById('ch-stamps'),c.stamps);
+  renderHP('ch-stamps',c.stamps);
   document.getElementById('ch-prog').style.width=(c.stamps/10*100)+'%';
   document.getElementById('ch-prog-t').textContent=c.stamps>=10?'FULL!':c.stamps+'/10';
   renderRewardChips('ch-rewards-list',c,false);
-  const redeemed=(c.rewards||[]).filter(r=>r.redeemed).length;
-  document.getElementById('ch-total-r').textContent=redeemed;
-  document.getElementById('ch-visits').textContent=totalVisits(c);
+  document.getElementById('ch-total-r').textContent=(c.rewards||[]).filter(r=>r.redeemed).length;
+  document.getElementById('ch-visits').textContent=c.visits||0;
 }
 
 function renderCustHist(){
-  const fresh=customers.find(x=>x.id===currentCustomer?.id);
-  if(fresh) currentCustomer=fresh;
+  currentCustomer=freshCust(currentCustomer);
   const c=currentCustomer; if(!c) return;
   const icons={stamp:'☕',reward:'🏆',birthday:'🎂'};
-  const labels={stamp:'STAMP ADDED',reward:'FREE COFFEE REDEEMED',birthday:'BIRTHDAY REWARD'};
+  const labels={stamp:'STAMP ADDED',reward:'FREE COFFEE',birthday:'BIRTHDAY REWARD'};
   const h=(c.history||[]).slice().reverse().slice(0,20);
   document.getElementById('ch-hist-list').innerHTML=h.length
     ?h.map(e=>`<div class="h-row">
-        <span class="h-row-icon">${icons[e.type]||'•'}</span>
-        <div class="h-row-text">${labels[e.type]||e.type}${e.note?`<br><span style="color:rgba(0,229,255,.35);font-size:6px;">${e.note}</span>`:''}</div>
-        <span class="h-row-date">${e.date}</span>
+        <span class="h-ico">${icons[e.type]||'•'}</span>
+        <div class="h-txt">${labels[e.type]||e.type}
+          ${e.note?`<br><span style="color:rgba(0,229,255,.35);font-size:6px;">${e.note}</span>`:''}</div>
+        <span class="h-date">${e.date}</span>
       </div>`).join('')
-    :'<div style="font-size:7px;color:rgba(0,255,136,.2);padding:10px 0;text-align:center;">NO ACTIVITY YET</div>';
+    :'<div style="font-size:7px;color:rgba(0,255,136,.18);padding:10px 0;text-align:center;">NO ACTIVITY YET</div>';
 }
 
-// ═══════════════════════════════════════════════════
-// SETTINGS
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
+// SETTINGS  (birthday locked after creation)
+// ═══════════════════════════════════════════
 function renderSettings(){
+  currentCustomer=freshCust(currentCustomer);
   const c=currentCustomer; if(!c) return;
-  document.getElementById('st-id').textContent=c.id;
-  document.getElementById('st-phone').textContent=c.phone;
-  document.getElementById('st-name-inp').value=c.name;
+  document.getElementById('set-id').textContent=c.id;
+  document.getElementById('set-phone').textContent=c.phone;
+  document.getElementById('set-name-inp').value=c.name;
   if(c.birthday){
-    const p=c.birthday.split('-');
-    document.getElementById('st-bm').value=String(parseInt(p[1]));
-    buildDays('st');
-    document.getElementById('st-bd').value=p[2];
-    document.getElementById('st-by').value=p[0];
+    // Birthday is set → show read-only
+    document.getElementById('set-bday-display').style.display='block';
+    document.getElementById('set-bday-edit').style.display='none';
+    document.getElementById('set-bday-ro').value=formatBirthday(c.birthday);
+  } else {
+    // No birthday yet → allow setting it once
+    document.getElementById('set-bday-display').style.display='none';
+    document.getElementById('set-bday-edit').style.display='block';
   }
 }
 function saveSettings(){
-  const name=document.getElementById('st-name-inp').value.trim().toUpperCase();
-  const bm=document.getElementById('st-bm').value;
-  const bd=document.getElementById('st-bd').value;
-  const by=document.getElementById('st-by').value;
-  const bday=(bm&&bd&&by)?`${by}-${bm.padStart(2,'0')}-${bd}`:(currentCustomer.birthday||'');
+  const name=document.getElementById('set-name-inp').value.trim().toUpperCase();
   if(!name){showToast('NAME CANNOT BE EMPTY','err');return;}
   const idx=customers.findIndex(x=>x.id===currentCustomer.id);
-  customers[idx].name=name; customers[idx].birthday=bday;
+  customers[idx].name=name;
+  // Only save birthday if it wasn't set before (one-time opportunity)
+  if(!customers[idx].birthday){
+    const bm=document.getElementById('set-bm')?.value;
+    const bd=document.getElementById('set-bd')?.value;
+    const by=document.getElementById('set-by')?.value;
+    if(bm&&bd&&by) customers[idx].birthday=`${by}-${bm.padStart(2,'0')}-${bd}`;
+  }
   currentCustomer=customers[idx]; save();
   showToast('★ SETTINGS SAVED ★');
+  renderSettings(); // re-render to lock birthday if just set
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // LEADERBOARD
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 function renderLeaderboard(){
   const sorted=[...customers].sort((a,b)=>
-    (b.rewards||[]).filter(r=>r.redeemed).length - (a.rewards||[]).filter(r=>r.redeemed).length
-  );
+    (b.rewards||[]).filter(r=>r.redeemed).length-(a.rewards||[]).filter(r=>r.redeemed).length);
   const medals=['🥇','🥈','🥉'];
   document.getElementById('lb-list').innerHTML=sorted.length===0
-    ?'<div style="font-size:7px;color:rgba(0,255,136,.2);padding:12px;text-align:center;">NO PLAYERS YET</div>'
+    ?'<div style="font-size:7px;color:rgba(0,255,136,.18);padding:12px;text-align:center;">NO PLAYERS YET</div>'
     :sorted.map((c,i)=>{
       const rd=(c.rewards||[]).filter(r=>r.redeemed).length;
       return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;
                 border-bottom:1px solid rgba(0,255,136,.08);">
         <div style="font-size:13px;width:22px;text-align:center;flex-shrink:0;
-             ${i===1?'color:rgba(200,200,200,.9)':i===2?'color:rgba(200,140,80,.9)':'color:var(--y)'}">
+             color:${i===0?'var(--y)':i===1?'rgba(200,200,200,.9)':'rgba(200,140,80,.9)'}">
           ${i<3?medals[i]:(i+1)}</div>
         <div style="flex:1;">
           <div style="font-size:8px;color:var(--g);">${c.name}</div>
           <div style="font-size:5px;color:rgba(0,229,255,.3);margin-top:2px;">${c.id}</div>
         </div>
         <div style="text-align:right;">
-          <div style="font-size:8px;color:var(--y);">${rd} ☕</div>
-          <div style="font-size:5px;color:rgba(0,255,136,.3);margin-top:2px;">${c.stamps}/10 STAMPS</div>
+          <div style="font-size:8px;color:var(--y);">${rd} ☕ redeemed</div>
+          <div style="font-size:5px;color:rgba(0,255,136,.3);margin-top:2px;">${c.stamps}/10 now</div>
         </div>
       </div>`;
     }).join('');
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // PIN PADS
-// ═══════════════════════════════════════════════════
-let pins={s:'', a:''};
-function pinPress(mode, k){
-  const p=pins[mode];
-  if(k==='del'){ pins[mode]=p.slice(0,-1); updatePins(mode); return; }
-  if(p.length>=4) return;
-  pins[mode]=p+String(k); updatePins(mode);
-  if(pins[mode].length===4){
-    setTimeout(()=>checkPin(mode),120);
-  }
+// ═══════════════════════════════════════════
+let pins={s:'',a:''};
+function pinPress(mode,k){
+  if(k==='del'){pins[mode]=pins[mode].slice(0,-1);updatePinUI(mode);return;}
+  if(pins[mode].length>=4) return;
+  pins[mode]+=String(k); updatePinUI(mode);
+  if(pins[mode].length===4) setTimeout(()=>checkPin(mode),120);
 }
-function updatePins(mode){
+function updatePinUI(mode){
   const pfx=mode==='s'?'sp':'ap';
+  const col=mode==='s'?'var(--p)':'var(--adm)';
   const v=pins[mode];
   for(let i=0;i<4;i++){
     const d=document.getElementById(pfx+i);
-    d.innerHTML=i<v.length?'<div class="pin-pip" style="background:var(--'+(mode==='s'?'g':'admin')+');box-shadow:0 0 6px var(--'+(mode==='s'?'g':'admin')+')"></div>':'';
+    d.innerHTML=i<v.length?`<div class="pin-pip" style="background:${col};box-shadow:0 0 6px ${col};width:12px;height:12px;"></div>`:'';
     d.classList.toggle('on',i<v.length); d.classList.remove('err');
   }
 }
 function checkPin(mode){
-  const correct=(mode==='s'&&pins[mode]===STAFF_PIN)||(mode==='a'&&pins[mode]===ADMIN_PIN);
+  const ok=(mode==='s'&&pins[mode]===STAFF_PIN)||(mode==='a'&&pins[mode]===ADMIN_PIN);
   const pfx=mode==='s'?'sp':'ap';
-  const errId=mode==='s'?'spin-err':'apin-err';
-  const rowId=mode==='s'?'spin-row':'apin-row';
-  if(correct){
-    pins[mode]=''; updatePins(mode);
+  const errId=mode+'pin-err', rowId=mode+'pin-row';
+  if(ok){
+    pins[mode]=''; updatePinUI(mode);
     go(mode==='s'?'s-staff-home':'s-admin-home');
   } else {
     document.getElementById(errId).textContent='!! WRONG PIN !!';
     document.getElementById(rowId).classList.add('shake');
     for(let i=0;i<4;i++) document.getElementById(pfx+i).classList.add('err');
     setTimeout(()=>{
-      pins[mode]=''; updatePins(mode);
+      pins[mode]=''; updatePinUI(mode);
       document.getElementById(errId).textContent='';
       document.getElementById(rowId).classList.remove('shake');
     },900);
   }
 }
 
-// ═══════════════════════════════════════════════════
-// STAFF – CUSTOMER LIST
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
+// STAFF — LIST
+// ═══════════════════════════════════════════
 function sTab(t){
   ['list','scan'].forEach(k=>{
     document.getElementById('stab-'+k).style.display=k===t?'block':'none';
     document.getElementById('snb-'+k).classList.toggle('on',k===t);
   });
-  if(t==='list'){ stopCamera(); renderStaffList(); }
+  if(t==='list') stopCamera('s');
 }
 function renderStaffList(){
   const q=(document.getElementById('staff-search')?.value||'').toUpperCase();
-  const filtered=customers.filter(c=>c.name.includes(q)||c.phone.includes(q)||c.id.includes(q))
+  const list=customers.filter(c=>c.name.includes(q)||c.phone.includes(q)||c.id.includes(q))
     .sort((a,b)=>a.name.localeCompare(b.name));
-  document.getElementById('staff-list').innerHTML=filtered.length===0
+  document.getElementById('staff-list').innerHTML=list.length===0
     ?'<div style="font-size:7px;color:rgba(255,0,255,.2);padding:16px;text-align:center;">NO CUSTOMERS FOUND</div>'
-    :filtered.map(c=>{
+    :list.map(c=>{
       const pr=pendingRewards(c).length;
-      return `<div class="c-row" onclick="openStamp('${c.id}')">
+      return `<div class="c-row" onclick="openStamp('${c.id}','staff')">
         <div class="c-av">${c.name.charAt(0)}</div>
         <div style="flex:1;">
           <div style="font-size:8px;color:var(--g);margin-bottom:3px;">${c.name}</div>
-          <div style="font-size:6px;color:rgba(0,229,255,.3);letter-spacing:.05em;">${c.phone}</div>
+          <div style="font-size:6px;color:rgba(0,229,255,.3);">${c.phone}</div>
         </div>
         <div style="text-align:right;">
           <div style="font-size:7px;color:var(--y);">☕ ${c.stamps}/10</div>
-          ${pr>0?`<div style="font-size:5px;color:var(--g);margin-top:2px;">★ ${pr} REWARD${pr>1?'S':''}</div>`:''}
+          ${pr>0?`<div style="font-size:5px;color:var(--g);margin-top:2px;">★ ${pr} reward${pr>1?'s':''}</div>`:''}
         </div>
       </div>`;
     }).join('');
 }
-function openStamp(id){
+function openStamp(id, from='staff'){
   scannedCustomer=customers.find(c=>c.id===id);
+  stampBackDest= from==='staff' ? 's-staff-home' : 's-admin-home';
   go('s-stamp');
 }
 
-// ═══════════════════════════════════════════════════
-// STAFF SCANNER
-// ═══════════════════════════════════════════════════
-function toggleCamera(){ cameraActive?stopCamera():startCamera(); }
-function startCamera(){
-  const re=document.getElementById('qr-reader'),ph=document.getElementById('scan-ph');
-  const btn=document.getElementById('btn-cam');
+// ═══════════════════════════════════════════
+// CAMERAS  (separate instances for s/a)
+// ═══════════════════════════════════════════
+let cameras={s:{active:false,inst:null}, a:{active:false,inst:null}};
+function toggleCamera(m){ cameras[m].active?stopCamera(m):startCamera(m); }
+function startCamera(m){
+  const rdId=m==='s'?'qr-reader':'qr-reader-a';
+  const phId=m==='s'?'scan-ph':'scan-ph-a';
+  const btnId=m==='s'?'btn-cam':'btn-cam-a';
+  const re=document.getElementById(rdId), ph=document.getElementById(phId);
+  const btn=document.getElementById(btnId);
   if(typeof Html5Qrcode==='undefined'){showToast('SCANNER NOT LOADED','err');return;}
-  ph.style.display='none'; re.style.display='block';
-  html5QrCode=new Html5Qrcode("qr-reader");
-  html5QrCode.start({facingMode:"environment"},{fps:10,qrbox:{width:200,height:200}},
-    (decoded)=>{stopCamera();openStamp(decoded);},()=>{}
-  ).then(()=>{cameraActive=true;btn.textContent='■ STOP CAMERA';btn.className='btn btn-r';})
-   .catch(()=>{re.style.display='none';ph.style.display='block';showToast('CAMERA UNAVAILABLE','err');});
+  ph.style.display='none'; re.style.display='block'; re.innerHTML='';
+  const inst=new Html5Qrcode(rdId);
+  inst.start({facingMode:"environment"},{fps:10,qrbox:{width:200,height:200}},
+    (decoded)=>{stopCamera(m); openStamp(decoded, m==='s'?'staff':'admin');},
+    ()=>{}
+  ).then(()=>{
+    cameras[m]={active:true,inst};
+    if(btn){btn.textContent='■ STOP CAMERA';btn.className='btn btn-r';}
+  }).catch(()=>{
+    re.style.display='none'; ph.style.display='block';
+    showToast('CAMERA UNAVAILABLE','err');
+  });
 }
-function stopCamera(){
-  if(html5QrCode&&cameraActive){
-    html5QrCode.stop().catch(()=>{}).finally(()=>{
-      html5QrCode=null;cameraActive=false;
-      const btn=document.getElementById('btn-cam');
-      if(btn){btn.textContent='▶ START CAMERA SCAN';btn.className='btn btn-b';}
-      const ph=document.getElementById('scan-ph'),rd=document.getElementById('qr-reader');
-      if(ph)ph.style.display='block';
-      if(rd){rd.style.display='none';rd.innerHTML='';}
-    });
-  }
+function stopCamera(m){
+  const c=cameras[m];
+  if(!c||!c.active||!c.inst) return;
+  c.inst.stop().catch(()=>{}).finally(()=>{
+    cameras[m]={active:false,inst:null};
+    const rdId=m==='s'?'qr-reader':'qr-reader-a';
+    const phId=m==='s'?'scan-ph':'scan-ph-a';
+    const btnId=m==='s'?'btn-cam':'btn-cam-a';
+    const rd=document.getElementById(rdId), ph=document.getElementById(phId);
+    const btn=document.getElementById(btnId);
+    if(rd){rd.style.display='none';rd.innerHTML='';}
+    if(ph) ph.style.display='block';
+    if(btn){btn.textContent='▶ START CAMERA SCAN';btn.className='btn btn-b';}
+  });
 }
-function doPhoneScan(){
-  const ph=document.getElementById('scan-phone').value.trim();
+function doPhoneScan(m){
+  const inpId=m==='s'?'scan-phone':'scan-phone-a';
+  const ph=document.getElementById(inpId).value.trim();
   const found=customers.find(c=>c.phone===ph);
-  if(found)openStamp(found.id);
+  if(found) openStamp(found.id, m==='s'?'staff':'admin');
   else showToast('PLAYER NOT FOUND','err');
-  document.getElementById('scan-phone').value='';
+  document.getElementById(inpId).value='';
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // STAMP SCREEN
-// ═══════════════════════════════════════════════════
-let lastStamp=0;
+// ═══════════════════════════════════════════
+let coolTimer=null;
+function addHist(idx,type,note=''){
+  if(!customers[idx].history) customers[idx].history=[];
+  customers[idx].history.push({date:today(),type,...(note?{note}:{})});
+}
 function syncSc(id){
   const c=customers.find(x=>x.id===id);
   if(currentCustomer?.id===id) currentCustomer=c;
   scannedCustomer=c;
-}
-function addHist(idx,type,note=''){
-  if(!customers[idx].history) customers[idx].history=[];
-  customers[idx].history.push({date:today(),type,...(note?{note}:{})});
 }
 
 function renderStamp(){
@@ -1189,45 +1216,49 @@ function renderStamp(){
   document.getElementById('st-cname').textContent=c.name;
   document.getElementById('st-cphone').textContent='📞 '+c.phone;
   const rd=(c.rewards||[]).filter(r=>r.redeemed).length;
-  document.getElementById('st-cmeta').textContent=c.id+' · '+rd+' redeemed';
+  document.getElementById('st-cmeta').textContent=c.id+' · '+rd+' redeemed · '+(c.visits||0)+' visits';
   document.getElementById('st-slabel').textContent=c.stamps+'/10';
   document.getElementById('st-ready').style.display=c.stamps>=10?'inline':'none';
-  renderHP(document.getElementById('st-stamps'),c.stamps);
+  renderHP('st-stamps',c.stamps);
   document.getElementById('st-prog').style.width=(c.stamps/10*100)+'%';
   document.getElementById('st-prog-t').textContent=c.stamps>=10?'FULL!':c.stamps+'/10';
   renderRewardChips('st-rewards-list',c,true);
   document.getElementById('btn-add').disabled=c.stamps>=10;
   document.getElementById('btn-redeem').disabled=pendingRewards(c).length===0;
-  document.getElementById('btn-bday').style.display=(isBirthdayMonth(c)&&!birthdayUsed(c))?'block':'none';
+  document.getElementById('btn-bday').style.display=
+    (isBirthdayMonth(c)&&!birthdayUsed(c))?'block':'none';
 }
 
-let coolTimer=null;
+let lastStamp=0;
 function addStamp(){
   const now=Date.now();
   if(now-lastStamp<5000){
-    showToast('WAIT '+Math.ceil((5000-(now-lastStamp))/1000)+'s','err');return;
+    showToast('WAIT '+Math.ceil((5000-(now-lastStamp))/1000)+'s','err'); return;
   }
   lastStamp=now;
   const idx=customers.findIndex(x=>x.id===scannedCustomer.id);
-  if(customers[idx].stamps>=10)return;
+  if(customers[idx].stamps>=10) return;
+  // Visits always +1 regardless of Tuesday
+  customers[idx].visits=(customers[idx].visits||0)+1;
+  // Stamps +1 or +2 on Tuesday
   const add=isTuesday()?2:1;
   customers[idx].stamps=Math.min(customers[idx].stamps+add,10);
-  for(let i=0;i<add;i++) addHist(idx,'stamp');
-  // auto-grant reward when stamps hit 10
+  addHist(idx,'stamp',isTuesday()?'double stamp tuesday':'');
+  // Auto-grant reward at 10
   if(customers[idx].stamps>=10){
     const earned=today(), expires=addDays(today(),REWARD_DAYS);
-    customers[idx].rewards.push({id:genRId(),earned,expires,redeemed:false,redeemedDate:null});
+    customers[idx].rewards.push({id:genRId(),earned,expires,redeemed:false,redeemedDate:null,source:'stamps'});
     customers[idx].stamps=0;
     addHist(idx,'reward','10-stamp reward earned');
   }
   syncSc(customers[idx].id); save(); renderStamp();
   // pop anim
   const pips=document.querySelectorAll('#st-stamps .hp-pip');
-  const pi=Math.max(0,Math.min(scannedCustomer.stamps-1,9));
+  const pi=Math.max(0,Math.min((scannedCustomer.stamps||1)-1,9));
   if(pips[pi]){pips[pi].classList.remove('pop');void pips[pi].offsetWidth;pips[pi].classList.add('pop');}
-  if(isTuesday()) showToast('⚡ DOUBLE STAMP! +2');
-  else showToast('☕ STAMP ADDED ('+scannedCustomer.stamps+'/10)');
-  // cooldown countdown
+  if(isTuesday()) showToast('⚡ DOUBLE STAMP! +2 STAMPS / +1 VISIT');
+  else showToast('☕ STAMP ADDED · VISIT #'+(scannedCustomer.visits||1));
+  // cooldown
   clearInterval(coolTimer);
   coolTimer=setInterval(()=>{
     const r=Math.ceil((5000-(Date.now()-lastStamp))/1000);
@@ -1240,130 +1271,127 @@ function addStamp(){
 function redeemCoffee(){
   const pr=pendingRewards(scannedCustomer);
   if(!pr.length){showToast('NO VALID REWARDS','err');return;}
-  redeemSpecificReward(pr[0].id);
+  redeemById(scannedCustomer.id, pr[0].id);
 }
-function redeemSpecificReward(rid){
-  const c=scannedCustomer||adminCustomer;
-  const idx=customers.findIndex(x=>x.id===c.id);
+function redeemById(custId, rid){
+  const idx=customers.findIndex(x=>x.id===custId);
   const ri=customers[idx].rewards.findIndex(r=>r.id===rid);
   if(ri<0){showToast('REWARD NOT FOUND','err');return;}
+  const src=customers[idx].rewards[ri].source||'stamps';
+  if(src==='admin'||src==='birthday'){
+    // admin/birthday grants don't block — just mark redeemed
+  }
   customers[idx].rewards[ri].redeemed=true;
   customers[idx].rewards[ri].redeemedDate=today();
   addHist(idx,'reward','free coffee redeemed');
   syncSc(customers[idx].id); save();
   if(scannedCustomer) renderStamp();
-  if(adminCustomer) renderAdminCust();
+  if(adminCustomer?.id===custId) renderAdminCust();
   showToast('★ FREE COFFEE REDEEMED! ★');
 }
 
 function grantBirthday(){
   const idx=customers.findIndex(x=>x.id===scannedCustomer.id);
   const earned=today(), expires=addDays(today(),REWARD_DAYS);
-  customers[idx].rewards.push({id:genRId(),earned,expires,redeemed:false,redeemedDate:null,note:'birthday'});
+  customers[idx].rewards.push({id:genRId(),earned,expires,redeemed:false,redeemedDate:null,source:'birthday'});
   customers[idx].birthdayRewardYear=new Date().getFullYear();
   addHist(idx,'birthday','birthday month free coffee granted');
   syncSc(customers[idx].id); save(); renderStamp();
   showToast('🎂 BIRTHDAY REWARD GRANTED!','info');
 }
 
-// ═══════════════════════════════════════════════════
-// ADMIN
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
+// ADMIN — TABS
+// ═══════════════════════════════════════════
 function aTab(t){
-  ['dash','rdm','custs'].forEach(k=>{
+  ['dash','custs','rdm','scan'].forEach(k=>{
     document.getElementById('atab-'+k).style.display=k===t?'block':'none';
     document.getElementById('anb-'+k).classList.toggle('on',k===t);
   });
-  if(t==='dash') renderAdmin();
-  if(t==='rdm')  renderRedemptions();
+  if(t==='dash')  renderAdminDash();
   if(t==='custs') renderAdminList();
+  if(t==='rdm')   renderRedemptions();
+  if(t!=='scan')  stopCamera('a');
 }
 
-function renderAdmin(){
-  const total=customers.length;
-  const totalVisitsAll=customers.reduce((s,c)=>s+totalVisits(c),0);
-  const allRewards=customers.flatMap(c=>c.rewards||[]);
-  const redeemed=allRewards.filter(r=>r.redeemed).length;
-  const active=allRewards.filter(r=>!r.redeemed&&r.expires>=today()).length;
-  const avgStamps=total?Math.round(customers.reduce((s,c)=>s+(c.stamps||0),0)/total*10)/10:0;
-
-  document.getElementById('db-members').textContent=total;
-  document.getElementById('db-visits').textContent=totalVisitsAll;
+function renderAdminDash(){
+  const n=customers.length;
+  const totalV=customers.reduce((s,c)=>s+(c.visits||0),0);
+  const allRw=customers.flatMap(c=>c.rewards||[]);
+  const redeemed=allRw.filter(r=>r.redeemed).length;
+  const active=allRw.filter(r=>!r.redeemed&&r.expires>=today()).length;
+  const avgS=n?Math.round(customers.reduce((s,c)=>s+(c.stamps||0),0)/n*10)/10:0;
+  document.getElementById('db-members').textContent=n;
+  document.getElementById('db-visits').textContent=totalV;
   document.getElementById('db-redeemed').textContent=redeemed;
   document.getElementById('db-active').textContent=active;
-  document.getElementById('db-avg-bar').style.width=(avgStamps/10*100)+'%';
-  document.getElementById('db-avg-label').textContent=avgStamps+'/10';
-  document.getElementById('db-avg-text').textContent='AVG '+avgStamps;
-
-  // Top 3
+  document.getElementById('db-avg-bar').style.width=(avgS/10*100)+'%';
+  document.getElementById('db-avg-lbl').textContent=avgS+'/10';
+  document.getElementById('db-avg-text').textContent='AVG '+avgS;
+  // top
   const top=[...customers].sort((a,b)=>
     (b.rewards||[]).filter(r=>r.redeemed).length-(a.rewards||[]).filter(r=>r.redeemed).length
   ).slice(0,3);
   const medals=['🥇','🥈','🥉'];
   document.getElementById('db-top').innerHTML=top.length
-    ?top.map((c,i)=>`
-      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;
-           border-bottom:1px solid rgba(176,96,255,.08);">
+    ?top.map((c,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;
+        border-bottom:1px solid rgba(176,96,255,.08);">
         <span style="font-size:13px;">${medals[i]}</span>
         <div style="flex:1;font-size:7px;color:var(--g);">${c.name}
-          <div style="font-size:5px;color:rgba(0,229,255,.3);margin-top:1px;">${c.id}</div>
+          <div style="font-size:5px;color:rgba(0,229,255,.3);margin-top:1px;">${c.visits||0} visits</div>
         </div>
-        <div style="font-size:7px;color:var(--y);">
-          ${(c.rewards||[]).filter(r=>r.redeemed).length} ☕
-        </div>
+        <div style="font-size:7px;color:var(--y);">${(c.rewards||[]).filter(r=>r.redeemed).length} ☕</div>
       </div>`).join('')
-    :'<div style="font-size:6px;color:rgba(176,96,255,.2);padding:6px;">NO DATA YET</div>';
-
-  // Recent activity (all customers, last 10 events)
-  const events=[];
-  customers.forEach(c=>(c.history||[]).forEach(h=>events.push({...h,name:c.name})));
-  events.sort((a,b)=>b.date.localeCompare(a.date));
+    :'<div style="font-size:6px;color:rgba(176,96,255,.18);padding:6px;">NO DATA YET</div>';
+  // recent
+  const evts=[];
+  customers.forEach(c=>(c.history||[]).forEach(h=>evts.push({...h,name:c.name})));
+  evts.sort((a,b)=>b.date.localeCompare(a.date));
   const icons={stamp:'☕',reward:'🏆',birthday:'🎂'};
-  document.getElementById('db-activity').innerHTML=events.slice(0,10).map(e=>`
+  document.getElementById('db-activity').innerHTML=evts.slice(0,10).map(e=>`
     <div class="h-row">
-      <span class="h-row-icon">${icons[e.type]||'•'}</span>
-      <div class="h-row-text">${e.name}
-        <span style="color:rgba(0,229,255,.4);font-size:6px;margin-left:6px;">${e.note||e.type}</span>
-      </div>
-      <span class="h-row-date">${e.date}</span>
-    </div>`).join('')||'<div style="font-size:6px;color:rgba(176,96,255,.2);padding:6px;">NO ACTIVITY YET</div>';
+      <span class="h-ico">${icons[e.type]||'•'}</span>
+      <div class="h-txt">${e.name}
+        <span style="color:rgba(0,229,255,.35);font-size:6px;margin-left:6px;">${e.note||e.type}</span></div>
+      <span class="h-date">${e.date}</span>
+    </div>`).join('')||'<div style="font-size:6px;color:rgba(176,96,255,.18);padding:6px;">NO ACTIVITY YET</div>';
 }
 
 function renderRedemptions(){
   const all=[];
   customers.forEach(c=>(c.rewards||[]).filter(r=>r.redeemed).forEach(r=>
-    all.push({name:c.name,id:c.id,date:r.redeemedDate||'–',earned:r.earned,note:r.note||'10-stamp reward'})
+    all.push({name:c.name,cid:c.id,date:r.redeemedDate||'–',src:r.source||'stamps'})
   ));
   all.sort((a,b)=>b.date.localeCompare(a.date));
+  const srcLabel={stamps:'10-STAMP REWARD',admin:'ADMIN GRANT',birthday:'BIRTHDAY REWARD'};
   document.getElementById('rdm-list').innerHTML=all.length===0
-    ?'<div style="font-size:7px;color:rgba(176,96,255,.2);padding:16px;text-align:center;">NO REDEMPTIONS YET</div>'
-    :all.map(r=>`
-      <div class="rdm-row">
+    ?'<div style="font-size:7px;color:rgba(176,96,255,.18);padding:16px;text-align:center;">NO REDEMPTIONS YET</div>'
+    :all.map(r=>`<div class="rdm-row">
         <div>
-          <div class="rdm-name">${r.name}</div>
-          <div style="font-size:5px;color:rgba(0,229,255,.3);margin-top:2px;">${r.id}</div>
+          <div style="font-size:7px;color:var(--g);">${r.name}</div>
+          <div style="font-size:5px;color:rgba(0,229,255,.3);margin-top:2px;">${r.cid}</div>
         </div>
         <div style="text-align:right;">
-          <div class="rdm-type">☕ ${r.note}</div>
-          <div class="rdm-date">${r.date}</div>
+          <div style="font-size:6px;color:var(--adm);">☕ ${srcLabel[r.src]||r.src}</div>
+          <div style="font-size:6px;color:rgba(0,229,255,.35);">${r.date}</div>
         </div>
       </div>`).join('');
 }
 
 function renderAdminList(){
   const q=(document.getElementById('admin-search')?.value||'').toUpperCase();
-  const filtered=customers.filter(c=>c.name.includes(q)||c.phone.includes(q)||c.id.includes(q))
+  const list=customers.filter(c=>c.name.includes(q)||c.phone.includes(q)||c.id.includes(q))
     .sort((a,b)=>a.name.localeCompare(b.name));
-  document.getElementById('admin-list').innerHTML=filtered.length===0
-    ?'<div style="font-size:7px;color:rgba(176,96,255,.2);padding:16px;text-align:center;">NO CUSTOMERS FOUND</div>'
-    :filtered.map(c=>{
+  document.getElementById('admin-list').innerHTML=list.length===0
+    ?'<div style="font-size:7px;color:rgba(176,96,255,.18);padding:16px;text-align:center;">NO CUSTOMERS FOUND</div>'
+    :list.map(c=>{
       const rd=(c.rewards||[]).filter(r=>r.redeemed).length;
       const pr=pendingRewards(c).length;
       return `<div class="c-row" onclick="openAdminCust('${c.id}')">
-        <div class="c-av" style="border-color:var(--admin);color:var(--admin);">${c.name.charAt(0)}</div>
+        <div class="c-av adm">${c.name.charAt(0)}</div>
         <div style="flex:1;">
           <div style="font-size:8px;color:var(--g);margin-bottom:3px;">${c.name}</div>
-          <div style="font-size:6px;color:rgba(0,229,255,.3);">${c.phone}</div>
+          <div style="font-size:6px;color:rgba(0,229,255,.3);">${c.phone} · ${c.visits||0} visits</div>
         </div>
         <div style="text-align:right;">
           <div style="font-size:7px;color:var(--y);">☕ ${c.stamps}/10</div>
@@ -1378,83 +1406,106 @@ function openAdminCust(id){
   adminCustomer=customers.find(c=>c.id===id);
   go('s-admin-cust');
 }
-
 function renderAdminCust(){
-  const fresh=customers.find(x=>x.id===adminCustomer?.id);
-  if(fresh) adminCustomer=fresh;
+  adminCustomer=freshCust(adminCustomer);
   const c=adminCustomer; if(!c) return;
+  renderOffers('ac-offers',c);
   document.getElementById('ac-av').textContent=c.name.charAt(0);
   document.getElementById('ac-name').textContent=c.name;
   document.getElementById('ac-phone').textContent='📞 '+c.phone+' · '+c.id;
   const rd=(c.rewards||[]).filter(r=>r.redeemed).length;
-  const visits=totalVisits(c);
-  document.getElementById('ac-meta').textContent=rd+' redeemed · '+visits+' visits';
+  document.getElementById('ac-meta').textContent=rd+' redeemed · '+(c.visits||0)+' visits · '+c.stamps+'/10 stamps';
   document.getElementById('ac-slabel').textContent=c.stamps+'/10';
-  renderHP(document.getElementById('ac-stamps'),c.stamps);
+  document.getElementById('ac-ready').style.display=c.stamps>=10?'inline':'none';
+  renderHP('ac-stamps',c.stamps);
   document.getElementById('ac-prog').style.width=(c.stamps/10*100)+'%';
   document.getElementById('ac-prog-t').textContent=c.stamps>=10?'FULL!':c.stamps+'/10';
   document.getElementById('ac-rm-btn').disabled=c.stamps<=0;
   renderRewardChips('ac-rewards-list',c,true);
+  const pr=pendingRewards(c).length;
+  document.getElementById('ac-redeem-btn').disabled=pr===0;
+  document.getElementById('ac-bday-btn').disabled=!isBirthdayMonth(c)||birthdayUsed(c);
   // history
   const icons={stamp:'☕',reward:'🏆',birthday:'🎂'};
-  const labels={stamp:'STAMP ADDED',reward:'FREE COFFEE REDEEMED',birthday:'BIRTHDAY REWARD'};
-  const h=(c.history||[]).slice().reverse().slice(0,15);
+  const labels={stamp:'STAMP',reward:'FREE COFFEE',birthday:'BIRTHDAY REWARD'};
+  const h=(c.history||[]).slice().reverse().slice(0,20);
   document.getElementById('ac-hist').innerHTML=h.length
     ?h.map(e=>`<div class="h-row">
-        <span class="h-row-icon">${icons[e.type]||'•'}</span>
-        <div class="h-row-text">${labels[e.type]||e.type}${e.note?`<br><span style="font-size:6px;color:rgba(0,229,255,.3);">${e.note}</span>`:''}</div>
-        <span class="h-row-date">${e.date}</span>
+        <span class="h-ico">${icons[e.type]||'•'}</span>
+        <div class="h-txt">${labels[e.type]||e.type}
+          ${e.note?`<br><span style="font-size:6px;color:rgba(0,229,255,.3);">${e.note}</span>`:''}</div>
+        <span class="h-date">${e.date}</span>
       </div>`).join('')
-    :'<div style="font-size:7px;color:rgba(0,255,136,.2);padding:8px;">NO HISTORY</div>';
+    :'<div style="font-size:7px;color:rgba(0,255,136,.18);padding:8px;">NO HISTORY</div>';
 }
 
 function adminAddStamp(){
   const idx=customers.findIndex(x=>x.id===adminCustomer.id);
-  if(customers[idx].stamps>=10)return;
+  if(customers[idx].stamps>=10) return;
   customers[idx].stamps++;
+  // admin stamp adjustments don't count as customer visits
   if(customers[idx].stamps>=10){
-    const earned=today(),expires=addDays(today(),REWARD_DAYS);
-    customers[idx].rewards.push({id:genRId(),earned,expires,redeemed:false,redeemedDate:null});
+    const earned=today(), expires=addDays(today(),REWARD_DAYS);
+    customers[idx].rewards.push({id:genRId(),earned,expires,redeemed:false,redeemedDate:null,source:'stamps'});
     customers[idx].stamps=0;
-    addHist(idx,'reward','10-stamp reward earned (admin)');
+    addHist(idx,'reward','10-stamp reward (admin adjusted)');
   } else {
-    addHist(idx,'stamp','admin added');
+    addHist(idx,'stamp','admin adjusted +1');
   }
   adminCustomer=customers[idx]; save(); renderAdminCust();
   showToast('STAMP ADDED');
 }
 function adminRemoveStamp(){
   const idx=customers.findIndex(x=>x.id===adminCustomer.id);
-  if(customers[idx].stamps<=0)return;
+  if(customers[idx].stamps<=0) return;
   customers[idx].stamps--;
-  addHist(idx,'stamp','stamp removed by admin');
+  addHist(idx,'stamp','admin adjusted -1');
   adminCustomer=customers[idx]; save(); renderAdminCust();
   showToast('STAMP REMOVED','info');
 }
 function adminGrantReward(){
   const idx=customers.findIndex(x=>x.id===adminCustomer.id);
-  const earned=today(),expires=addDays(today(),REWARD_DAYS);
-  customers[idx].rewards.push({id:genRId(),earned,expires,redeemed:false,redeemedDate:null,note:'admin grant'});
+  const earned=today(), expires=addDays(today(),REWARD_DAYS);
+  customers[idx].rewards.push({id:genRId(),earned,expires,redeemed:false,redeemedDate:null,source:'admin'});
   addHist(idx,'reward','free coffee granted by admin');
   adminCustomer=customers[idx]; save(); renderAdminCust();
   showToast('★ FREE COFFEE GRANTED ★');
 }
+function adminRedeemReward(){
+  const pr=pendingRewards(adminCustomer);
+  if(!pr.length){showToast('NO VALID REWARDS','err');return;}
+  redeemById(adminCustomer.id, pr[0].id);
+}
+function adminGrantBirthday(){
+  const idx=customers.findIndex(x=>x.id===adminCustomer.id);
+  if(!isBirthdayMonth(adminCustomer)||birthdayUsed(adminCustomer)){
+    showToast('BIRTHDAY REWARD NOT AVAILABLE','err');return;
+  }
+  const earned=today(), expires=addDays(today(),REWARD_DAYS);
+  customers[idx].rewards.push({id:genRId(),earned,expires,redeemed:false,redeemedDate:null,source:'birthday'});
+  customers[idx].birthdayRewardYear=new Date().getFullYear();
+  addHist(idx,'birthday','birthday month reward granted by admin');
+  adminCustomer=customers[idx]; save(); renderAdminCust();
+  showToast('🎂 BIRTHDAY REWARD GRANTED!','info');
+}
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // BIRTHDAY DROPDOWNS
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 function buildYears(pfx){
   const el=document.getElementById(pfx+'-by');
+  if(!el) return;
   const cur=new Date().getFullYear();
   for(let y=cur-5;y>=cur-100;y--){
     const o=document.createElement('option'); o.value=y; o.textContent=y; el.appendChild(o);
   }
 }
 function buildDays(pfx){
-  const m=parseInt(document.getElementById(pfx+'-bm')?.value||document.getElementById(pfx+'bm')?.value)||0;
-  const y=parseInt(document.getElementById(pfx+'-by')?.value||document.getElementById(pfx+'by')?.value)||2000;
+  const mEl=document.getElementById(pfx+'-bm'), yEl=document.getElementById(pfx+'-by');
+  const dEl=document.getElementById(pfx+'-bd');
+  if(!mEl||!yEl||!dEl) return;
+  const m=parseInt(mEl.value)||0, y=parseInt(yEl.value)||2000;
   const days=m?new Date(y,m,0).getDate():31;
-  const dEl=document.getElementById(pfx+'-bd')||document.getElementById(pfx+'bd');
   const cur=dEl.value;
   dEl.innerHTML='<option value="">DAY</option>';
   for(let d=1;d<=days;d++){
@@ -1464,15 +1515,16 @@ function buildDays(pfx){
   if(cur) dEl.value=cur;
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════════════════
-buildYears('su'); buildYears('st');
+// ═══════════════════════════════════════════
+buildYears('su'); buildYears('set');
 document.getElementById('su-bm').addEventListener('change',()=>buildDays('su'));
-document.getElementById('st-bm').addEventListener('change',()=>buildDays('st'));
-buildDays('su'); buildDays('st');
+document.getElementById('set-bm')?.addEventListener('change',()=>buildDays('set'));
+buildDays('su'); buildDays('set');
 document.getElementById('qr-reader').style.display='none';
-window.addEventListener('beforeunload',stopCamera);
+document.getElementById('qr-reader-a').style.display='none';
+window.addEventListener('beforeunload',()=>{stopCamera('s');stopCamera('a');});
 </script>
 </body>
 </html>
