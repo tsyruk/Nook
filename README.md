@@ -1,36 +1,25 @@
-<h1 align="center">☕ The Nook Café Loyalty App</h1>
+<h1 align="center">The Nook Café Loyalty App</h1>
+ Project Overview
 
-<p align="center">
-  A retro-inspired digital loyalty system for small cafés, designed to replace physical punch cards with a simple QR-based rewards experience.
-</p>
+The Nook Café Loyalty App is a QR-based digital loyalty system designed for small cafés to replace traditional punch cards.
 
-<p align="center">
-  Customers collect stamps for coffee purchases, earn free drinks, and staff can manage rewards through a fast register-friendly interface.
-</p>
+The application supports three user roles:
 
-<p align="center">
-  <strong>Roles:</strong> Customer • Staff • Admin
-</p>
+- **Customer** - tracks coffee purchases and rewards
+- **Staff** - scans QR codes and adds stamps at the register
+- **Admin** - monitors analytics and manages customer rewards
 
-<p align="center">
-  <a href="https://margaritadubeau-droid.github.io/Nook/" target="_blank">
-    <img src="https://img.shields.io/badge/Live%20Demo-Visit%20Project-6f4e37?style=for-the-badge" alt="Live Demo Badge" />
+The system demonstrates a complete front-end loyalty platform including reward tracking, QR scanning, and role-based dashboards.
+
   </a>
 </p>
-
----
-
-<h2>🌐 Live Demo</h2>
-
-<p>
-  <a href="https://margaritadubeau-droid.github.io/Nook/" target="_blank">
-    https://margaritadubeau-droid.github.io/Nook/
-  </a>
+<p align="center">
+<a href="https://margaritadubeau-droid.github.io/Nook/">
+<img src="https://img.shields.io/badge/Try%20Live%20Demo-Open%20App-green?style=for-the-badge">
+</a>
 </p>
 
----
-
-<h2>📸 Screenshots</h2>
+<h2>Screenshots</h2>
 
 <h3>Welcome Screen</h3>
 <p>
@@ -72,7 +61,7 @@
 
 <h3>Rewards System</h3>
 <ul>
-  <li><strong>10 stamps → 1 free coffee</strong></li>
+  <li>10 stamps → 1 free coffee</li>
   <li><strong>Birthday month → 1 free coffee</strong></li>
   <li>Rewards expire after <strong>90 days</strong></li>
 </ul>
@@ -141,13 +130,13 @@
   <li>Redeemed status</li>
 </ul>
 
-<p>Free coffee rewards expire <strong>90 days</strong> after being earned.</p>
+<p>Free coffee rewards expire 90 days after being earned.</p>
 
 ---
 
 <h2>🛠️ Tech Stack</h2>
 
-<p><strong>Built using simple front-end technologies:</strong></p>
+<p>Built using simple front-end technologies:</p>
 <ul>
   <li>HTML</li>
   <li>CSS</li>
@@ -169,7 +158,7 @@
 
 ---
 
-<h2>🗂️ Project Structure</h2>
+<h2>Project Structure</h2>
 
 ```bash
 Nook/
