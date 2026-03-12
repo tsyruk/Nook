@@ -4,19 +4,10 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>THE NOOK</title>
-
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-const supabaseUrl = 'https://ivqftezvshaywludmteu.supabase.co';
-const supabaseKey = 'sb_publishable_iv8epEM_DZz1bWfcnjCtsQ_vSrJQaPa';
-
-window.supabase = createClient('https://ivqftezvshaywludmteu.supabase.co', 'sb_publishable_iv8epEM_DZz1bWfcnjCtsQ_vSrJQaPa');
-</script>
-
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet"/>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root{
   --bg:#07070f;--bg2:#0d0d1a;
@@ -270,6 +261,11 @@ select option{background:#07070f;color:var(--g);}
 </head>
 <body>
 <div class="phone">
+<div id="busy-overlay" style="display:none;position:absolute;inset:0;background:rgba(7,7,15,.75);z-index:3000;
+  display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;">
+  <div style="font-size:10px;color:var(--g);text-shadow:0 0 10px var(--g);" class="blink">■ ■ ■</div>
+  <div style="font-size:6px;color:rgba(0,255,136,.5);letter-spacing:.12em;">LOADING…</div>
+</div>
 <div class="toast" id="toast"></div>
 
 <!-- ══════════════════════════════════════
@@ -880,56 +876,169 @@ select option{background:#07070f;color:var(--g);}
 <script>
 'use strict';
 // ═══════════════════════════════════════════
+// SUPABASE
+// ═══════════════════════════════════════════
+const SUPA_URL = 'https://ivqftezvshaywludmteu.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cWZ0ZXp2c2hheXdsdWRtdGV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTQyMDQsImV4cCI6MjA4ODkzMDIwNH0.P7ZCHzhL6LVfb8BPg157T7Jw0YNSX3WLopM5UOTYj2w';
+const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+// ═══════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════
 const STAFF_PIN  = "1234";
 const ADMIN_PIN  = "0000";
 const PHONE_RE   = /^[0-9]{10}$/;
-const REWARD_EXP = 90; // reward expiry in days
-
-// ═══════════════════════════════════════════
-// DATA
-// ═══════════════════════════════════════════
-// visits: direct counter — +1 per purchase
-// rewards: [{id, earned, expires, redeemed, redeemedDate, note}]
-// note values: '10-stamp' | 'birthday' | 'admin-grant'  (admin/birthday grants never count as visits)
-let customers = [];
-
-function saveData(){}
-function loadData(){}
+const REWARD_EXP = 90;
 
 // ═══════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════
 let staffPin="", adminPin="";
 let lastStampTime=0, coolTimer=null;
-let currentCustomer=null;   // signed-in customer
+let currentCustomer=null;   // signed-in customer (full object)
 let selectedCustomer=null;  // staff is viewing
 let adminCustomer=null;     // admin is viewing
+let staffList=[];           // cached list for staff/admin screens
 let cameraActive=false, html5QrCode=null;
-let admCamActive=false, html5QrCodeAdm=null;
+let admCamActive=false,  html5QrCodeAdm=null;
+
+// ═══════════════════════════════════════════
+// LOADING OVERLAY
+// ═══════════════════════════════════════════
+function showBusy(on){
+  const el=document.getElementById('busy-overlay');
+  el.style.display=on?'flex':'none';
+}
+
+// ═══════════════════════════════════════════
+// DATA TRANSFORM  (Supabase row → app object)
+// ═══════════════════════════════════════════
+function xform(row){
+  if(!row) return null;
+  return {
+    id:          row.id,
+    name:        row.name,
+    phone:       row.phone,
+    birthday:    row.birthday||'',
+    stamps:      row.stamps||0,
+    visits:      row.visits||0,
+    birthdayYear:row.birthday_year||0,
+    since:       row.since||'',
+    rewards:     (row.rewards||[]).map(r=>({
+      id:           r.id,
+      earned:       r.earned,
+      expires:      r.expires,
+      redeemed:     r.redeemed,
+      redeemedDate: r.redeemed_date,
+      note:         r.note||''
+    })),
+    history:     (row.history||[])
+      .sort((a,b)=>a.date.localeCompare(b.date)||(a.id||0)-(b.id||0))
+      .map(h=>({date:h.date,type:h.type,note:h.note||''}))
+  };
+}
+
+// ═══════════════════════════════════════════
+// DB HELPERS
+// ═══════════════════════════════════════════
+async function dbGetByPhone(phone){
+  const {data,error}=await sb.from('customers')
+    .select('*, rewards(*), history(*)')
+    .eq('phone',phone).single();
+  if(error){console.error(error);return null;}
+  return xform(data);
+}
+async function dbGetById(id){
+  const {data,error}=await sb.from('customers')
+    .select('*, rewards(*), history(*)')
+    .eq('id',id).single();
+  if(error){console.error(error);return null;}
+  return xform(data);
+}
+async function dbGetAll(){
+  const {data,error}=await sb.from('customers')
+    .select('*, rewards(*)')
+    .order('name');
+  if(error){console.error(error);return[];}
+  return (data||[]).map(xform);
+}
+async function dbCreateCustomer(c){
+  const {error}=await sb.from('customers').insert({
+    id:c.id,name:c.name,phone:c.phone,
+    birthday:c.birthday||null,
+    stamps:0,visits:0,birthday_year:0,since:c.since
+  });
+  if(error) console.error(error);
+  return !error;
+}
+async function dbUpdateCustomer(id,fields){
+  const m={};
+  if(fields.stamps!==undefined)       m.stamps=fields.stamps;
+  if(fields.visits!==undefined)       m.visits=fields.visits;
+  if(fields.birthdayYear!==undefined) m.birthday_year=fields.birthdayYear;
+  if(fields.name!==undefined)         m.name=fields.name;
+  if(fields.birthday!==undefined)     m.birthday=fields.birthday||null;
+  const {error}=await sb.from('customers').update(m).eq('id',id);
+  if(error) console.error(error);
+  return !error;
+}
+async function dbAddReward(r,customerId){
+  const {error}=await sb.from('rewards').insert({
+    id:r.id,customer_id:customerId,
+    earned:r.earned,expires:r.expires,
+    redeemed:false,redeemed_date:null,note:r.note||null
+  });
+  if(error) console.error(error);
+  return !error;
+}
+async function dbRedeemReward(rid,date){
+  const {error}=await sb.from('rewards')
+    .update({redeemed:true,redeemed_date:date}).eq('id',rid);
+  if(error) console.error(error);
+  return !error;
+}
+async function dbAddHistory(customerId,type,note=''){
+  const {error}=await sb.from('history').insert({
+    customer_id:customerId,date:todayStr(),type,note:note||null
+  });
+  if(error) console.error(error);
+  return !error;
+}
+
+// Reload a single customer and sync all local refs
+async function refreshCustomer(id){
+  const fresh=await dbGetById(id);
+  if(!fresh) return null;
+  if(currentCustomer?.id===id)  currentCustomer=fresh;
+  if(selectedCustomer?.id===id) selectedCustomer=fresh;
+  if(adminCustomer?.id===id)    adminCustomer=fresh;
+  // update in staffList cache
+  const li=staffList.findIndex(x=>x.id===id);
+  if(li>=0) staffList[li]=fresh;
+  return fresh;
+}
 
 // ═══════════════════════════════════════════
 // NAVIGATION
 // ═══════════════════════════════════════════
-function go(id){
+async function go(id){
   if(id!=='s-staff-scanner') stopCamera();
   if(id!=='s-admin-scan')    stopAdminCamera();
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  const renders={
-    's-c-rewards':   renderCustomerRewards,
-    's-c-history':   renderCustomerHistory,
-    's-c-settings':  renderCustomerSettings,
-    's-leaderboard': renderLeaderboard,
-    's-staff-home':  renderStaffHome,
-    's-staff-detail':renderStaffDetail,
-    's-admin-dash':  renderAdminDash,
-    's-admin-rdm':   renderAdminRdm,
+  const asyncRenders={
+    's-c-rewards':    renderCustomerRewards,
+    's-c-history':    renderCustomerHistory,
+    's-c-settings':   renderCustomerSettings,
+    's-leaderboard':  renderLeaderboard,
+    's-staff-home':   renderStaffHome,
+    's-staff-detail': renderStaffDetail,
+    's-admin-dash':   renderAdminDash,
+    's-admin-rdm':    renderAdminRdm,
     's-admin-players':renderAdminPlayerList,
-    's-admin-detail':renderAdminDetail,
+    's-admin-detail': renderAdminDetail,
   };
-  if(renders[id]) renders[id]();
+  if(asyncRenders[id]) await asyncRenders[id]();
 }
 function adminGoTab(tab){go('s-admin-'+tab);}
 function staffGoScan(){
@@ -956,33 +1065,31 @@ function genRid(){return "r"+Date.now().toString(36)+Math.random().toString(36).
 function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function addDays(ds,n){const d=new Date(ds+'T12:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10);}
 function daysLeft(ds){return Math.ceil((new Date(ds+'T12:00:00')-new Date())/864e5);}
-
-// ADD THIS RIGHT HERE
-async function loadCustomersFromSupabase() {
-  const { data, error } = await window.supabase
-    .from('customers')
-    .select('*')
-    .order('created_at', { ascending: true });
-
-  if (error) {
-    console.error('Error loading customers:', error);
-    showToast('FAILED TO LOAD CUSTOMERS', 'err');
-    return;
-  }
-
-  customers = (data || []).map(c => ({
-    ...c,
-    visits: c.visits || 0,
-    rewards: [],
-    history: [],
-    since: c.created_at ? c.created_at.slice(0, 10) : todayStr(),
-    birthdayYear: c.birthday_reward_year || 0
-  }));
-}
-
 function isBirthdayMonth(c){
   if(!c?.birthday)return false;
   return new Date(c.birthday+'T12:00:00').getMonth()===new Date().getMonth();
+}
+function bdayUsed(c){return c.birthdayYear===new Date().getFullYear();}
+function pendingRewards(c){const t=todayStr();return(c.rewards||[]).filter(r=>!r.redeemed&&r.expires>=t);}
+function renderHPBar(el,stamps,max=10){
+  el.innerHTML=Array.from({length:max},(_,i)=>`<div class="hp-pip ${i<stamps?'on':''}"></div>`).join('');
+}
+function renderOffers(cid,c){
+  let h='';
+  if(c&&isBirthdayMonth(c)&&!bdayUsed(c)) h+=`<div class="offer-banner bday"><span class="ob-icon">🎂</span><div class="ob-text">BIRTHDAY MONTH, ${c.name}!<br>FREE COFFEE WAITING</div></div>`;
+  document.getElementById(cid).innerHTML=h;
+}
+const H_ICO={stamp:'☕',reward:'🏆',birthday:'🎂'};
+const H_LBL={stamp:'STAMP ADDED',reward:'FREE COFFEE',birthday:'BIRTHDAY REWARD'};
+function renderHistList(elId,c){
+  const h=(c.history||[]).slice().reverse();
+  if(!h.length){document.getElementById(elId).innerHTML='<div style="font-size:6px;color:rgba(0,255,136,.2);padding:8px;text-align:center;">NO ACTIVITY YET</div>';return;}
+  document.getElementById(elId).innerHTML=h.map(e=>`
+    <div class="hist-item">
+      <span class="hist-icon">${H_ICO[e.type]||'•'}</span>
+      <div class="hist-text">${H_LBL[e.type]||e.type}${e.note?`<div style="font-size:5px;color:rgba(0,229,255,.35);margin-top:1px;">${e.note}</div>`:''}</div>
+      <span class="hist-date">${e.date}</span>
+    </div>`).join('');
 }
 
 // ═══════════════════════════════════════════
@@ -1009,13 +1116,12 @@ function renderRewardChips(elId,c,showBtn,fnName){
 }
 
 // ═══════════════════════════════════════════
-// QR CODE — generate a real scannable code
+// QR CODE
 // ═══════════════════════════════════════════
-let _qrPrev=null;
 function drawQR(id,elId){
   const el=document.getElementById(elId);
   el.innerHTML='';
-  if(typeof QRCode==='undefined')return;
+  if(typeof QRCode==='undefined') return;
   new QRCode(el,{text:id,width:110,height:110,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
 }
 
@@ -1023,97 +1129,54 @@ function drawQR(id,elId){
 // SIGN IN / OUT
 // ═══════════════════════════════════════════
 async function doSignIn(){
-  const phone = document.getElementById('w-phone').value.trim();
-
-  if(!PHONE_RE.test(phone)){
-    showToast('ENTER A VALID 10-DIGIT PHONE','err');
-    return;
-  }
-
-  const { data, error } = await window.supabase
-    .from('customers')
-    .select('*')
-    .eq('phone', phone)
-    .maybeSingle();
-
-  if(error || !data){
-    showToast('PHONE NOT FOUND — CREATE ACCOUNT?','err');
-    return;
-  }
-
-  await loadCustomersFromSupabase();
-  currentCustomer = customers.find(c => c.id === data.id);
-
-  document.getElementById('w-phone').value = '';
-  showToast('WELCOME BACK ' + data.name + '!');
+  const phone=document.getElementById('w-phone').value.trim();
+  if(!PHONE_RE.test(phone)){showToast('ENTER A VALID 10-DIGIT PHONE','err');return;}
+  showBusy(true);
+  const c=await dbGetByPhone(phone);
+  showBusy(false);
+  if(!c){showToast('PHONE NOT FOUND — CREATE ACCOUNT?','err');return;}
+  currentCustomer=c;
+  document.getElementById('w-phone').value='';
+  showToast('WELCOME BACK '+c.name+'!');
   go('s-c-rewards');
 }
+function doSignOut(){currentCustomer=null;go('s-welcome');showToast('SEE YOU SOON! ☕','info');}
 
 // ═══════════════════════════════════════════
 // CREATE ACCOUNT
 // ═══════════════════════════════════════════
 async function doCreate(){
-  const name = document.getElementById('c-name').value.trim().toUpperCase();
-  const phone = document.getElementById('c-phone').value.trim();
-
-  if(!name || !phone){
-    showToast('FILL ALL FIELDS','err');
-    return;
-  }
-
-  if(!PHONE_RE.test(phone)){
-    showToast('INVALID PHONE NUMBER','err');
-    return;
-  }
-
-  const bday = getBday('c-bm','c-bd','c-by');
-  const id = genId();
-
-  const { data: existing } = await window.supabase
-    .from('customers')
-    .select('id')
-    .eq('phone', phone)
-    .maybeSingle();
-
-  if(existing){
-    showToast('PHONE ALREADY REGISTERED','err');
-    return;
-  }
-
-  const { error } = await window.supabase
-    .from('customers')
-    .insert({
-      id,
-      name,
-      phone,
-      birthday: bday || null,
-      stamps: 0,
-      birthday_reward_year: 0
-    });
-
-  if(error){
-    console.error(error);
-    showToast('FAILED TO CREATE ACCOUNT','err');
-    return;
-  }
-
-  await loadCustomersFromSupabase();
-  currentCustomer = customers.find(c => c.id === id);
-
-  document.getElementById('c-name').value = '';
-  document.getElementById('c-phone').value = '';
-  ['c-bm','c-bd','c-by'].forEach(x => document.getElementById(x).value = '');
-
-  showToast('★ WELCOME ' + name + '! ★');
+  const name=document.getElementById('c-name').value.trim().toUpperCase();
+  const phone=document.getElementById('c-phone').value.trim();
+  if(!name||!phone){showToast('FILL ALL FIELDS','err');return;}
+  if(!PHONE_RE.test(phone)){showToast('INVALID PHONE NUMBER','err');return;}
+  const bday=getBday('c-bm','c-bd','c-by');
+  const nc={id:genId(),name,phone,birthday:bday,since:todayStr()};
+  showBusy(true);
+  // Check phone not already taken
+  const existing=await dbGetByPhone(phone);
+  if(existing){showBusy(false);showToast('PHONE ALREADY REGISTERED','err');return;}
+  const ok=await dbCreateCustomer(nc);
+  if(!ok){showBusy(false);showToast('ERROR CREATING ACCOUNT','err');return;}
+  currentCustomer=await dbGetByPhone(phone);
+  showBusy(false);
+  document.getElementById('c-name').value=''; document.getElementById('c-phone').value='';
+  ['c-bm','c-bd','c-by'].forEach(id=>document.getElementById(id).value='');
+  showToast('★ WELCOME '+nc.name+'! ★');
   go('s-c-rewards');
 }
 
 // ═══════════════════════════════════════════
 // CUSTOMER SCREENS
 // ═══════════════════════════════════════════
-function renderCustomerRewards(){
-  const c=customers.find(x=>x.id===currentCustomer?.id)||currentCustomer;
-  if(!c)return; currentCustomer=c;
+async function renderCustomerRewards(){
+  if(!currentCustomer) return;
+  // Refresh from DB to get latest stamps/rewards
+  showBusy(true);
+  const fresh=await dbGetById(currentCustomer.id);
+  showBusy(false);
+  if(fresh) currentCustomer=fresh;
+  const c=currentCustomer;
   document.getElementById('c-header-name').textContent=c.name;
   renderOffers('c-offers',c);
   drawQR(c.id,'c-qr');
@@ -1126,20 +1189,18 @@ function renderCustomerRewards(){
   document.getElementById('c-total-r').textContent=(c.rewards||[]).filter(r=>r.redeemed).length;
   document.getElementById('c-total-v').textContent=c.visits||0;
 }
-function renderCustomerHistory(){
-  const c=customers.find(x=>x.id===currentCustomer?.id)||currentCustomer;
-  if(!c)return; currentCustomer=c;
-  document.getElementById('c-hist-name').textContent=c.name;
-  renderHistList('c-history-list',c);
+async function renderCustomerHistory(){
+  if(!currentCustomer) return;
+  document.getElementById('c-hist-name').textContent=currentCustomer.name;
+  renderHistList('c-history-list',currentCustomer);
 }
-function renderCustomerSettings(){
-  const c=currentCustomer; if(!c)return;
+async function renderCustomerSettings(){
+  const c=currentCustomer; if(!c) return;
   document.getElementById('c-set-name').textContent=c.name;
   document.getElementById('s-name').value=c.name;
   document.getElementById('s-id').textContent=c.id;
   document.getElementById('s-phone').textContent=c.phone;
   document.getElementById('s-since').textContent=c.since||'—';
-  // Birthday: show locked display if set; show dropdowns if not set
   if(c.birthday){
     const [y,m,d]=c.birthday.split('-');
     const mo=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
@@ -1151,29 +1212,33 @@ function renderCustomerSettings(){
     document.getElementById('s-bday-dropdowns').style.display='block';
   }
 }
-function doSaveSettings(){
-  const c=currentCustomer; if(!c)return;
+async function doSaveSettings(){
+  const c=currentCustomer; if(!c) return;
   const name=document.getElementById('s-name').value.trim().toUpperCase();
   if(!name){showToast('NAME CANNOT BE EMPTY','err');return;}
-  const idx=customers.findIndex(x=>x.id===c.id);
-  customers[idx].name=name;
-  // Birthday: only save if not already set
-  if(!customers[idx].birthday){
+  const fields={name};
+  if(!c.birthday){
     const bday=getBday('s-bm','s-bd','s-by');
-    if(bday) customers[idx].birthday=bday;
+    if(bday) fields.birthday=bday;
   }
-  currentCustomer=customers[idx]; saveData();
-  document.getElementById('c-set-name').textContent=name;
-  document.getElementById('c-header-name').textContent=name;
+  showBusy(true);
+  await dbUpdateCustomer(c.id,fields);
+  currentCustomer=await dbGetById(c.id);
+  showBusy(false);
+  document.getElementById('c-set-name').textContent=currentCustomer.name;
+  document.getElementById('c-header-name').textContent=currentCustomer.name;
   showToast('✓ SETTINGS SAVED');
-  renderCustomerSettings(); // re-render to lock birthday if just set
+  renderCustomerSettings();
 }
 
 // ═══════════════════════════════════════════
 // LEADERBOARD
 // ═══════════════════════════════════════════
-function renderLeaderboard(){
-  const sorted=[...customers].sort((a,b)=>(b.rewards||[]).filter(r=>r.redeemed).length-(a.rewards||[]).filter(r=>r.redeemed).length);
+async function renderLeaderboard(){
+  showBusy(true);
+  const all=await dbGetAll();
+  showBusy(false);
+  const sorted=[...all].sort((a,b)=>(b.rewards||[]).filter(r=>r.redeemed).length-(a.rewards||[]).filter(r=>r.redeemed).length);
   const medals=['🥇','🥈','🥉'];
   document.getElementById('lb-list').innerHTML=sorted.length===0
     ?'<div style="font-size:6px;color:rgba(0,255,136,.2);padding:14px;text-align:center;">NO PLAYERS YET</div>'
@@ -1206,7 +1271,7 @@ function updateStaffPinUI(){
 }
 function staffPinPress(k){
   if(k==='del'){staffPin=staffPin.slice(0,-1);updateStaffPinUI();return;}
-  if(staffPin.length>=4)return;
+  if(staffPin.length>=4) return;
   staffPin+=String(k); updateStaffPinUI();
   if(staffPin.length===4){
     setTimeout(()=>{
@@ -1234,7 +1299,7 @@ function updateAdminPinUI(){
 }
 function adminPinPress(k){
   if(k==='del'){adminPin=adminPin.slice(0,-1);updateAdminPinUI();return;}
-  if(adminPin.length>=4)return;
+  if(adminPin.length>=4) return;
   adminPin+=String(k); updateAdminPinUI();
   if(adminPin.length===4){
     setTimeout(()=>{
@@ -1253,14 +1318,19 @@ function doAdminLogout(){stopAdminCamera();go('s-welcome');showToast('ADMIN LOGG
 // ═══════════════════════════════════════════
 // STAFF HOME
 // ═══════════════════════════════════════════
-function renderStaffHome(){
-  document.getElementById('sh-members').textContent=customers.length;
-  document.getElementById('sh-visits').textContent=customers.reduce((a,c)=>a+(c.visits||0),0);
+async function renderStaffHome(){
+  document.getElementById('sh-members').textContent='…';
+  document.getElementById('sh-visits').textContent='…';
+  showBusy(true);
+  staffList=await dbGetAll();
+  showBusy(false);
+  document.getElementById('sh-members').textContent=staffList.length;
+  document.getElementById('sh-visits').textContent=staffList.reduce((a,c)=>a+(c.visits||0),0);
   renderCustomerList();
 }
 function renderCustomerList(){
   const q=(document.getElementById('staff-search')?.value||'').toUpperCase();
-  const sorted=[...customers].filter(c=>!q||c.name.includes(q)||c.phone.includes(q)||c.id.includes(q)).sort((a,b)=>a.name.localeCompare(b.name));
+  const sorted=[...staffList].filter(c=>!q||c.name.includes(q)||c.phone.includes(q)||c.id.includes(q));
   const el=document.getElementById('staff-customer-list');
   if(!sorted.length){el.innerHTML='<div style="font-size:6px;color:rgba(255,0,255,.3);padding:14px;text-align:center;">NO PLAYERS FOUND</div>';return;}
   el.innerHTML=sorted.map(c=>{
@@ -1279,13 +1349,18 @@ function renderCustomerList(){
     </div>`;
   }).join('');
 }
-function openStaffDetail(id){selectedCustomer=customers.find(c=>c.id===id);go('s-staff-detail');}
+async function openStaffDetail(id){
+  showBusy(true);
+  selectedCustomer=await dbGetById(id);
+  showBusy(false);
+  go('s-staff-detail');
+}
 
 // ═══════════════════════════════════════════
 // STAFF DETAIL
 // ═══════════════════════════════════════════
-function renderStaffDetail(){
-  const c=selectedCustomer; if(!c)return;
+async function renderStaffDetail(){
+  const c=selectedCustomer; if(!c) return;
   document.getElementById('sd-avatar').textContent=c.name.charAt(0);
   document.getElementById('sd-name').textContent=c.name;
   const rd=(c.rewards||[]).filter(r=>r.redeemed).length;
@@ -1301,32 +1376,37 @@ function renderStaffDetail(){
   document.getElementById('sd-btn-redeem').disabled=pendingRewards(c).length===0;
   document.getElementById('sd-btn-bday').style.display=(isBirthdayMonth(c)&&!bdayUsed(c))?'block':'none';
 }
-function sdAddStamp(){
+
+async function sdAddStamp(){
   const now=Date.now();
   if(now-lastStampTime<5000){showToast('WAIT '+Math.ceil((5000-(now-lastStampTime))/1000)+'s','err');return;}
   lastStampTime=now;
-  const idx=customers.findIndex(x=>x.id===selectedCustomer.id);
-  if(customers[idx].stamps>=10)return;
-  // visits: always +1 per transaction
-  customers[idx].visits=(customers[idx].visits||0)+1;
-  // stamps: always +1
-  customers[idx].stamps=Math.min(customers[idx].stamps+1,10);
-  addHist(idx,'stamp');
-  // auto-earn reward on full card
-  if(customers[idx].stamps>=10){
+  const c=selectedCustomer; if(!c||c.stamps>=10) return;
+  const newStamps=c.stamps+1;
+  const newVisits=(c.visits||0)+1;
+  showBusy(true);
+  if(newStamps>=10){
+    // Full card — reset stamps, grant reward
+    await dbUpdateCustomer(c.id,{stamps:0,visits:newVisits});
     const earned=todayStr(),expires=addDays(earned,REWARD_EXP);
-    customers[idx].rewards.push({id:genRid(),earned,expires,redeemed:false,redeemedDate:null,note:'10-stamp'});
-    customers[idx].stamps=0;
-    addHist(idx,'reward','10-stamp reward earned');
+    await dbAddReward({id:genRid(),earned,expires,note:'10-stamp'},c.id);
+    await dbAddHistory(c.id,'stamp');
+    await dbAddHistory(c.id,'reward','10-stamp reward earned');
+    selectedCustomer=await refreshCustomer(c.id);
+    showBusy(false);
+    renderStaffDetail();
     showToast('★ FREE COFFEE EARNED! ★');
   } else {
-    showToast('☕ STAMP ADDED ('+customers[idx].stamps+'/10)');
+    await dbUpdateCustomer(c.id,{stamps:newStamps,visits:newVisits});
+    await dbAddHistory(c.id,'stamp');
+    selectedCustomer=await refreshCustomer(c.id);
+    showBusy(false);
+    renderStaffDetail();
+    showToast('☕ STAMP ADDED ('+newStamps+'/10)');
+    // pop animation
+    const pips=document.querySelectorAll('#sd-stamps .hp-pip');
+    if(pips[newStamps-1]){pips[newStamps-1].classList.remove('pop');void pips[newStamps-1].offsetWidth;pips[newStamps-1].classList.add('pop');}
   }
-  syncCustomer(customers[idx].id); saveData(); renderStaffDetail();
-  // pop animation
-  const pips=document.querySelectorAll('#sd-stamps .hp-pip');
-  const pi=Math.max(0,Math.min(customers[idx].stamps-1+(customers[idx].stamps===0?10:0),9));
-  if(pips[pi]){pips[pi].classList.remove('pop');void pips[pi].offsetWidth;pips[pi].classList.add('pop');}
   // cooldown
   clearInterval(coolTimer);
   coolTimer=setInterval(()=>{
@@ -1336,28 +1416,29 @@ function sdAddStamp(){
     if(r<=0) clearInterval(coolTimer);
   },500);
 }
-function sdRedeemCoffee(){
+async function sdRedeemCoffee(){
   const pr=pendingRewards(selectedCustomer);
   if(!pr.length){showToast('NO VALID REWARDS','err');return;}
-  sdRedeemById(pr[0].id);
+  await sdRedeemById(pr[0].id);
 }
-function sdRedeemById(rid){
-  const idx=customers.findIndex(x=>x.id===selectedCustomer.id);
-  const ri=customers[idx].rewards.findIndex(r=>r.id===rid);
-  if(ri<0)return;
-  customers[idx].rewards[ri].redeemed=true;
-  customers[idx].rewards[ri].redeemedDate=todayStr();
-  addHist(idx,'reward','free coffee redeemed');
-  syncCustomer(customers[idx].id); saveData(); renderStaffDetail();
+async function sdRedeemById(rid){
+  showBusy(true);
+  await dbRedeemReward(rid,todayStr());
+  await dbAddHistory(selectedCustomer.id,'reward','free coffee redeemed');
+  selectedCustomer=await refreshCustomer(selectedCustomer.id);
+  showBusy(false);
+  renderStaffDetail();
   showToast('★★ FREE COFFEE REDEEMED! ★★');
 }
-function sdGrantBirthday(){
-  const idx=customers.findIndex(x=>x.id===selectedCustomer.id);
+async function sdGrantBirthday(){
+  showBusy(true);
   const earned=todayStr(),expires=addDays(earned,REWARD_EXP);
-  customers[idx].rewards.push({id:genRid(),earned,expires,redeemed:false,redeemedDate:null,note:'birthday'});
-  customers[idx].birthdayYear=new Date().getFullYear();
-  addHist(idx,'birthday','birthday month reward granted');
-  syncCustomer(customers[idx].id); saveData(); renderStaffDetail();
+  await dbAddReward({id:genRid(),earned,expires,note:'birthday'},selectedCustomer.id);
+  await dbUpdateCustomer(selectedCustomer.id,{birthdayYear:new Date().getFullYear()});
+  await dbAddHistory(selectedCustomer.id,'birthday','birthday month reward granted');
+  selectedCustomer=await refreshCustomer(selectedCustomer.id);
+  showBusy(false);
+  renderStaffDetail();
   showToast('🎂 BIRTHDAY REWARD GRANTED!','info');
 }
 
@@ -1365,56 +1446,26 @@ function sdGrantBirthday(){
 // STAFF CAMERA
 // ═══════════════════════════════════════════
 function toggleCamera(){cameraActive?stopCamera():startCamera();}
-function toggleCamera(){cameraActive?stopCamera():startCamera();}
-
 function startCamera(){
-  const rd = document.getElementById('qr-reader');
-  const ph = document.getElementById('scan-placeholder');
-  const btn = document.getElementById('btn-cam');
-
-  if(typeof Html5Qrcode === 'undefined'){
-    showToast('SCANNER NOT LOADED','err');
-    return;
-  }
-
-  ph.style.display = 'none';
-  rd.style.display = 'block';
-  rd.innerHTML = '';
-
-  html5QrCode = new Html5Qrcode("qr-reader");
-
-  html5QrCode.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: { width: 180, height: 180 } },
-    async decoded => {
-      const id = decoded.trim();
+  const rd=document.getElementById('qr-reader'),ph=document.getElementById('scan-placeholder'),btn=document.getElementById('btn-cam');
+  if(typeof Html5Qrcode==='undefined'){showToast('SCANNER NOT LOADED','err');return;}
+  ph.style.display='none'; rd.style.display='block'; rd.innerHTML='';
+  html5QrCode=new Html5Qrcode("qr-reader");
+  html5QrCode.start({facingMode:"environment"},{fps:10,qrbox:{width:180,height:180}},
+    async decoded=>{
+      const id=decoded.trim();
+      const c=staffList.find(x=>x.id===id);
       stopCamera();
-
-      const { data, error } = await window.supabase
-        .from('customers')
-        .select('*')
-        .eq('id', id)
-        .maybeSingle();
-
-      if(error || !data){
-        showToast('QR NOT RECOGNISED','err');
-        return;
-      }
-
-      await loadCustomersFromSupabase();
-      selectedCustomer = customers.find(c => c.id === data.id);
-      go('s-staff-detail');
+      if(c){
+        showBusy(true);
+        selectedCustomer=await dbGetById(id);
+        showBusy(false);
+        go('s-staff-detail');
+      } else showToast('QR NOT RECOGNISED','err');
     },
-    () => {}
-  ).then(() => {
-    cameraActive = true;
-    btn.textContent = '■ STOP CAMERA';
-    btn.className = 'btn btn-r';
-  }).catch(() => {
-    rd.style.display = 'none';
-    ph.style.display = 'block';
-    showToast('CAMERA UNAVAILABLE','err');
-  });
+    ()=>{}
+  ).then(()=>{cameraActive=true;btn.textContent='■ STOP CAMERA';btn.className='btn btn-r';})
+   .catch(()=>{rd.style.display='none';ph.style.display='block';showToast('CAMERA UNAVAILABLE','err');});
 }
 function stopCamera(){
   if(html5QrCode&&cameraActive){
@@ -1427,28 +1478,17 @@ function stopCamera(){
   }
 }
 async function doPhoneScan(){
-  const v = document.getElementById('scan-phone').value.trim();
-
-  const { data, error } = await window.supabase
-    .from('customers')
-    .select('*')
-    .eq('phone', v)
-    .maybeSingle();
-
-  if(error || !data){
-    showToast('PLAYER NOT FOUND','err');
-    document.getElementById('scan-phone').value = '';
-    return;
-  }
-
-  await loadCustomersFromSupabase();
-  selectedCustomer = customers.find(c => c.id === data.id);
-  document.getElementById('scan-phone').value = '';
-  go('s-staff-detail');
+  const v=document.getElementById('scan-phone').value.trim();
+  showBusy(true);
+  const c=await dbGetByPhone(v);
+  showBusy(false);
+  if(c){selectedCustomer=c;go('s-staff-detail');}
+  else showToast('PLAYER NOT FOUND','err');
+  document.getElementById('scan-phone').value='';
 }
 
 // ═══════════════════════════════════════════
-// ADMIN CAMERA (separate instance)
+// ADMIN CAMERA
 // ═══════════════════════════════════════════
 function toggleAdminCamera(){admCamActive?stopAdminCamera():startAdminCamera();}
 function startAdminCamera(){
@@ -1457,10 +1497,12 @@ function startAdminCamera(){
   ph.style.display='none'; rd.style.display='block'; rd.innerHTML='';
   html5QrCodeAdm=new Html5Qrcode("qr-reader-adm");
   html5QrCodeAdm.start({facingMode:"environment"},{fps:10,qrbox:{width:180,height:180}},
-    decoded=>{
+    async decoded=>{
       const id=decoded.trim();
-      const c=customers.find(x=>x.id===id);
       stopAdminCamera();
+      showBusy(true);
+      const c=await dbGetById(id);
+      showBusy(false);
       if(c){adminCustomer=c;go('s-admin-detail');}
       else showToast('QR NOT RECOGNISED','err');
     },
@@ -1478,23 +1520,29 @@ function stopAdminCamera(){
     });
   }
 }
-function doAdminPhoneScan(){
+async function doAdminPhoneScan(){
   const v=document.getElementById('scan-phone-adm').value.trim();
-  const c=customers.find(x=>x.phone===v);
-  if(c){adminCustomer=c;go('s-admin-detail');}else showToast('PLAYER NOT FOUND','err');
+  showBusy(true);
+  const c=await dbGetByPhone(v);
+  showBusy(false);
+  if(c){adminCustomer=c;go('s-admin-detail');}
+  else showToast('PLAYER NOT FOUND','err');
   document.getElementById('scan-phone-adm').value='';
 }
 
 // ═══════════════════════════════════════════
 // ADMIN DASHBOARD
 // ═══════════════════════════════════════════
-function renderAdminDash(){
-  const total=customers.length;
-  const visits=customers.reduce((a,c)=>a+(c.visits||0),0);
-  const allRew=customers.flatMap(c=>c.rewards||[]);
+async function renderAdminDash(){
+  showBusy(true);
+  staffList=await dbGetAll();
+  showBusy(false);
+  const total=staffList.length;
+  const visits=staffList.reduce((a,c)=>a+(c.visits||0),0);
+  const allRew=staffList.flatMap(c=>c.rewards||[]);
   const redeemed=allRew.filter(r=>r.redeemed).length;
-  const active=customers.flatMap(c=>pendingRewards(c)).length;
-  const avgS=total?Math.round(customers.reduce((a,c)=>a+(c.stamps||0),0)/total*10)/10:0;
+  const active=staffList.flatMap(c=>pendingRewards(c)).length;
+  const avgS=total?Math.round(staffList.reduce((a,c)=>a+(c.stamps||0),0)/total*10)/10:0;
   document.getElementById('db-members').textContent=total;
   document.getElementById('db-visits').textContent=visits;
   document.getElementById('db-redeemed').textContent=redeemed;
@@ -1502,8 +1550,7 @@ function renderAdminDash(){
   document.getElementById('db-avg-bar').style.width=(avgS/10*100)+'%';
   document.getElementById('db-avg-lbl').textContent=avgS+'/10';
   document.getElementById('db-avg-text').textContent='AVG '+avgS;
-  // Top 3
-  const top=[...customers].sort((a,b)=>(b.rewards||[]).filter(r=>r.redeemed).length-(a.rewards||[]).filter(r=>r.redeemed).length).slice(0,3);
+  const top=[...staffList].sort((a,b)=>(b.rewards||[]).filter(r=>r.redeemed).length-(a.rewards||[]).filter(r=>r.redeemed).length).slice(0,3);
   const medals=['🥇','🥈','🥉'];
   document.getElementById('db-top').innerHTML=top.length
     ?top.map((c,i)=>`<div class="stat-row">
@@ -1513,9 +1560,12 @@ function renderAdminDash(){
         <div style="font-size:7px;color:var(--y);">${(c.rewards||[]).filter(r=>r.redeemed).length} ☕</div>
       </div>`).join('')
     :'<div style="font-size:6px;color:rgba(176,96,255,.2);padding:6px;">NO DATA YET</div>';
-  // Recent activity
+  // Recent activity — fetch with full history
+  showBusy(true);
+  const full=await dbGetAll();
+  showBusy(false);
   const evts=[];
-  customers.forEach(c=>(c.history||[]).forEach(h=>evts.push({...h,cname:c.name})));
+  full.forEach(c=>(c.history||[]).forEach(h=>evts.push({...h,cname:c.name})));
   evts.sort((a,b)=>b.date.localeCompare(a.date));
   document.getElementById('db-activity').innerHTML=evts.slice(0,12).map(e=>`
     <div class="hist-item">
@@ -1531,15 +1581,18 @@ function renderAdminDash(){
 // ═══════════════════════════════════════════
 // ADMIN REDEMPTIONS
 // ═══════════════════════════════════════════
-function renderAdminRdm(){
-  const all=[];
-  customers.forEach(c=>(c.rewards||[]).filter(r=>r.redeemed).forEach(r=>
-    all.push({name:c.name,id:c.id,date:r.redeemedDate||'–',note:r.note||'10-stamp'})
+async function renderAdminRdm(){
+  showBusy(true);
+  const all=await dbGetAll();
+  showBusy(false);
+  const rdms=[];
+  all.forEach(c=>(c.rewards||[]).filter(r=>r.redeemed).forEach(r=>
+    rdms.push({name:c.name,id:c.id,date:r.redeemedDate||'–',note:r.note||'10-stamp'})
   ));
-  all.sort((a,b)=>b.date.localeCompare(a.date));
-  document.getElementById('rdm-list').innerHTML=all.length===0
+  rdms.sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('rdm-list').innerHTML=rdms.length===0
     ?'<div style="font-size:6px;color:rgba(176,96,255,.2);padding:16px;text-align:center;">NO REDEMPTIONS YET</div>'
-    :all.map(r=>`<div class="rdm-row">
+    :rdms.map(r=>`<div class="rdm-row">
         <div style="flex:1;"><div style="font-size:7px;color:var(--g);">${r.name}</div>
           <div style="font-size:5px;color:rgba(0,229,255,.3);margin-top:1px;">${r.id}</div></div>
         <div style="text-align:right;">
@@ -1552,9 +1605,15 @@ function renderAdminRdm(){
 // ═══════════════════════════════════════════
 // ADMIN PLAYER LIST
 // ═══════════════════════════════════════════
-function renderAdminPlayerList(){
+async function renderAdminPlayerList(){
+  showBusy(true);
+  staffList=await dbGetAll();
+  showBusy(false);
+  _renderAdminListFromCache();
+}
+function _renderAdminListFromCache(){
   const q=(document.getElementById('admin-search')?.value||'').toUpperCase();
-  const sorted=[...customers].filter(c=>!q||c.name.includes(q)||c.phone.includes(q)||c.id.includes(q)).sort((a,b)=>a.name.localeCompare(b.name));
+  const sorted=[...staffList].filter(c=>!q||c.name.includes(q)||c.phone.includes(q)||c.id.includes(q));
   const el=document.getElementById('admin-player-list');
   el.innerHTML=sorted.length===0
     ?'<div style="font-size:6px;color:rgba(176,96,255,.2);padding:14px;text-align:center;">NO PLAYERS FOUND</div>'
@@ -1575,14 +1634,26 @@ function renderAdminPlayerList(){
       </div>`;
     }).join('');
 }
-function openAdminDetail(id){adminCustomer=customers.find(c=>c.id===id);go('s-admin-detail');}
+// Hook search input (search filters the already-loaded list, no extra fetch)
+function renderAdminPlayerList(){
+  // called by go() — also called directly from oninput on search box
+  // if staffList is populated just filter; otherwise fetch
+  if(staffList.length) _renderAdminListFromCache();
+  else renderAdminPlayerList(); // async version above
+}
+
+async function openAdminDetail(id){
+  showBusy(true);
+  adminCustomer=await dbGetById(id);
+  showBusy(false);
+  go('s-admin-detail');
+}
 
 // ═══════════════════════════════════════════
 // ADMIN DETAIL
 // ═══════════════════════════════════════════
-function renderAdminDetail(){
-  const c=customers.find(x=>x.id===adminCustomer?.id)||adminCustomer;
-  if(!c)return; adminCustomer=c;
+async function renderAdminDetail(){
+  const c=adminCustomer; if(!c) return;
   document.getElementById('ad-avatar').textContent=c.name.charAt(0);
   document.getElementById('ad-name').textContent=c.name;
   const rd=(c.rewards||[]).filter(r=>r.redeemed).length;
@@ -1600,59 +1671,72 @@ function renderAdminDetail(){
   document.getElementById('ad-btn-bday').style.display=(isBirthdayMonth(c)&&!bdayUsed(c))?'block':'none';
   renderHistList('ad-hist-list',c);
 }
-function adAddStamp(){
-  const idx=customers.findIndex(x=>x.id===adminCustomer.id);
-  if(customers[idx].stamps>=10)return;
-  customers[idx].visits=(customers[idx].visits||0)+1;
-  customers[idx].stamps++;
-  addHist(idx,'stamp','added by admin');
-  if(customers[idx].stamps>=10){
+async function adAddStamp(){
+  const c=adminCustomer; if(!c||c.stamps>=10) return;
+  const newStamps=c.stamps+1;
+  const newVisits=(c.visits||0)+1;
+  showBusy(true);
+  if(newStamps>=10){
+    await dbUpdateCustomer(c.id,{stamps:0,visits:newVisits});
     const earned=todayStr(),expires=addDays(earned,REWARD_EXP);
-    customers[idx].rewards.push({id:genRid(),earned,expires,redeemed:false,redeemedDate:null,note:'10-stamp'});
-    customers[idx].stamps=0;
-    addHist(idx,'reward','10-stamp reward earned');
+    await dbAddReward({id:genRid(),earned,expires,note:'10-stamp'},c.id);
+    await dbAddHistory(c.id,'stamp','added by admin');
+    await dbAddHistory(c.id,'reward','10-stamp reward earned');
     showToast('★ FREE COFFEE EARNED! ★');
-  } else showToast('☕ STAMP ADDED ('+customers[idx].stamps+'/10)');
-  syncCustomer(customers[idx].id); saveData(); renderAdminDetail();
+  } else {
+    await dbUpdateCustomer(c.id,{stamps:newStamps,visits:newVisits});
+    await dbAddHistory(c.id,'stamp','added by admin');
+    showToast('☕ STAMP ADDED ('+newStamps+'/10)');
+  }
+  adminCustomer=await refreshCustomer(c.id);
+  showBusy(false);
+  renderAdminDetail();
 }
-function adRemoveStamp(){
-  const idx=customers.findIndex(x=>x.id===adminCustomer.id);
-  if(customers[idx].stamps<=0)return;
-  customers[idx].stamps--;
-  addHist(idx,'stamp','removed by admin');
-  syncCustomer(customers[idx].id); saveData(); renderAdminDetail();
+async function adRemoveStamp(){
+  const c=adminCustomer; if(!c||c.stamps<=0) return;
+  showBusy(true);
+  await dbUpdateCustomer(c.id,{stamps:c.stamps-1});
+  await dbAddHistory(c.id,'stamp','removed by admin');
+  adminCustomer=await refreshCustomer(c.id);
+  showBusy(false);
+  renderAdminDetail();
   showToast('STAMP REMOVED','info');
 }
-function adGrantReward(){
-  const idx=customers.findIndex(x=>x.id===adminCustomer.id);
+async function adGrantReward(){
+  const c=adminCustomer; if(!c) return;
+  showBusy(true);
   const earned=todayStr(),expires=addDays(earned,REWARD_EXP);
-  customers[idx].rewards.push({id:genRid(),earned,expires,redeemed:false,redeemedDate:null,note:'admin-grant'});
-  addHist(idx,'reward','free coffee granted by admin');
-  syncCustomer(customers[idx].id); saveData(); renderAdminDetail();
+  await dbAddReward({id:genRid(),earned,expires,note:'admin-grant'},c.id);
+  await dbAddHistory(c.id,'reward','free coffee granted by admin');
+  adminCustomer=await refreshCustomer(c.id);
+  showBusy(false);
+  renderAdminDetail();
   showToast('★ FREE COFFEE GRANTED ★');
 }
-function adRedeemCoffee(){
+async function adRedeemCoffee(){
   const pr=pendingRewards(adminCustomer);
   if(!pr.length){showToast('NO VALID REWARDS','err');return;}
-  adRedeemById(pr[0].id);
+  await adRedeemById(pr[0].id);
 }
-function adRedeemById(rid){
-  const idx=customers.findIndex(x=>x.id===adminCustomer.id);
-  const ri=customers[idx].rewards.findIndex(r=>r.id===rid);
-  if(ri<0)return;
-  customers[idx].rewards[ri].redeemed=true;
-  customers[idx].rewards[ri].redeemedDate=todayStr();
-  addHist(idx,'reward','free coffee redeemed');
-  syncCustomer(customers[idx].id); saveData(); renderAdminDetail();
+async function adRedeemById(rid){
+  showBusy(true);
+  await dbRedeemReward(rid,todayStr());
+  await dbAddHistory(adminCustomer.id,'reward','free coffee redeemed');
+  adminCustomer=await refreshCustomer(adminCustomer.id);
+  showBusy(false);
+  renderAdminDetail();
   showToast('★★ FREE COFFEE REDEEMED! ★★');
 }
-function adGrantBirthday(){
-  const idx=customers.findIndex(x=>x.id===adminCustomer.id);
+async function adGrantBirthday(){
+  const c=adminCustomer; if(!c) return;
+  showBusy(true);
   const earned=todayStr(),expires=addDays(earned,REWARD_EXP);
-  customers[idx].rewards.push({id:genRid(),earned,expires,redeemed:false,redeemedDate:null,note:'birthday'});
-  customers[idx].birthdayYear=new Date().getFullYear();
-  addHist(idx,'birthday','birthday month reward granted');
-  syncCustomer(customers[idx].id); saveData(); renderAdminDetail();
+  await dbAddReward({id:genRid(),earned,expires,note:'birthday'},c.id);
+  await dbUpdateCustomer(c.id,{birthdayYear:new Date().getFullYear()});
+  await dbAddHistory(c.id,'birthday','birthday month reward granted');
+  adminCustomer=await refreshCustomer(c.id);
+  showBusy(false);
+  renderAdminDetail();
   showToast('🎂 BIRTHDAY REWARD GRANTED!','info');
 }
 
@@ -1680,17 +1764,10 @@ function getBday(mId,dId,yId){
 // ═══════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════
-initYearSelect('c-by'); 
-initYearSelect('s-by');
-populateDays('c-bm','c-bd','c-by'); 
-populateDays('s-bm','s-bd','s-by');
+initYearSelect('c-by'); initYearSelect('s-by');
+populateDays('c-bm','c-bd','c-by'); populateDays('s-bm','s-bd','s-by');
 document.getElementById('qr-reader').style.display='none';
 document.getElementById('qr-reader-adm').style.display='none';
-
-window.addEventListener('load', async () => {
-  await loadCustomersFromSupabase();
-});
-
 window.addEventListener('beforeunload',()=>{stopCamera();stopAdminCamera();});
 </script>
 </body>
