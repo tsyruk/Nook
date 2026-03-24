@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet"/>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root{
@@ -1061,7 +1062,41 @@ select option{background:#07070f;color:var(--g);}
 // ═══════════════════════════════════════════
 const EDGE      = 'https://ivqftezvshaywludmteu.supabase.co/functions/v1';
 const ANON_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cWZ0ZXp2c2hheXdsdWRtdGV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTQyMDQsImV4cCI6MjA4ODkzMDIwNH0.P7ZCHzhL6LVfb8BPg157T7Jw0YNSX3WLopM5UOTYj2w';
+const SUPA_URL = 'https://ivqftezvshaywludmteu.supabase.co';
+const sb = window.supabase.createClient(SUPA_URL, ANON_KEY);
+async function signInWithEmail(email, password) {
+  const { data, error } = await sb.auth.signInWithPassword({
+    email,
+    password
+  });
+  if (error) throw error;
+  return data;
+}
 
+async function getCurrentUser() {
+  const { data, error } = await sb.auth.getUser();
+  if (error) throw error;
+  return data.user;
+}
+
+async function getMyProfile() {
+  const user = await getCurrentUser();
+  if (!user) return null;
+
+  const { data, error } = await sb
+    .from('profiles')
+    .select('id, email, full_name, role')
+    .eq('id', user.id)
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+async function signOutAuthUser() {
+  const { error } = await sb.auth.signOut();
+  if (error) throw error;
+}
 // ═══════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════
