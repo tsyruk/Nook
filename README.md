@@ -2,7 +2,7 @@
 
 A QR-based digital loyalty system for small cafes, built to replace traditional punch cards with a role-protected web app.
 
-**Live Demo:** [The Nook Café Loyalty App](https://tsyruk.github.io/Nook/)
+**Live Demo:** [The Nook Cafe Loyalty App](https://tsyruk.github.io/Nook/)
 
 ---
 
@@ -12,25 +12,21 @@ The Nook Cafe Loyalty App is a digital rewards platform designed for small café
 
 The application supports three user roles:
 
-- **Customer** — tracks purchases, rewards, and visit history
-- **Staff** — scans QR codes, adds stamps, redeems rewards, and grants birthday rewards
-- **Admin** — manages customer rewards, removes stamps, grants rewards, and reviews activity
-
-This project demonstrates a full loyalty workflow with QR scanning, reward tracking, role-based access control, and Supabase-powered persistence.
+- **Customer** - tracks purchases, rewards, and visit history
+- **Staff** - scans QR codes, adds stamps, redeems rewards, and grants birthday rewards
+- **Admin** - manages customer rewards, removes stamps, grants rewards, and reviews activity
 
 ---
 
 ## What Makes This Project Stronger
 
-This app originally used simple PIN-based staff/admin access, but it was upgraded to use a more realistic authentication and authorization model:
+This app originally used simple PIN-based staff/admin access, but it was upgraded to use a better authentication and authorization model:
 
 - **Supabase Auth with email/password**
 - **Role-based protection using a `profiles` table**
 - **Row Level Security (RLS) for user profile access**
 - **Protected Edge Functions for staff/admin actions**
 - **Backend role checks for sensitive actions**
-
-That upgrade makes the project much more representative of a real production-style app and a stronger portfolio piece.
 
 ---
 
