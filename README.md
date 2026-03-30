@@ -98,19 +98,16 @@ The admin side of the app now uses **Supabase Auth** instead of a frontend-only 
 - Staff/admin actions run through a protected **Supabase Edge Function**
 - The Edge Function verifies the bearer token and checks the user’s role before allowing actions
 
-### Why this matters
-
-This moves the project away from a simple frontend gate and toward a more realistic app architecture with:
-
-- authenticated sessions
-- backend authorization
-- role-based access control
-- safer admin operations
-
 ---
 
-## How It Works
-
+## Tech Stack
+- HTML
+- CSS
+- JavaScript
+- Supabase Auth
+- Supabase Database
+- Supabase Edge Functions
+- 
 ### Customer flow
 
 ```text
@@ -125,3 +122,21 @@ Staff adds a stamp
 After 10 stamps, a free coffee reward is created
         ↓
 Staff redeems the reward when used
+
+## What I Learned
+This project helped me practice building a role-based web app with authentication, backend authorization, and protected actions. I also learned how to improve a project from a simple frontend-only approach into a more realistic architecture using Supabase Auth, RLS, and Edge Functions.
+
+## Setup
+1. Clone the repository
+2. Open the project files locally
+3. Connect the app to your Supabase project
+4. Configure environment values as needed
+5. Run locally in your browser
+
+## How It Works
+1. A customer creates an account
+2. The app generates a QR-based loyalty card
+3. Staff search by phone/name or scan the QR code
+4. A stamp is added after each purchase
+5. After 10 stamps, a free coffee reward is created
+6. Staff redeem the reward when it is used
