@@ -4,6 +4,8 @@ A QR-based digital loyalty system for small cafés, built to replace traditional
 
 **Live Demo:** [The Nook Cafe Loyalty App](https://tsyruk.github.io/Nook/)
 
+![App demo](https://github.com/user-attachments/assets/3e60ecc7-63dd-4072-9f81-7ea6e28ad892)
+
 ---
 
 ## Overview
