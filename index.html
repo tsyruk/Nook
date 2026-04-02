@@ -16,16 +16,15 @@
 </head>
 <body>
 <div class="phone">
+
 <div id="busy-overlay" style="display:none;position:absolute;inset:0;background:rgba(7,7,15,.75);z-index:3000;
-  display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;">
+  align-items:center;justify-content:center;flex-direction:column;gap:10px;">
   <div style="font-size:10px;color:var(--g);text-shadow:0 0 10px var(--g);" class="blink">■ ■ ■</div>
   <div style="font-size:6px;color:rgba(0,255,136,.5);letter-spacing:.12em;">LOADING…</div>
 </div>
 <div class="toast" id="toast"></div>
 
-<!-- ══════════════════════════════════════
-     WELCOME
-══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════ WELCOME ══ -->
 <div class="screen active" id="s-welcome"
      style="align-items:center;text-align:center;justify-content:center;padding-top:18px;">
   <div style="font-size:7px;color:var(--b);letter-spacing:.18em;margin-bottom:8px;">PRESS START</div>
@@ -45,14 +44,10 @@
     style="background:none;border:none;font-family:'Press Start 2P',monospace;
            font-size:7px;color:rgba(0,255,136,.55);cursor:pointer;padding:10px 20px;
            letter-spacing:.12em;text-transform:uppercase;margin-top:2px;
-           text-shadow:0 0 6px rgba(0,255,136,.25);">
-    · STAFF ·
-  </button>
+           text-shadow:0 0 6px rgba(0,255,136,.25);">· STAFF ·</button>
 </div>
 
-<!-- ══════════════════════════════════════
-     SIGN IN
-══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════ SIGN IN ══ -->
 <div class="screen" id="s-signin" style="padding-top:4px;">
   <div class="scroll">
     <button class="back" onclick="go('s-welcome')">◀ BACK</button>
@@ -65,19 +60,14 @@
     </div>
     <p style="font-size:6px;color:rgba(0,255,136,.2);text-align:center;line-height:2.4;">
       DON'T HAVE AN ACCOUNT?<br>
-      <button onclick="go('s-create')"
-        style="background:none;border:none;font-family:'Press Start 2P',monospace;
-               font-size:6px;color:rgba(0,255,136,.45);cursor:pointer;padding:4px 0;
-               text-decoration:underline;text-transform:uppercase;">
-        CREATE ONE HERE
-      </button>
+      <button onclick="go('s-create')" style="background:none;border:none;font-family:'Press Start 2P',monospace;
+        font-size:6px;color:rgba(0,255,136,.45);cursor:pointer;padding:4px 0;
+        text-decoration:underline;text-transform:uppercase;">CREATE ONE HERE</button>
     </p>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     CREATE ACCOUNT
-══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════ CREATE ACCOUNT ══ -->
 <div class="screen" id="s-create" style="padding-top:4px;">
   <div class="scroll">
     <button class="back" onclick="go('s-welcome')">◀ BACK</button>
@@ -93,9 +83,7 @@
       </div>
       <div>
         <label class="lbl">BIRTHDAY (OPTIONAL)</label>
-        <div style="font-size:5px;color:rgba(0,255,136,.3);margin-bottom:6px;line-height:2;letter-spacing:.06em;">
-          ⚠ CANNOT BE CHANGED AFTER JOINING
-        </div>
+        <div style="font-size:5px;color:rgba(0,255,136,.3);margin-bottom:6px;line-height:2;letter-spacing:.06em;">⚠ CANNOT BE CHANGED AFTER JOINING</div>
         <div style="display:grid;grid-template-columns:2fr 1fr 2fr;gap:6px;">
           <select id="c-bm" onchange="populateDays('c-bm','c-bd','c-by')">
             <option value="">MONTH</option>
@@ -105,8 +93,7 @@
             <option value="10">OCT</option><option value="11">NOV</option><option value="12">DEC</option>
           </select>
           <select id="c-bd" style="font-size:7px;padding:10px 4px;"><option value="">DD</option></select>
-          <select id="c-by" onchange="populateDays('c-bm','c-bd','c-by')" style="font-size:7px;padding:10px 4px;">
-            <option value="">YEAR</option></select>
+          <select id="c-by" onchange="populateDays('c-bm','c-bd','c-by')" style="font-size:7px;padding:10px 4px;"><option value="">YEAR</option></select>
         </div>
       </div>
     </div>
@@ -115,9 +102,7 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     CUSTOMER: REWARDS CARD
-══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════ CUSTOMER: REWARDS CARD ══ -->
 <div class="screen" id="s-c-rewards" style="padding-top:4px;">
   <div class="scroll">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
@@ -161,9 +146,7 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     CUSTOMER: HISTORY
-══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════ CUSTOMER: HISTORY ══ -->
 <div class="screen" id="s-c-history" style="padding-top:4px;">
   <div class="scroll">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
@@ -183,9 +166,7 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     CUSTOMER: SETTINGS
-══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════ CUSTOMER: SETTINGS ══ -->
 <div class="screen" id="s-c-settings" style="padding-top:4px;">
   <div class="scroll">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
@@ -200,14 +181,10 @@
       </div>
       <div>
         <label class="lbl">BIRTHDAY</label>
-        <!-- Locked state: shown when birthday is already set -->
         <div id="s-bday-locked" style="display:none;">
           <div class="bday-locked" id="s-bday-val"></div>
-          <div style="font-size:5px;color:rgba(0,255,136,.25);margin-top:5px;line-height:2;letter-spacing:.06em;">
-            🔒 BIRTHDAY IS LOCKED AND CANNOT BE CHANGED
-          </div>
+          <div style="font-size:5px;color:rgba(0,255,136,.25);margin-top:5px;line-height:2;letter-spacing:.06em;">🔒 BIRTHDAY IS LOCKED AND CANNOT BE CHANGED</div>
         </div>
-        <!-- Dropdowns: shown only if birthday NOT set yet -->
         <div id="s-bday-dropdowns">
           <div style="display:grid;grid-template-columns:2fr 1fr 2fr;gap:6px;">
             <select id="s-bm" onchange="populateDays('s-bm','s-bd','s-by')">
@@ -220,9 +197,7 @@
             <select id="s-bd" style="font-size:7px;padding:10px 4px;"><option value="">DD</option></select>
             <select id="s-by" onchange="populateDays('s-bm','s-bd','s-by')" style="font-size:7px;padding:10px 4px;"><option value="">YEAR</option></select>
           </div>
-          <div style="font-size:5px;color:rgba(0,255,136,.25);margin-top:5px;line-height:2;">
-            SET ONCE — LOCKED AFTER SAVING
-          </div>
+          <div style="font-size:5px;color:rgba(0,255,136,.25);margin-top:5px;line-height:2;">SET ONCE — LOCKED AFTER SAVING</div>
         </div>
       </div>
     </div>
@@ -246,9 +221,7 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     LEADERBOARD
-══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════ LEADERBOARD ══ -->
 <div class="screen" id="s-leaderboard" style="padding-top:4px;">
   <div class="scroll">
     <button class="back" onclick="go('s-welcome')">◀ BACK</button>
@@ -259,31 +232,29 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     STAFF LOGIN
-══════════════════════════════════════ -->
-<div class="screen" id="s-staff-login"
-     style="align-items:center;justify-content:center;text-align:center;padding-top:20px;">
-  <div style="font-size:26px;margin-bottom:10px;filter:drop-shadow(0 0 9px var(--p))">🔐</div>
-  <div style="font-size:10px;color:var(--p);text-shadow:0 0 10px var(--p);margin-bottom:4px;">STAFF ACCESS</div>
-  <div style="font-size:6px;color:rgba(255,0,255,.4);margin-bottom:4px;letter-spacing:.1em;">THE NOOK · FAIRHAVEN</div>
-  <div class="pin-row" id="spin-row">
-    <div class="pin-dot" id="spd0"></div><div class="pin-dot" id="spd1"></div>
-    <div class="pin-dot" id="spd2"></div><div class="pin-dot" id="spd3"></div>
+<!-- ══════════════════════════════════════ STAFF LOGIN ══
+     FIX 5: .scroll wrapper prevents clipping on landscape / small phones -->
+<div class="screen" id="s-staff-login" style="align-items:center;padding-top:20px;">
+  <div class="scroll" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+    <div style="font-size:26px;margin-bottom:10px;filter:drop-shadow(0 0 9px var(--p))">🔐</div>
+    <div style="font-size:10px;color:var(--p);text-shadow:0 0 10px var(--p);margin-bottom:4px;">STAFF ACCESS</div>
+    <div style="font-size:6px;color:rgba(255,0,255,.4);margin-bottom:4px;letter-spacing:.1em;">THE NOOK · FAIRHAVEN</div>
+    <div class="pin-row" id="spin-row">
+      <div class="pin-dot" id="spd0"></div><div class="pin-dot" id="spd1"></div>
+      <div class="pin-dot" id="spd2"></div><div class="pin-dot" id="spd3"></div>
+    </div>
+    <div id="spin-err" style="font-size:7px;color:var(--r);min-height:16px;margin-bottom:10px;letter-spacing:.08em;"></div>
+    <div class="numpad">
+      <div class="num" onclick="staffPinPress(1)">1</div><div class="num" onclick="staffPinPress(2)">2</div><div class="num" onclick="staffPinPress(3)">3</div>
+      <div class="num" onclick="staffPinPress(4)">4</div><div class="num" onclick="staffPinPress(5)">5</div><div class="num" onclick="staffPinPress(6)">6</div>
+      <div class="num" onclick="staffPinPress(7)">7</div><div class="num" onclick="staffPinPress(8)">8</div><div class="num" onclick="staffPinPress(9)">9</div>
+      <div class="num blank"></div><div class="num" onclick="staffPinPress(0)">0</div><div class="num" onclick="staffPinPress('del')">⌫</div>
+    </div>
+    <button class="btn-out" style="width:200px;margin-top:8px;" onclick="go('s-welcome')">CANCEL</button>
   </div>
-  <div id="spin-err" style="font-size:7px;color:var(--r);min-height:16px;margin-bottom:10px;letter-spacing:.08em;"></div>
-  <div class="numpad">
-    <div class="num" onclick="staffPinPress(1)">1</div><div class="num" onclick="staffPinPress(2)">2</div><div class="num" onclick="staffPinPress(3)">3</div>
-    <div class="num" onclick="staffPinPress(4)">4</div><div class="num" onclick="staffPinPress(5)">5</div><div class="num" onclick="staffPinPress(6)">6</div>
-    <div class="num" onclick="staffPinPress(7)">7</div><div class="num" onclick="staffPinPress(8)">8</div><div class="num" onclick="staffPinPress(9)">9</div>
-    <div class="num blank"></div><div class="num" onclick="staffPinPress(0)">0</div><div class="num" onclick="staffPinPress('del')">⌫</div>
-  </div>
-  <button class="btn-out" style="width:200px;margin-top:8px;" onclick="go('s-welcome')">CANCEL</button>
 </div>
 
-<!-- ══════════════════════════════════════
-     STAFF HOME — PLAYERS TAB
-══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════ STAFF HOME ══ -->
 <div class="screen" id="s-staff-home" style="padding-top:4px;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
     <div style="font-size:8px;color:var(--p);text-shadow:0 0 6px var(--p);">THE NOOK</div>
@@ -307,24 +278,19 @@
       <div style="padding:9px 12px 7px;border-bottom:1px solid rgba(255,0,255,.15);">
         <div class="lbl-p">ALL PLAYERS</div>
       </div>
-      <div id="staff-customer-list" style="max-height:220px;overflow-y:auto;"></div>
+      <!-- FIX 4: removed max-height:220px + overflow-y:auto — no more scroll trap -->
+      <div id="staff-customer-list"></div>
     </div>
   </div>
   <div class="snav-bar">
-    <button class="snav-btn active" id="snb-players" onclick="go('s-staff-home')">
-      <span class="ni">👥</span>PLAYERS</button>
-    <button class="snav-btn" id="snb-scan" onclick="staffGoScan()">
-      <span class="ni">📷</span>SCANNER</button>
-    <button class="snav-btn adm-entry" onclick="go('s-admin-login')">
-      <span class="ni">🛡</span>ADMIN</button>
-    <button class="snav-btn nav-btn-logout" onclick="doStaffLogout()">
-      <span class="ni">⏻</span>LOGOUT</button>
+    <button class="snav-btn active" id="snb-players" onclick="go('s-staff-home')"><span class="ni">👥</span>PLAYERS</button>
+    <button class="snav-btn" id="snb-scan" onclick="staffGoScan()"><span class="ni">📷</span>SCANNER</button>
+    <button class="snav-btn adm-entry" onclick="go('s-admin-login')"><span class="ni">🛡</span>ADMIN</button>
+    <button class="snav-btn nav-btn-logout" onclick="doStaffLogout()"><span class="ni">⏻</span>LOGOUT</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     STAFF — SCANNER TAB
-══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════ STAFF SCANNER ══ -->
 <div class="screen" id="s-staff-scanner" style="padding-top:4px;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
     <div style="font-size:8px;color:var(--p);">QR SCANNER</div>
@@ -351,26 +317,19 @@
       <div style="display:flex;gap:6px;">
         <input id="scan-phone" placeholder="5081234567" type="tel" style="font-size:7px;"
                onkeydown="if(event.key==='Enter')doPhoneScan()"/>
-        <button class="btn btn-b" style="width:auto;padding:12px;margin-bottom:0;flex-shrink:0;"
-                onclick="doPhoneScan()">GO</button>
+        <button class="btn btn-b" style="width:auto;padding:12px;margin-bottom:0;flex-shrink:0;" onclick="doPhoneScan()">GO</button>
       </div>
     </div>
   </div>
   <div class="snav-bar">
-    <button class="snav-btn" onclick="go('s-staff-home')">
-      <span class="ni">👥</span>PLAYERS</button>
-    <button class="snav-btn active" onclick="staffGoScan()">
-      <span class="ni">📷</span>SCANNER</button>
-    <button class="snav-btn adm-entry" onclick="go('s-admin-login')">
-      <span class="ni">🛡</span>ADMIN</button>
-    <button class="snav-btn nav-btn-logout" onclick="doStaffLogout()">
-      <span class="ni">⏻</span>LOGOUT</button>
+    <button class="snav-btn" onclick="go('s-staff-home')"><span class="ni">👥</span>PLAYERS</button>
+    <button class="snav-btn active" onclick="staffGoScan()"><span class="ni">📷</span>SCANNER</button>
+    <button class="snav-btn adm-entry" onclick="go('s-admin-login')"><span class="ni">🛡</span>ADMIN</button>
+    <button class="snav-btn nav-btn-logout" onclick="doStaffLogout()"><span class="ni">⏻</span>LOGOUT</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     STAFF DETAIL (stamp screen)
-══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════ STAFF DETAIL ══ -->
 <div class="screen" id="s-staff-detail" style="padding-top:4px;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
     <button class="back" style="margin-bottom:0;" onclick="go('s-staff-home')">◀ PLAYERS</button>
@@ -405,33 +364,31 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     ADMIN LOGIN
-══════════════════════════════════════ -->
-<div class="screen" id="s-admin-login"
-     style="align-items:center;justify-content:center;text-align:center;padding-top:20px;">
-  <div style="font-size:26px;margin-bottom:10px;filter:drop-shadow(0 0 9px var(--adm))">🛡</div>
-  <div style="font-size:10px;color:var(--adm);text-shadow:0 0 10px var(--adm);margin-bottom:4px;">ADMIN ACCESS</div>
-  <div style="font-size:6px;color:rgba(176,96,255,.4);margin-bottom:4px;letter-spacing:.1em;">THE NOOK · FAIRHAVEN</div>
-  <div class="pin-row" id="apin-row">
-    <div class="pin-dot" id="apd0" style="border-color:rgba(176,96,255,.22);"></div>
-    <div class="pin-dot" id="apd1" style="border-color:rgba(176,96,255,.22);"></div>
-    <div class="pin-dot" id="apd2" style="border-color:rgba(176,96,255,.22);"></div>
-    <div class="pin-dot" id="apd3" style="border-color:rgba(176,96,255,.22);"></div>
+<!-- ══════════════════════════════════════ ADMIN LOGIN ══
+     FIX 5: .scroll wrapper prevents clipping on landscape / small phones -->
+<div class="screen" id="s-admin-login" style="align-items:center;padding-top:20px;">
+  <div class="scroll" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+    <div style="font-size:26px;margin-bottom:10px;filter:drop-shadow(0 0 9px var(--adm))">🛡</div>
+    <div style="font-size:10px;color:var(--adm);text-shadow:0 0 10px var(--adm);margin-bottom:4px;">ADMIN ACCESS</div>
+    <div style="font-size:6px;color:rgba(176,96,255,.4);margin-bottom:4px;letter-spacing:.1em;">THE NOOK · FAIRHAVEN</div>
+    <div class="pin-row" id="apin-row">
+      <div class="pin-dot" id="apd0" style="border-color:rgba(176,96,255,.22);"></div>
+      <div class="pin-dot" id="apd1" style="border-color:rgba(176,96,255,.22);"></div>
+      <div class="pin-dot" id="apd2" style="border-color:rgba(176,96,255,.22);"></div>
+      <div class="pin-dot" id="apd3" style="border-color:rgba(176,96,255,.22);"></div>
+    </div>
+    <div id="apin-err" style="font-size:7px;color:var(--r);min-height:16px;margin-bottom:10px;letter-spacing:.08em;"></div>
+    <div class="numpad">
+      <div class="num num-adm" onclick="adminPinPress(1)">1</div><div class="num num-adm" onclick="adminPinPress(2)">2</div><div class="num num-adm" onclick="adminPinPress(3)">3</div>
+      <div class="num num-adm" onclick="adminPinPress(4)">4</div><div class="num num-adm" onclick="adminPinPress(5)">5</div><div class="num num-adm" onclick="adminPinPress(6)">6</div>
+      <div class="num num-adm" onclick="adminPinPress(7)">7</div><div class="num num-adm" onclick="adminPinPress(8)">8</div><div class="num num-adm" onclick="adminPinPress(9)">9</div>
+      <div class="num blank"></div><div class="num num-adm" onclick="adminPinPress(0)">0</div><div class="num num-adm" onclick="adminPinPress('del')">⌫</div>
+    </div>
+    <button class="btn-out" style="width:200px;margin-top:8px;border-color:rgba(176,96,255,.4);color:var(--adm);" onclick="go('s-staff-home')">CANCEL</button>
   </div>
-  <div id="apin-err" style="font-size:7px;color:var(--r);min-height:16px;margin-bottom:10px;letter-spacing:.08em;"></div>
-  <div class="numpad">
-    <div class="num num-adm" onclick="adminPinPress(1)">1</div><div class="num num-adm" onclick="adminPinPress(2)">2</div><div class="num num-adm" onclick="adminPinPress(3)">3</div>
-    <div class="num num-adm" onclick="adminPinPress(4)">4</div><div class="num num-adm" onclick="adminPinPress(5)">5</div><div class="num num-adm" onclick="adminPinPress(6)">6</div>
-    <div class="num num-adm" onclick="adminPinPress(7)">7</div><div class="num num-adm" onclick="adminPinPress(8)">8</div><div class="num num-adm" onclick="adminPinPress(9)">9</div>
-    <div class="num blank"></div><div class="num num-adm" onclick="adminPinPress(0)">0</div><div class="num num-adm" onclick="adminPinPress('del')">⌫</div>
-  </div>
-  <button class="btn-out" style="width:200px;margin-top:8px;border-color:rgba(176,96,255,.4);color:var(--adm);" onclick="go('s-staff-home')">CANCEL</button>
 </div>
 
-<!-- ══════════════════════════════════════
-     ADMIN — DASHBOARD TAB
-══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════ ADMIN DASHBOARD ══ -->
 <div class="screen" id="s-admin-dash" style="padding-top:4px;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
     <div style="font-size:8px;color:var(--adm);text-shadow:0 0 6px var(--adm);">THE NOOK</div>
@@ -450,8 +407,7 @@
       </div>
     </div>
     <div class="g2" style="margin-bottom:8px;">
-      <div style="background:rgba(255,238,0,.07);border:2px solid var(--y);box-shadow:3px 3px 0 #222200;
-           text-align:center;padding:9px;position:relative;">
+      <div style="background:rgba(255,238,0,.07);border:2px solid var(--y);box-shadow:3px 3px 0 #222200;text-align:center;padding:9px;">
         <div style="font-size:5px;color:var(--y);margin-bottom:4px;">COFFEES REDEEMED</div>
         <div style="font-size:20px;color:var(--y);text-shadow:0 0 10px var(--y);" id="db-redeemed">0</div>
       </div>
@@ -489,9 +445,7 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     ADMIN — REDEMPTIONS TAB
-══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════ ADMIN REDEMPTIONS ══ -->
 <div class="screen" id="s-admin-rdm" style="padding-top:4px;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
     <div style="font-size:8px;color:var(--adm);">🎁 REDEMPTION LOG</div>
@@ -509,9 +463,7 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     ADMIN — PLAYERS TAB
-══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════ ADMIN PLAYERS ══ -->
 <div class="screen" id="s-admin-players" style="padding-top:4px;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
     <div style="font-size:8px;color:var(--adm);">👥 ALL PLAYERS</div>
@@ -521,6 +473,7 @@
     <input id="admin-search" placeholder="SEARCH BY NAME OR PHONE..."
            style="font-size:7px;border-color:var(--adm);color:var(--adm);margin-bottom:10px;"
            oninput="renderAdminPlayerList()"/>
+    <!-- FIX 4: no scroll trap here either -->
     <div id="admin-player-list" style="border:2px solid rgba(176,96,255,.2);overflow:hidden;"></div>
   </div>
   <div class="anav-bar">
@@ -532,9 +485,7 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     ADMIN — SCANNER TAB
-══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════ ADMIN SCANNER ══ -->
 <div class="screen" id="s-admin-scan" style="padding-top:4px;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
     <div style="font-size:8px;color:var(--adm);">📷 SCANNER</div>
@@ -544,7 +495,7 @@
     <div class="scan-box scan-box-adm">
       <div id="qr-reader-adm"></div>
       <div id="scan-ph-adm">
-        <div class="sc-corners" style="--b:var(--adm);">
+        <div class="sc-corners">
           <div class="corner tl" style="border-color:var(--adm);"></div>
           <div class="corner tr" style="border-color:var(--adm);"></div>
           <div class="corner bl" style="border-color:var(--adm);"></div>
@@ -564,8 +515,7 @@
         <input id="scan-phone-adm" placeholder="5081234567" type="tel"
                style="font-size:7px;border-color:var(--adm);color:var(--adm);"
                onkeydown="if(event.key==='Enter')doAdminPhoneScan()"/>
-        <button class="btn btn-adm" style="width:auto;padding:12px;margin-bottom:0;flex-shrink:0;"
-                onclick="doAdminPhoneScan()">GO</button>
+        <button class="btn btn-adm" style="width:auto;padding:12px;margin-bottom:0;flex-shrink:0;" onclick="doAdminPhoneScan()">GO</button>
       </div>
     </div>
   </div>
@@ -578,9 +528,7 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     ADMIN DETAIL  (full card + controls)
-══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════ ADMIN DETAIL ══ -->
 <div class="screen" id="s-admin-detail" style="padding-top:4px;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
     <button class="back" style="margin-bottom:0;" onclick="go('s-admin-players')">◀ PLAYERS</button>
@@ -595,7 +543,6 @@
       </div>
     </div>
     <div id="ad-offers" style="margin-bottom:4px;"></div>
-    <!-- Stamp card with add + remove -->
     <div class="card" style="margin-bottom:8px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
         <span style="font-size:7px;color:var(--g);">☕ STAMPS</span>
@@ -608,7 +555,6 @@
         <button class="btn-sm btn-sm-r" id="ad-rm-btn" onclick="adRemoveStamp()" style="flex:1;">– REMOVE</button>
       </div>
     </div>
-    <!-- Rewards + grant/redeem -->
     <div class="card" style="margin-bottom:8px;">
       <div style="font-size:7px;color:rgba(0,255,136,.45);margin-bottom:8px;">🏆 PENDING REWARDS</div>
       <div id="ad-rewards-list"></div>
@@ -619,7 +565,6 @@
     </div>
     <button class="btn btn-r" id="sd-btn-redeem-adm" onclick="adRedeemCoffee()">★ REDEEM FREE COFFEE ★</button>
     <button class="btn btn-p" id="ad-btn-bday" style="display:none;" onclick="adGrantBirthday()">🎂 GRANT BIRTHDAY REWARD</button>
-    <!-- Visit history -->
     <div class="card-b">
       <div class="lbl" style="margin-bottom:8px;">📜 VISIT HISTORY</div>
       <div id="ad-hist-list"></div>
@@ -628,899 +573,16 @@
 </div>
 
 </div><!-- /phone -->
-<script>
-'use strict';
-// ═══════════════════════════════════════════
-// EDGE FUNCTION CONFIG
-// ═══════════════════════════════════════════
-const EDGE      = 'https://ivqftezvshaywludmteu.supabase.co/functions/v1';
-const ANON_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cWZ0ZXp2c2hheXdsdWRtdGV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTQyMDQsImV4cCI6MjA4ODkzMDIwNH0.P7ZCHzhL6LVfb8BPg157T7Jw0YNSX3WLopM5UOTYj2w';
-const SUPA_URL = 'https://ivqftezvshaywludmteu.supabase.co';
-const sb = window.supabase.createClient(SUPA_URL, ANON_KEY);
-async function signInWithEmail(email, password) {
-  const { data, error } = await sb.auth.signInWithPassword({
-    email,
-    password
-  });
-  if (error) throw error;
-  return data;
-}
 
-async function getCurrentUser() {
-  const { data, error } = await sb.auth.getUser();
-  if (error) throw error;
-  return data.user;
-}
+<!-- JS — load order matters: config → db → utils → auth → customer → staff → admin → app -->
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/customer.js"></script>
+<script src="js/staff.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/app.js"></script>
 
-async function getMyProfile() {
-  const user = await getCurrentUser();
-  if (!user) return null;
-
-  const { data, error } = await sb
-    .from('profiles')
-    .select('id, email, full_name, role')
-    .eq('id', user.id)
-    .single();
-
-  if (error) throw error;
-  return data;
-}
-
-async function signOutAuthUser() {
-  const { error } = await sb.auth.signOut();
-  if (error) throw error;
-}
-// ═══════════════════════════════════════════
-// CONFIG
-// ═══════════════════════════════════════════
-const PHONE_RE   = /^[0-9]{10}$/;
-const REWARD_EXP = 90;
-
-// ═══════════════════════════════════════════
-// EDGE FETCH — all server calls go here
-// ═══════════════════════════════════════════
-async function callEdge(fn, body, token = null) {
-  const headers = {
-    'Content-Type': 'application/json',
-    'apikey': ANON_KEY,
-    // Supabase requires Authorization even on --no-verify-jwt functions
-    // for the CORS preflight to pass at the infrastructure level
-    'Authorization': `Bearer ${token || ANON_KEY}`,
-  };
-
-  // 10-second timeout so we never hang silently
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 10000);
-
-  let res;
-  try {
-    res = await fetch(`${EDGE}/${fn}`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-      signal: controller.signal,
-    });
-  } catch (e) {
-    clearTimeout(timer);
-    const msg = e.name === 'AbortError'
-      ? `Timeout calling ${fn} — check Edge Function logs`
-      : `Network error calling ${fn}: ${e.message}`;
-    console.error(msg, e);
-    throw new Error(msg);
-  }
-  clearTimeout(timer);
-
-  const data = await res.json().catch(() => ({ error: 'Bad JSON response' }));
-  console.log(`[${fn}] ${res.status}`, data);
-  if (!res.ok) throw new Error(data.error || `HTTP ${res.status} from ${fn}`);
-  return data;
-}
-
-// ═══════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════
-let staffPin='', adminPin='';
-let lastStampTime=0, coolTimer=null;
-let currentCustomer=null;
-let selectedCustomer=null;
-let adminCustomer=null;
-let staffList=[];
-let cameraActive=false, html5QrCode=null;
-let admCamActive=false,  html5QrCodeAdm=null;
-
-// JWT tokens — sessionStorage so they die when the tab closes
-let staffToken = sessionStorage.getItem('nook_staff_token') || null;
-let adminToken = sessionStorage.getItem('nook_admin_token') || null;
-
-function saveStaffToken(t){ staffToken=t; sessionStorage.setItem('nook_staff_token',t); }
-function saveAdminToken(t){ adminToken=t; sessionStorage.setItem('nook_admin_token',t); }
-function clearStaffToken(){ staffToken=null; sessionStorage.removeItem('nook_staff_token'); }
-function clearAdminToken(){ adminToken=null; sessionStorage.removeItem('nook_admin_token'); }
-
-// ═══════════════════════════════════════════
-// LOADING OVERLAY
-// ═══════════════════════════════════════════
-function showBusy(on){
-  const el=document.getElementById('busy-overlay');
-  el.style.display=on?'flex':'none';
-}
-
-// ═══════════════════════════════════════════
-// EDGE DB HELPERS (replace supabase client)
-// ═══════════════════════════════════════════
-async function dbGetByPhone(phone){
-  try{const d=await callEdge('nook-read',{action:'getByPhone',phone});return d.customer||null;}
-  catch(e){console.error('dbGetByPhone:',e);return null;}
-}
-async function dbGetById(id){
-  try{const d=await callEdge('nook-read',{action:'getById',id});return d.customer||null;}
-  catch(e){console.error('dbGetById:',e);return null;}
-}
-async function dbGetAll(){
-  try{const d=await callEdge('nook-read',{action:'getAll'});return d.customers||[];}
-  catch(e){console.error('dbGetAll:',e);return[];}
-}
-async function refreshCustomer(id){
-  const fresh=await dbGetById(id);
-  if(!fresh) return null;
-  if(currentCustomer?.id===id)  currentCustomer=fresh;
-  if(selectedCustomer?.id===id) selectedCustomer=fresh;
-  if(adminCustomer?.id===id)    adminCustomer=fresh;
-  const li=staffList.findIndex(x=>x.id===id);
-  if(li>=0) staffList[li]=fresh;
-  return fresh;
-}
-
-// ═══════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════
-async function go(id){
-  if(id!=='s-staff-scanner') stopCamera();
-  if(id!=='s-admin-scan')    stopAdminCamera();
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  const renders={
-    's-c-rewards':    renderCustomerRewards,
-    's-c-history':    renderCustomerHistory,
-    's-c-settings':   renderCustomerSettings,
-    's-leaderboard':  renderLeaderboard,
-    's-staff-home':   renderStaffHome,
-    's-staff-detail': renderStaffDetail,
-    's-admin-dash':   renderAdminDash,
-    's-admin-rdm':    renderAdminRdm,
-    's-admin-players':loadAdminPlayerList,
-    's-admin-detail': renderAdminDetail,
-  };
-  if(renders[id]) await renders[id]();
-}
-function adminGoTab(tab){go('s-admin-'+tab);}
-function staffGoScan(){
-  document.getElementById('qr-reader').style.display='none';
-  document.getElementById('scan-placeholder').style.display='block';
-  go('s-staff-scanner');
-}
-
-// ═══════════════════════════════════════════
-// TOAST
-// ═══════════════════════════════════════════
-function showToast(msg,type='ok'){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.className='toast '+type;
-  setTimeout(()=>t.classList.add('show'),10);
-  setTimeout(()=>t.classList.remove('show'),3000);
-}
-
-// ═══════════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════════
-function genId(){return "NOOK-"+String(Math.floor(Math.random()*9000)+1000);}
-function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function addDays(ds,n){const d=new Date(ds+'T12:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10);}
-function daysLeft(ds){return Math.ceil((new Date(ds+'T12:00:00')-new Date())/864e5);}
-function isBirthdayMonth(c){
-  if(!c?.birthday)return false;
-  return new Date(c.birthday+'T12:00:00').getMonth()===new Date().getMonth();
-}
-function bdayUsed(c){return c.birthdayYear===new Date().getFullYear();}
-function pendingRewards(c){const t=todayStr();return(c.rewards||[]).filter(r=>!r.redeemed&&r.expires>=t);}
-function renderHPBar(el,stamps,max=10){
-  el.innerHTML=Array.from({length:max},(_,i)=>`<div class="hp-pip ${i<stamps?'on':''}"></div>`).join('');
-}
-function renderOffers(cid,c){
-  let h='';
-  if(c&&isBirthdayMonth(c)&&!bdayUsed(c)) h+=`<div class="offer-banner bday"><span class="ob-icon">🎂</span><div class="ob-text">BIRTHDAY MONTH, ${c.name}!<br>FREE COFFEE WAITING</div></div>`;
-  document.getElementById(cid).innerHTML=h;
-}
-const H_ICO={stamp:'☕',reward:'🏆',birthday:'🎂'};
-const H_LBL={stamp:'STAMP ADDED',reward:'FREE COFFEE',birthday:'BIRTHDAY REWARD'};
-function renderHistList(elId,c){
-  const h=(c.history||[]).slice().reverse();
-  if(!h.length){document.getElementById(elId).innerHTML='<div style="font-size:6px;color:rgba(0,255,136,.2);padding:8px;text-align:center;">NO ACTIVITY YET</div>';return;}
-  document.getElementById(elId).innerHTML=h.map(e=>`
-    <div class="hist-item">
-      <span class="hist-icon">${H_ICO[e.type]||'•'}</span>
-      <div class="hist-text">${H_LBL[e.type]||e.type}${e.note?`<div style="font-size:5px;color:rgba(0,229,255,.35);margin-top:1px;">${e.note}</div>`:''}</div>
-      <span class="hist-date">${e.date}</span>
-    </div>`).join('');
-}
-
-// ═══════════════════════════════════════════
-// REWARD CHIPS
-// ═══════════════════════════════════════════
-function renderRewardChips(elId,c,showBtn,fnName){
-  const all=(c.rewards||[]).filter(r=>!r.redeemed);
-  if(!all.length){document.getElementById(elId).innerHTML='<div style="font-size:6px;color:rgba(0,255,136,.2);padding:6px 0;">NO PENDING REWARDS</div>';return;}
-  document.getElementById(elId).innerHTML=all.map(r=>{
-    const left=daysLeft(r.expires),expired=left<=0,warn=left>0&&left<=14;
-    const cls=expired?'dead':warn?'warn':'';
-    const col=expired?'var(--r)':warn?'var(--o)':'var(--g)';
-    return `<div class="reward-chip ${cls}">
-      <div>
-        <div style="font-size:7px;color:${col};margin-bottom:2px;">☕ FREE COFFEE</div>
-        <div style="font-size:5px;color:rgba(0,229,255,.35);">
-          ${expired?'EXPIRED':'EXPIRES'} ${r.expires}${!expired?' ('+left+'d LEFT)':''}
-          ${r.note?' · '+r.note:''}
-        </div>
-      </div>
-      ${showBtn&&!expired?`<button class="btn-sm btn-sm-g" onclick="${fnName}('${r.id}')">REDEEM</button>`:''}
-    </div>`;
-  }).join('');
-}
-
-// ═══════════════════════════════════════════
-// QR CODE
-// ═══════════════════════════════════════════
-function drawQR(id,elId){
-  const el=document.getElementById(elId);
-  el.innerHTML='';
-  if(typeof QRCode==='undefined') return;
-  new QRCode(el,{text:id,width:110,height:110,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
-}
-
-// ═══════════════════════════════════════════
-// SIGN IN / OUT
-// ═══════════════════════════════════════════
-async function doSignIn(){
-  const phone=document.getElementById('w-phone').value.trim();
-  if(!PHONE_RE.test(phone)){showToast('ENTER A VALID 10-DIGIT PHONE','err');return;}
-  showBusy(true);
-  const c=await dbGetByPhone(phone);
-  showBusy(false);
-  if(!c){showToast('PHONE NOT FOUND — CREATE ACCOUNT?','err');return;}
-  currentCustomer=c;
-  document.getElementById('w-phone').value='';
-  showToast('WELCOME BACK '+c.name+'!');
-  go('s-c-rewards');
-}
-function doSignOut(){currentCustomer=null;go('s-welcome');showToast('SEE YOU SOON! ☕','info');}
-
-// ═══════════════════════════════════════════
-// CREATE ACCOUNT
-// ═══════════════════════════════════════════
-async function doCreate(){
-  const name=document.getElementById('c-name').value.trim().toUpperCase();
-  const phone=document.getElementById('c-phone').value.trim();
-  if(!name||!phone){showToast('FILL ALL FIELDS','err');return;}
-  if(!PHONE_RE.test(phone)){showToast('INVALID PHONE NUMBER','err');return;}
-  const bday=getBday('c-bm','c-bd','c-by');
-  const nc={id:genId(),name,phone,birthday:bday,since:todayStr()};
-  showBusy(true);
-  try{
-    await callEdge('nook-customer',{action:'create',...nc});
-    currentCustomer=await dbGetByPhone(phone);
-    showBusy(false);
-    document.getElementById('c-name').value='';
-    document.getElementById('c-phone').value='';
-    ['c-bm','c-bd','c-by'].forEach(id=>document.getElementById(id).value='');
-    showToast('★ WELCOME '+nc.name+'! ★');
-    go('s-c-rewards');
-  }catch(e){
-    showBusy(false);
-    showToast(e.message||'ERROR CREATING ACCOUNT','err');
-  }
-}
-
-// ═══════════════════════════════════════════
-// CUSTOMER SCREENS
-// ═══════════════════════════════════════════
-async function renderCustomerRewards(){
-  if(!currentCustomer) return;
-  showBusy(true);
-  const fresh=await dbGetById(currentCustomer.id);
-  showBusy(false);
-  if(fresh) currentCustomer=fresh;
-  const c=currentCustomer;
-  document.getElementById('c-header-name').textContent=c.name;
-  renderOffers('c-offers',c);
-  drawQR(c.id,'c-qr');
-  document.getElementById('c-qr-id').textContent=c.id;
-  document.getElementById('c-stamp-lbl').textContent=c.stamps+'/10';
-  renderHPBar(document.getElementById('c-stamps'),c.stamps);
-  document.getElementById('c-prog').style.width=(c.stamps/10*100)+'%';
-  document.getElementById('c-prog-t').textContent=c.stamps>=10?'FULL!':c.stamps+'/10';
-  renderRewardChips('c-rewards-list',c,false,'');
-  document.getElementById('c-total-r').textContent=(c.rewards||[]).filter(r=>r.redeemed).length;
-  document.getElementById('c-total-v').textContent=c.visits||0;
-}
-async function renderCustomerHistory(){
-  if(!currentCustomer) return;
-  document.getElementById('c-hist-name').textContent=currentCustomer.name;
-  renderHistList('c-history-list',currentCustomer);
-}
-async function renderCustomerSettings(){
-  const c=currentCustomer; if(!c) return;
-  document.getElementById('c-set-name').textContent=c.name;
-  document.getElementById('s-name').value=c.name;
-  document.getElementById('s-id').textContent=c.id;
-  document.getElementById('s-phone').textContent=c.phone;
-  document.getElementById('s-since').textContent=c.since||'—';
-  if(c.birthday){
-    const [y,m,d]=c.birthday.split('-');
-    const mo=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-    document.getElementById('s-bday-val').textContent=mo[parseInt(m,10)-1]+' '+parseInt(d,10)+', '+y;
-    document.getElementById('s-bday-locked').style.display='block';
-    document.getElementById('s-bday-dropdowns').style.display='none';
-  } else {
-    document.getElementById('s-bday-locked').style.display='none';
-    document.getElementById('s-bday-dropdowns').style.display='block';
-  }
-}
-async function doSaveSettings(){
-  const c=currentCustomer; if(!c) return;
-  const name=document.getElementById('s-name').value.trim().toUpperCase();
-  if(!name){showToast('NAME CANNOT BE EMPTY','err');return;}
-  const payload={action:'updateSettings',customerId:c.id,name};
-  if(!c.birthday){
-    const bday=getBday('s-bm','s-bd','s-by');
-    if(bday) payload.birthday=bday;
-  }
-  showBusy(true);
-  try{
-    await callEdge('nook-customer',payload);
-    currentCustomer=await dbGetById(c.id);
-    showBusy(false);
-    document.getElementById('c-set-name').textContent=currentCustomer.name;
-    document.getElementById('c-header-name').textContent=currentCustomer.name;
-    showToast('✓ SETTINGS SAVED');
-    renderCustomerSettings();
-  }catch(e){
-    showBusy(false);
-    showToast(e.message||'SAVE FAILED','err');
-  }
-}
-
-// ═══════════════════════════════════════════
-// LEADERBOARD
-// ═══════════════════════════════════════════
-async function renderLeaderboard(){
-  showBusy(true);
-  const all=await dbGetAll();
-  showBusy(false);
-  const sorted=[...all].sort((a,b)=>(b.rewards||[]).filter(r=>r.redeemed).length-(a.rewards||[]).filter(r=>r.redeemed).length);
-  const medals=['🥇','🥈','🥉'];
-  document.getElementById('lb-list').innerHTML=sorted.length===0
-    ?'<div style="font-size:6px;color:rgba(0,255,136,.2);padding:14px;text-align:center;">NO PLAYERS YET</div>'
-    :sorted.map((c,i)=>{
-      const rd=(c.rewards||[]).filter(r=>r.redeemed).length;
-      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(0,255,136,.08);">
-        <div style="font-size:13px;width:22px;text-align:center;flex-shrink:0;color:${i===0?'var(--y)':i===1?'rgba(200,200,200,.9)':'rgba(200,140,80,.9)'}">
-          ${i<3?medals[i]:(i+1)}</div>
-        <div style="flex:1;">
-          <div style="font-size:8px;color:var(--g);">${c.name}</div>
-          <div style="font-size:5px;color:rgba(0,229,255,.3);margin-top:2px;">${c.id}</div>
-        </div>
-        <div style="text-align:right;">
-          <div style="font-size:7px;color:var(--y);">${rd} ☕</div>
-          <div style="font-size:5px;color:rgba(0,255,136,.3);margin-top:2px;">${c.stamps}/10 STAMPS</div>
-        </div>
-      </div>`;
-    }).join('');
-}
-
-// ═══════════════════════════════════════════
-// STAFF PIN — validates server-side
-// ═══════════════════════════════════════════
-function updateStaffPinUI(){
-  for(let i=0;i<4;i++){
-    const d=document.getElementById('spd'+i);
-    d.innerHTML=i<staffPin.length?'<div class="pin-pip"></div>':'';
-    d.classList.toggle('on',i<staffPin.length); d.classList.remove('err');
-  }
-}
-function staffPinPress(k){
-  if(k==='del'){staffPin=staffPin.slice(0,-1);updateStaffPinUI();return;}
-  if(staffPin.length>=4) return;
-  staffPin+=String(k); updateStaffPinUI();
-  if(staffPin.length===4){
-    setTimeout(async ()=>{
-      showBusy(true);
-      try{
-        const {token}=await callEdge('nook-auth',{pin:staffPin,role:'staff'});
-        staffPin=''; updateStaffPinUI();
-        saveStaffToken(token);
-        showBusy(false);
-        go('s-staff-home');
-      }catch(e){
-        showBusy(false);
-        staffPin=''; updateStaffPinUI();
-        document.getElementById('spin-err').textContent='!! WRONG PIN !!';
-        document.getElementById('spin-row').classList.add('shake');
-        for(let i=0;i<4;i++) document.getElementById('spd'+i).classList.add('err');
-        setTimeout(()=>{
-          document.getElementById('spin-err').textContent='';
-          document.getElementById('spin-row').classList.remove('shake');
-        },900);
-      }
-    },120);
-  }
-}
-function doStaffLogout(){
-  stopCamera();
-  clearStaffToken();
-  go('s-welcome');
-  showToast('STAFF LOGGED OUT','info');
-}
-
-// ═══════════════════════════════════════════
-// ADMIN PIN — validates server-side
-// ═══════════════════════════════════════════
-function updateAdminPinUI(){
-  for(let i=0;i<4;i++){
-    const d=document.getElementById('apd'+i);
-    d.innerHTML=i<adminPin.length?`<div class="pin-pip" style="background:var(--adm);box-shadow:0 0 6px var(--adm);"></div>`:'';
-    d.classList.toggle('on-adm',i<adminPin.length); d.classList.remove('err');
-  }
-}
-function adminPinPress(k){
-  if(k==='del'){adminPin=adminPin.slice(0,-1);updateAdminPinUI();return;}
-  if(adminPin.length>=4) return;
-  adminPin+=String(k); updateAdminPinUI();
-  if(adminPin.length===4){
-    setTimeout(async ()=>{
-      showBusy(true);
-      try{
-        const {token}=await callEdge('nook-auth',{pin:adminPin,role:'admin'});
-        adminPin=''; updateAdminPinUI();
-        saveAdminToken(token);
-        showBusy(false);
-        go('s-admin-dash');
-      }catch(e){
-        showBusy(false);
-        adminPin=''; updateAdminPinUI();
-        document.getElementById('apin-err').textContent='!! WRONG PIN !!';
-        document.getElementById('apin-row').classList.add('shake');
-        for(let i=0;i<4;i++) document.getElementById('apd'+i).classList.add('err');
-        setTimeout(()=>{
-          document.getElementById('apin-err').textContent='';
-          document.getElementById('apin-row').classList.remove('shake');
-        },900);
-      }
-    },120);
-  }
-}
-function doAdminLogout(){
-  stopAdminCamera();
-  clearAdminToken();
-  go('s-welcome');
-  showToast('ADMIN LOGGED OUT','info');
-}
-
-// ═══════════════════════════════════════════
-// STAFF HOME
-// ═══════════════════════════════════════════
-async function renderStaffHome(){
-  document.getElementById('sh-members').textContent='…';
-  document.getElementById('sh-visits').textContent='…';
-  showBusy(true);
-  staffList=await dbGetAll();
-  showBusy(false);
-  document.getElementById('sh-members').textContent=staffList.length;
-  document.getElementById('sh-visits').textContent=staffList.reduce((a,c)=>a+(c.visits||0),0);
-  renderCustomerList();
-}
-function renderCustomerList(){
-  const q=(document.getElementById('staff-search')?.value||'').toUpperCase();
-  const sorted=[...staffList].filter(c=>!q||c.name.includes(q)||c.phone.includes(q)||c.id.includes(q));
-  const el=document.getElementById('staff-customer-list');
-  if(!sorted.length){el.innerHTML='<div style="font-size:6px;color:rgba(255,0,255,.3);padding:14px;text-align:center;">NO PLAYERS FOUND</div>';return;}
-  el.innerHTML=sorted.map(c=>{
-    const bday=isBirthdayMonth(c)&&!bdayUsed(c)?'🎂 ':'';
-    const pr=pendingRewards(c).length;
-    return `<div class="c-row" onclick="openStaffDetail('${c.id}')">
-      <div class="c-av">${c.name.charAt(0)}</div>
-      <div style="flex:1;">
-        <div style="font-size:8px;color:var(--g);margin-bottom:3px;">${bday}${c.name}</div>
-        <div style="font-size:6px;color:rgba(0,229,255,.4);">${c.phone}</div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-size:7px;color:var(--y);">☕ ${c.stamps}/10</div>
-        ${pr>0?`<div style="font-size:5px;color:var(--g);margin-top:2px;">★ ${pr} REWARD${pr>1?'S':''}</div>`:''}
-      </div>
-    </div>`;
-  }).join('');
-}
-async function openStaffDetail(id){
-  showBusy(true);
-  selectedCustomer=await dbGetById(id);
-  showBusy(false);
-  go('s-staff-detail');
-}
-
-// ═══════════════════════════════════════════
-// STAFF DETAIL
-// ═══════════════════════════════════════════
-async function renderStaffDetail(){
-  const c=selectedCustomer; if(!c) return;
-  document.getElementById('sd-avatar').textContent=c.name.charAt(0);
-  document.getElementById('sd-name').textContent=c.name;
-  const rd=(c.rewards||[]).filter(r=>r.redeemed).length;
-  document.getElementById('sd-meta').textContent=`${c.id}\n${c.phone} · ${rd} REDEEMED · ${c.visits||0} VISITS`;
-  renderOffers('sd-offers',c);
-  document.getElementById('sd-stamp-lbl').textContent=c.stamps+'/10';
-  document.getElementById('sd-ready').style.display=c.stamps>=10?'inline':'none';
-  renderHPBar(document.getElementById('sd-stamps'),c.stamps);
-  document.getElementById('sd-prog').style.width=(c.stamps/10*100)+'%';
-  document.getElementById('sd-prog-t').textContent=c.stamps>=10?'FULL!':c.stamps+'/10';
-  renderRewardChips('sd-rewards-list',c,true,'sdRedeemById');
-  document.getElementById('sd-btn-add').disabled=c.stamps>=10;
-  document.getElementById('sd-btn-redeem').disabled=pendingRewards(c).length===0;
-  document.getElementById('sd-btn-bday').style.display=(isBirthdayMonth(c)&&!bdayUsed(c))?'block':'none';
-}
-
-async function sdAddStamp(){
-  const now=Date.now();
-  if(now-lastStampTime<5000){showToast('WAIT '+Math.ceil((5000-(now-lastStampTime))/1000)+'s','err');return;}
-  lastStampTime=now;
-  if(!staffToken){showToast('SESSION EXPIRED — PLEASE LOG IN AGAIN','err');go('s-staff-login');return;}
-  showBusy(true);
-  try{
-    const {customer}=await callEdge('nook-staff',{action:'addStamp',customerId:selectedCustomer.id},staffToken);
-    selectedCustomer=customer;
-    await refreshCustomer(customer.id);
-    showBusy(false);
-    renderStaffDetail();
-    showToast(customer.stamps===0?'★ FREE COFFEE EARNED! ★':'☕ STAMP ADDED ('+customer.stamps+'/10)');
-    // pip pop animation
-    const pips=document.querySelectorAll('#sd-stamps .hp-pip');
-    const pi=Math.min(customer.stamps>0?customer.stamps-1:9,9);
-    if(pips[pi]){pips[pi].classList.remove('pop');void pips[pi].offsetWidth;pips[pi].classList.add('pop');}
-  }catch(e){
-    showBusy(false);
-    if(e.message.includes('Unauthorized')){showToast('SESSION EXPIRED — LOG IN AGAIN','err');go('s-staff-login');}
-    else showToast(e.message||'ERROR','err');
-  }
-  // cooldown display
-  clearInterval(coolTimer);
-  coolTimer=setInterval(()=>{
-    const r=Math.ceil((5000-(Date.now()-lastStampTime))/1000);
-    const el=document.getElementById('sd-cooldown');
-    if(el) el.textContent=r>0?'COOLDOWN: '+r+'s':'';
-    if(r<=0) clearInterval(coolTimer);
-  },500);
-}
-async function sdRedeemCoffee(){
-  const pr=pendingRewards(selectedCustomer);
-  if(!pr.length){showToast('NO VALID REWARDS','err');return;}
-  await sdRedeemById(pr[0].id);
-}
-async function sdRedeemById(rid){
-  if(!staffToken){showToast('SESSION EXPIRED','err');go('s-staff-login');return;}
-  showBusy(true);
-  try{
-    const {customer}=await callEdge('nook-staff',{action:'redeemReward',customerId:selectedCustomer.id,rewardId:rid},staffToken);
-    selectedCustomer=customer;
-    await refreshCustomer(customer.id);
-    showBusy(false);
-    renderStaffDetail();
-    showToast('★★ FREE COFFEE REDEEMED! ★★');
-  }catch(e){
-    showBusy(false);
-    showToast(e.message||'ERROR','err');
-  }
-}
-async function sdGrantBirthday(){
-  if(!staffToken){showToast('SESSION EXPIRED','err');go('s-staff-login');return;}
-  showBusy(true);
-  try{
-    const {customer}=await callEdge('nook-staff',{action:'grantBirthday',customerId:selectedCustomer.id},staffToken);
-    selectedCustomer=customer;
-    await refreshCustomer(customer.id);
-    showBusy(false);
-    renderStaffDetail();
-    showToast('🎂 BIRTHDAY REWARD GRANTED!','info');
-  }catch(e){
-    showBusy(false);
-    showToast(e.message||'ERROR','err');
-  }
-}
-
-// ═══════════════════════════════════════════
-// STAFF CAMERA
-// ═══════════════════════════════════════════
-function toggleCamera(){cameraActive?stopCamera():startCamera();}
-function startCamera(){
-  const rd=document.getElementById('qr-reader'),ph=document.getElementById('scan-placeholder'),btn=document.getElementById('btn-cam');
-  if(typeof Html5Qrcode==='undefined'){showToast('SCANNER NOT LOADED','err');return;}
-  ph.style.display='none'; rd.style.display='block'; rd.innerHTML='';
-  html5QrCode=new Html5Qrcode("qr-reader");
-  html5QrCode.start({facingMode:"environment"},{fps:10,qrbox:{width:180,height:180}},
-    async decoded=>{
-      const id=decoded.trim();
-      stopCamera();
-      showBusy(true);
-      selectedCustomer=await dbGetById(id);
-      showBusy(false);
-      if(selectedCustomer) go('s-staff-detail');
-      else showToast('QR NOT RECOGNISED','err');
-    },()=>{}
-  ).then(()=>{cameraActive=true;btn.textContent='■ STOP CAMERA';btn.className='btn btn-r';})
-   .catch(()=>{rd.style.display='none';ph.style.display='block';showToast('CAMERA UNAVAILABLE','err');});
-}
-function stopCamera(){
-  if(html5QrCode&&cameraActive){
-    html5QrCode.stop().catch(()=>{}).finally(()=>{
-      html5QrCode=null; cameraActive=false;
-      const btn=document.getElementById('btn-cam');
-      if(btn){btn.textContent='▶ START CAMERA';btn.className='btn btn-b';}
-      const ph=document.getElementById('scan-placeholder'),rd=document.getElementById('qr-reader');
-      if(ph)ph.style.display='block';if(rd){rd.style.display='none';rd.innerHTML='';}
-    });
-  }
-}
-async function doPhoneScan(){
-  const v=document.getElementById('scan-phone').value.trim();
-  showBusy(true);
-  const c=await dbGetByPhone(v);
-  showBusy(false);
-  if(c){selectedCustomer=c;go('s-staff-detail');}
-  else showToast('PLAYER NOT FOUND','err');
-  document.getElementById('scan-phone').value='';
-}
-
-// ═══════════════════════════════════════════
-// ADMIN CAMERA
-// ═══════════════════════════════════════════
-function toggleAdminCamera(){admCamActive?stopAdminCamera():startAdminCamera();}
-function startAdminCamera(){
-  const rd=document.getElementById('qr-reader-adm'),ph=document.getElementById('scan-ph-adm'),btn=document.getElementById('btn-cam-adm');
-  if(typeof Html5Qrcode==='undefined'){showToast('SCANNER NOT LOADED','err');return;}
-  ph.style.display='none'; rd.style.display='block'; rd.innerHTML='';
-  html5QrCodeAdm=new Html5Qrcode("qr-reader-adm");
-  html5QrCodeAdm.start({facingMode:"environment"},{fps:10,qrbox:{width:180,height:180}},
-    async decoded=>{
-      const id=decoded.trim();
-      stopAdminCamera();
-      showBusy(true);
-      adminCustomer=await dbGetById(id);
-      showBusy(false);
-      if(adminCustomer) go('s-admin-detail');
-      else showToast('QR NOT RECOGNISED','err');
-    },()=>{}
-  ).then(()=>{admCamActive=true;btn.textContent='■ STOP CAMERA';btn.className='btn btn-r';})
-   .catch(()=>{rd.style.display='none';ph.style.display='block';showToast('CAMERA UNAVAILABLE','err');});
-}
-function stopAdminCamera(){
-  if(html5QrCodeAdm&&admCamActive){
-    html5QrCodeAdm.stop().catch(()=>{}).finally(()=>{
-      html5QrCodeAdm=null; admCamActive=false;
-      const btn=document.getElementById('btn-cam-adm');
-      if(btn){btn.textContent='▶ START CAMERA';btn.className='btn btn-adm';}
-      const ph=document.getElementById('scan-ph-adm'),rd=document.getElementById('qr-reader-adm');
-      if(ph)ph.style.display='block';if(rd){rd.style.display='none';rd.innerHTML='';}
-    });
-  }
-}
-async function doAdminPhoneScan(){
-  const v=document.getElementById('scan-phone-adm').value.trim();
-  showBusy(true);
-  const c=await dbGetByPhone(v);
-  showBusy(false);
-  if(c){adminCustomer=c;go('s-admin-detail');}
-  else showToast('PLAYER NOT FOUND','err');
-  document.getElementById('scan-phone-adm').value='';
-}
-
-// ═══════════════════════════════════════════
-// ADMIN DASHBOARD
-// ═══════════════════════════════════════════
-async function renderAdminDash(){
-  showBusy(true);
-  staffList=await dbGetAll();
-  showBusy(false);
-  const total=staffList.length;
-  const visits=staffList.reduce((a,c)=>a+(c.visits||0),0);
-  const allRew=staffList.flatMap(c=>c.rewards||[]);
-  const redeemed=allRew.filter(r=>r.redeemed).length;
-  const active=staffList.flatMap(c=>pendingRewards(c)).length;
-  const avgS=total?Math.round(staffList.reduce((a,c)=>a+(c.stamps||0),0)/total*10)/10:0;
-  document.getElementById('db-members').textContent=total;
-  document.getElementById('db-visits').textContent=visits;
-  document.getElementById('db-redeemed').textContent=redeemed;
-  document.getElementById('db-active').textContent=active;
-  document.getElementById('db-avg-bar').style.width=(avgS/10*100)+'%';
-  document.getElementById('db-avg-lbl').textContent=avgS+'/10';
-  document.getElementById('db-avg-text').textContent='AVG '+avgS;
-  const top=[...staffList].sort((a,b)=>(b.rewards||[]).filter(r=>r.redeemed).length-(a.rewards||[]).filter(r=>r.redeemed).length).slice(0,3);
-  const medals=['🥇','🥈','🥉'];
-  document.getElementById('db-top').innerHTML=top.length
-    ?top.map((c,i)=>`<div class="stat-row">
-        <span style="font-size:13px;">${medals[i]}</span>
-        <div style="flex:1;margin-left:8px;"><div style="font-size:7px;color:var(--g);">${c.name}</div>
-          <div style="font-size:5px;color:rgba(0,229,255,.3);margin-top:1px;">${c.id}</div></div>
-        <div style="font-size:7px;color:var(--y);">${(c.rewards||[]).filter(r=>r.redeemed).length} ☕</div>
-      </div>`).join('')
-    :'<div style="font-size:6px;color:rgba(176,96,255,.2);padding:6px;">NO DATA YET</div>';
-  const evts=[];
-  staffList.forEach(c=>(c.history||[]).forEach(h=>evts.push({...h,cname:c.name})));
-  evts.sort((a,b)=>b.date.localeCompare(a.date));
-  document.getElementById('db-activity').innerHTML=evts.slice(0,12).map(e=>`
-    <div class="hist-item">
-      <span class="hist-icon">${H_ICO[e.type]||'•'}</span>
-      <div class="hist-text"><span style="color:var(--g);">${e.cname}</span>
-        <span style="color:rgba(0,229,255,.4);margin-left:8px;font-size:5px;">${H_LBL[e.type]||e.type}</span>
-        ${e.note?`<div style="font-size:5px;color:rgba(0,229,255,.3);">${e.note}</div>`:''}
-      </div>
-      <span class="hist-date">${e.date}</span>
-    </div>`).join('')||'<div style="font-size:6px;color:rgba(176,96,255,.2);padding:6px;">NO ACTIVITY</div>';
-}
-
-// ═══════════════════════════════════════════
-// ADMIN REDEMPTIONS
-// ═══════════════════════════════════════════
-async function renderAdminRdm(){
-  showBusy(true);
-  const all=await dbGetAll();
-  showBusy(false);
-  const rdms=[];
-  all.forEach(c=>(c.rewards||[]).filter(r=>r.redeemed).forEach(r=>
-    rdms.push({name:c.name,id:c.id,date:r.redeemedDate||'–',note:r.note||'10-stamp'})
-  ));
-  rdms.sort((a,b)=>b.date.localeCompare(a.date));
-  document.getElementById('rdm-list').innerHTML=rdms.length===0
-    ?'<div style="font-size:6px;color:rgba(176,96,255,.2);padding:16px;text-align:center;">NO REDEMPTIONS YET</div>'
-    :rdms.map(r=>`<div class="rdm-row">
-        <div style="flex:1;"><div style="font-size:7px;color:var(--g);">${r.name}</div>
-          <div style="font-size:5px;color:rgba(0,229,255,.3);margin-top:1px;">${r.id}</div></div>
-        <div style="text-align:right;">
-          <div style="font-size:6px;color:var(--adm);">☕ ${r.note}</div>
-          <div style="font-size:5px;color:rgba(0,229,255,.35);margin-top:1px;">${r.date}</div>
-        </div>
-      </div>`).join('');
-}
-
-// ═══════════════════════════════════════════
-// ADMIN PLAYER LIST
-// ═══════════════════════════════════════════
-async function loadAdminPlayerList(){
-  showBusy(true);
-  staffList=await dbGetAll();
-  showBusy(false);
-  _renderAdminListFromCache();
-}
-function _renderAdminListFromCache(){
-  const q=(document.getElementById('admin-search')?.value||'').toUpperCase();
-  const sorted=[...staffList].filter(c=>!q||c.name.includes(q)||c.phone.includes(q)||c.id.includes(q));
-  const el=document.getElementById('admin-player-list');
-  el.innerHTML=sorted.length===0
-    ?'<div style="font-size:6px;color:rgba(176,96,255,.2);padding:14px;text-align:center;">NO PLAYERS FOUND</div>'
-    :sorted.map(c=>{
-      const rd=(c.rewards||[]).filter(r=>r.redeemed).length;
-      const pr=pendingRewards(c).length;
-      return `<div class="c-row" onclick="openAdminDetail('${c.id}')">
-        <div class="c-av c-av-adm">${c.name.charAt(0)}</div>
-        <div style="flex:1;">
-          <div style="font-size:8px;color:var(--g);margin-bottom:3px;">${c.name}</div>
-          <div style="font-size:6px;color:rgba(0,229,255,.35);">${c.phone} · ${c.visits||0} visits</div>
-        </div>
-        <div style="text-align:right;">
-          <div style="font-size:7px;color:var(--y);">☕ ${c.stamps}/10</div>
-          <div style="font-size:5px;color:rgba(0,255,136,.4);margin-top:1px;">${rd} redeemed</div>
-          ${pr>0?`<div style="font-size:5px;color:var(--g);margin-top:1px;">★ ${pr} pending</div>`:''}
-        </div>
-      </div>`;
-    }).join('');
-}
-function renderAdminPlayerList(){
-  if(staffList.length) _renderAdminListFromCache();
-  else loadAdminPlayerList();
-}
-async function openAdminDetail(id){
-  showBusy(true);
-  adminCustomer=await dbGetById(id);
-  showBusy(false);
-  go('s-admin-detail');
-}
-
-// ═══════════════════════════════════════════
-// ADMIN DETAIL
-// ═══════════════════════════════════════════
-async function renderAdminDetail(){
-  const c=adminCustomer; if(!c) return;
-  document.getElementById('ad-avatar').textContent=c.name.charAt(0);
-  document.getElementById('ad-name').textContent=c.name;
-  const rd=(c.rewards||[]).filter(r=>r.redeemed).length;
-  document.getElementById('ad-meta').textContent=`${c.id}\n${c.phone} · ${rd} REDEEMED · ${c.visits||0} VISITS`;
-  renderOffers('ad-offers',c);
-  document.getElementById('ad-stamp-lbl').textContent=c.stamps+'/10';
-  renderHPBar(document.getElementById('ad-stamps'),c.stamps);
-  document.getElementById('ad-prog').style.width=(c.stamps/10*100)+'%';
-  document.getElementById('ad-prog-t').textContent=c.stamps>=10?'FULL!':c.stamps+'/10';
-  document.getElementById('ad-rm-btn').disabled=c.stamps<=0;
-  renderRewardChips('ad-rewards-list',c,true,'adRedeemById');
-  const pending=pendingRewards(c).length>0;
-  document.getElementById('ad-redeem-btn').disabled=!pending;
-  document.getElementById('sd-btn-redeem-adm').disabled=!pending;
-  document.getElementById('ad-btn-bday').style.display=(isBirthdayMonth(c)&&!bdayUsed(c))?'block':'none';
-  renderHistList('ad-hist-list',c);
-}
-// Helper: run admin action with JWT, refresh detail
-async function adminAction(action, extra={}){
-  if(!adminToken){showToast('SESSION EXPIRED','err');go('s-admin-login');return;}
-  showBusy(true);
-  try{
-    const {customer}=await callEdge('nook-staff',{action,customerId:adminCustomer.id,...extra},adminToken);
-    adminCustomer=customer;
-    await refreshCustomer(customer.id);
-    showBusy(false);
-    renderAdminDetail();
-  }catch(e){
-    showBusy(false);
-    if(e.message.includes('Unauthorized')){showToast('SESSION EXPIRED — LOG IN AGAIN','err');go('s-admin-login');}
-    else showToast(e.message||'ERROR','err');
-  }
-}
-async function adAddStamp()    { await adminAction('addStamp');    showToast(adminCustomer.stamps===0?'★ FREE COFFEE EARNED! ★':'☕ STAMP ADDED'); }
-async function adRemoveStamp() { await adminAction('removeStamp'); showToast('STAMP REMOVED','info'); }
-async function adGrantReward() { await adminAction('grantReward'); showToast('★ FREE COFFEE GRANTED ★'); }
-async function adGrantBirthday(){ await adminAction('grantBirthday'); showToast('🎂 BIRTHDAY REWARD GRANTED!','info'); }
-async function adRedeemCoffee(){
-  const pr=pendingRewards(adminCustomer);
-  if(!pr.length){showToast('NO VALID REWARDS','err');return;}
-  await adRedeemById(pr[0].id);
-}
-async function adRedeemById(rid){
-  await adminAction('redeemReward',{rewardId:rid});
-  showToast('★★ FREE COFFEE REDEEMED! ★★');
-}
-
-// ═══════════════════════════════════════════
-// BIRTHDAY DROPDOWNS
-// ═══════════════════════════════════════════
-function populateDays(mId,dId,yId){
-  const m=parseInt(document.getElementById(mId).value)||0;
-  const y=parseInt(document.getElementById(yId).value)||2000;
-  const days=m?new Date(y,m,0).getDate():31;
-  const dEl=document.getElementById(dId); const cur=dEl.value;
-  dEl.innerHTML='<option value="">DD</option>';
-  for(let d=1;d<=days;d++){const o=document.createElement('option');o.value=String(d).padStart(2,'0');o.textContent=d;dEl.appendChild(o);}
-  if(cur)dEl.value=cur;
-}
-function initYearSelect(yId){
-  const el=document.getElementById(yId); const cur=new Date().getFullYear();
-  for(let y=cur-5;y>=cur-100;y--){const o=document.createElement('option');o.value=y;o.textContent=y;el.appendChild(o);}
-}
-function getBday(mId,dId,yId){
-  const m=document.getElementById(mId).value,d=document.getElementById(dId).value,y=document.getElementById(yId).value;
-  return (m&&d&&y)?`${y}-${m}-${d}`:'';
-}
-
-// ═══════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════
-initYearSelect('c-by'); initYearSelect('s-by');
-populateDays('c-bm','c-bd','c-by'); populateDays('s-bm','s-bd','s-by');
-document.getElementById('qr-reader').style.display='none';
-document.getElementById('qr-reader-adm').style.display='none';
-window.addEventListener('beforeunload',()=>{stopCamera();stopAdminCamera();});
-
-// ── DVH SHIM ─────────────────────────────────────────────────────────────────
-function setDvh(){
-  const dvh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty('--dvh', dvh + 'px');
-}
-setDvh();
-window.addEventListener('resize', setDvh);
-window.addEventListener('orientationchange', ()=>{ setTimeout(setDvh, 150); });
-</script>
 </body>
 </html>
