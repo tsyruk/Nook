@@ -66,7 +66,27 @@
     </p>
   </div>
 </div>
-
+<!-- ══════════════════════════════════════ CUSTOMER PIN ══ -->
+<div class="screen" id="s-customer-pin" style="align-items:center;padding-top:20px;">
+  <div class="scroll" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+    <div style="font-size:26px;margin-bottom:10px;filter:drop-shadow(0 0 9px var(--g))">🔑</div>
+    <div style="font-size:10px;color:var(--g);text-shadow:0 0 10px var(--g);margin-bottom:4px;" id="cpin-title">ENTER YOUR PIN</div>
+    <div style="font-size:6px;color:rgba(0,255,136,.4);margin-bottom:14px;letter-spacing:.1em;" id="cpin-sub">4-DIGIT PIN</div>
+    <div class="pin-row" id="cpin-row">
+      <div class="pin-dot" id="cpd0"></div><div class="pin-dot" id="cpd1"></div>
+      <div class="pin-dot" id="cpd2"></div><div class="pin-dot" id="cpd3"></div>
+    </div>
+    <div id="cpin-err" style="font-size:7px;color:var(--r);min-height:16px;margin-bottom:10px;letter-spacing:.08em;"></div>
+    <div class="numpad">
+      <div class="num" onclick="customerPinPress(1)">1</div><div class="num" onclick="customerPinPress(2)">2</div><div class="num" onclick="customerPinPress(3)">3</div>
+      <div class="num" onclick="customerPinPress(4)">4</div><div class="num" onclick="customerPinPress(5)">5</div><div class="num" onclick="customerPinPress(6)">6</div>
+      <div class="num" onclick="customerPinPress(7)">7</div><div class="num" onclick="customerPinPress(8)">8</div><div class="num" onclick="customerPinPress(9)">9</div>
+      <div class="num blank"></div><div class="num" onclick="customerPinPress(0)">0</div><div class="num" onclick="customerPinPress('del')">⌫</div>
+    </div>
+    <button class="btn-out" style="width:200px;margin-top:8px;" onclick="go('s-signin')">CANCEL</button>
+  </div>
+</div>
+  
 <!-- ══════════════════════════════════════ CREATE ACCOUNT ══ -->
 <div class="screen" id="s-create" style="padding-top:4px;">
   <div class="scroll">
