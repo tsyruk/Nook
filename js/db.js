@@ -68,3 +68,21 @@ async function refreshCustomer(id) {
   if (li >= 0) staffList[li] = fresh;
   return fresh;
 }
+async function dbCheckPhone(phone) {
+  try {
+    const d = await callEdge('nook-read', { action: 'checkPhone', phone });
+    return d; // { exists, hasPin }
+  } catch (e) { console.error('dbCheckPhone:', e); return { exists: false }; }
+}
+async function dbVerifyPin(phone, pin) {
+  try {
+    const d = await callEdge('nook-read', { action: 'verifyPin', phone, pin });
+    return d.customer || null;
+  } catch (e) { throw e; }
+}
+async function dbGetLeaderboard() {
+  try {
+    const d = await callEdge('nook-read', { action: 'getLeaderboard' });
+    return d.leaderboard || [];
+  } catch (e) { console.error('dbGetLeaderboard:', e); return []; }
+}
