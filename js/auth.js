@@ -3,17 +3,70 @@
 // AUTH — customer sign in / out / create / settings
 // ═══════════════════════════════════════════
 
+let pendingPinPhone = '';
+let customerPin = '';
+let customerPinMode = 'verify'; // 'verify' or 'create'
+
+function updateCustomerPinUI() {
+  for (let i = 0; i < 4; i++) {
+    const d = document.getElementById('cpd' + i);
+    d.innerHTML = i < customerPin.length
+      ? `<div class="pin-pip" style="background:var(--g);box-shadow:0 0 6px var(--g);"></div>` : '';
+    d.classList.toggle('on', i < customerPin.length);
+    d.classList.remove('err');
+  }
+}
+
+function customerPinPress(k) {
+  if (k === 'del') { customerPin = customerPin.slice(0,-1); updateCustomerPinUI(); return; }
+  if (customerPin.length >= 4) return;
+  customerPin += String(k);
+  updateCustomerPinUI();
+  if (customerPin.length === 4) {
+    setTimeout(async () => {
+      showBusy(true);
+      try {
+        const c = await dbVerifyPin(pendingPinPhone, customerPin);
+        customerPin = ''; updateCustomerPinUI();
+        currentCustomer = c;
+        showBusy(false);
+        showToast('WELCOME BACK ' + c.name + '!');
+        go('s-c-rewards');
+      } catch (e) {
+        showBusy(false);
+        customerPin = ''; updateCustomerPinUI();
+        document.getElementById('cpin-err').textContent = e.message || '!! WRONG PIN !!';
+        document.getElementById('cpin-row').classList.add('shake');
+        for (let i = 0; i < 4; i++) document.getElementById('cpd' + i).classList.add('err');
+        setTimeout(() => {
+          document.getElementById('cpin-err').textContent = '';
+          document.getElementById('cpin-row').classList.remove('shake');
+        }, 900);
+      }
+    }, 120);
+  }
+}
+
 async function doSignIn() {
   const phone = document.getElementById('w-phone').value.trim();
   if (!PHONE_RE.test(phone)) { showToast('ENTER A VALID 10-DIGIT PHONE', 'err'); return; }
   showBusy(true);
-  const c = await dbGetByPhone(phone);
+  const result = await dbCheckPhone(phone);
   showBusy(false);
-  if (!c) { showToast('PHONE NOT FOUND — CREATE ACCOUNT?', 'err'); return; }
-  currentCustomer = c;
+  if (!result.exists) { showToast('PHONE NOT FOUND — CREATE ACCOUNT?', 'err'); return; }
+  pendingPinPhone = phone;
+  customerPin = '';
+  updateCustomerPinUI();
+  document.getElementById('cpin-err').textContent = '';
+  if (result.hasPin) {
+    document.getElementById('cpin-title').textContent = 'ENTER YOUR PIN';
+    document.getElementById('cpin-sub').textContent = '4-DIGIT PIN';
+  } else {
+    document.getElementById('cpin-title').textContent = 'CREATE YOUR PIN';
+    document.getElementById('cpin-sub').textContent = 'CHOOSE A 4-DIGIT PIN FOR YOUR ACCOUNT';
+  }
   document.getElementById('w-phone').value = '';
-  showToast('WELCOME BACK ' + c.name + '!');
-  go('s-c-rewards');
+  go('s-customer-pin');
 }
 
 function doSignOut() {
