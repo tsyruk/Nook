@@ -1,0 +1,25 @@
+{
+  "name": "The Nook Loyalty Card",
+  "short_name": "The Nook",
+  "description": "Your digital loyalty card for The Nook Cafe, Fairhaven",
+  "start_url": "/Nook/",
+  "scope": "/Nook/",
+  "display": "standalone",
+  "background_color": "#0b0c20",
+  "theme_color": "#00ff88",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
