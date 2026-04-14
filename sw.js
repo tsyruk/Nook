@@ -1,19 +1,19 @@
 const CACHE = 'nook-v1';
 const ASSETS = [
-  '/Nook/',
-  '/Nook/index.html',
-  '/Nook/css/styles.css',
-  '/Nook/js/config.js',
-  '/Nook/js/db.js',
-  '/Nook/js/utils.js',
-  '/Nook/js/auth.js',
-  '/Nook/js/customer.js',
-  '/Nook/js/staff.js',
-  '/Nook/js/admin.js',
-  '/Nook/js/app.js',
-  '/Nook/manifest.json',
-  '/Nook/icons/icon-192.png',
-  '/Nook/icons/icon-512.png'
+  '/',
+  '/index.html',
+  '/css/styles.css',
+  '/js/config.js',
+  '/js/db.js',
+  '/js/utils.js',
+  '/js/auth.js',
+  '/js/customer.js',
+  '/js/staff.js',
+  '/js/admin.js',
+  '/js/app.js',
+  '/manifest.json',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png'
 ];
 
 // Install: cache all assets
