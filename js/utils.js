@@ -13,8 +13,11 @@ function showToast(msg, type = 'ok') {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast ' + type;
+  // shrink font for long messages so they don't overflow
+  t.style.fontSize = msg.length > 40 ? '6px' : '7px';
   setTimeout(() => t.classList.add('show'), 10);
-  setTimeout(() => t.classList.remove('show'), 3000);
+  const duration = type === 'err' ? 5000 : 3000;
+  setTimeout(() => t.classList.remove('show'), duration);
 }
 
 // ── Data helpers ─────────────────────────
