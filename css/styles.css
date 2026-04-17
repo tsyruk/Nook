@@ -358,6 +358,8 @@ select option { background: #0b0c20; color: var(--g); }
   transform: translateY(-90px);
   transition: transform .18s steps(4);
   z-index: 2000; text-transform: uppercase; letter-spacing: .04em;
+  padding: 12px 14px;
+  line-height: 1.7;
 }
 .toast.show { transform: translateY(0); }
 .toast.err  { border-color: var(--r); color: var(--r); box-shadow: 0 0 14px rgba(255,51,102,.55),  2px 2px 0 #220011; }
