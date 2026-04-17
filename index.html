@@ -580,7 +580,50 @@
     </div>
   </div>
 </div>
-
+<!-- ══════════════════════════════════════ CHANGE PIN ══ -->
+<div class="screen" id="s-change-pin" style="padding-top:4px;">
+  <div class="scroll">
+    <button class="back" onclick="go('s-c-settings')">◀ BACK</button>
+    <div style="font-size:7px;color:var(--g);letter-spacing:.1em;margin-bottom:14px;">🔑 CHANGE PIN</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div style="margin-bottom:12px;">
+        <label class="lbl">CURRENT PIN</label>
+        <div class="numpad" style="margin:8px auto;">
+          <div class="num" onclick="cpPress('old',1)">1</div><div class="num" onclick="cpPress('old',2)">2</div><div class="num" onclick="cpPress('old',3)">3</div>
+          <div class="num" onclick="cpPress('old',4)">4</div><div class="num" onclick="cpPress('old',5)">5</div><div class="num" onclick="cpPress('old',6)">6</div>
+          <div class="num" onclick="cpPress('old',7)">7</div><div class="num" onclick="cpPress('old',8)">8</div><div class="num" onclick="cpPress('old',9)">9</div>
+          <div class="num blank"></div><div class="num" onclick="cpPress('old',0)">0</div><div class="num" onclick="cpPress('old','del')">⌫</div>
+        </div>
+        <div class="pin-row" id="cp-old-row" style="margin:0 auto 4px;">
+          <div class="pin-dot" id="cp-old-0"></div><div class="pin-dot" id="cp-old-1"></div>
+          <div class="pin-dot" id="cp-old-2"></div><div class="pin-dot" id="cp-old-3"></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div style="margin-top:12px;">
+        <label class="lbl">NEW PIN</label>
+        <div class="numpad" style="margin:8px auto;">
+          <div class="num" onclick="cpPress('new',1)">1</div><div class="num" onclick="cpPress('new',2)">2</div><div class="num" onclick="cpPress('new',3)">3</div>
+          <div class="num" onclick="cpPress('new',4)">4</div><div class="num" onclick="cpPress('new',5)">5</div><div class="num" onclick="cpPress('new',6)">6</div>
+          <div class="num" onclick="cpPress('new',7)">7</div><div class="num" onclick="cpPress('new',8)">8</div><div class="num" onclick="cpPress('new',9)">9</div>
+          <div class="num blank"></div><div class="num" onclick="cpPress('new',0)">0</div><div class="num" onclick="cpPress('new','del')">⌫</div>
+        </div>
+        <div class="pin-row" id="cp-new-row" style="margin:0 auto 4px;">
+          <div class="pin-dot" id="cp-new-0"></div><div class="pin-dot" id="cp-new-1"></div>
+          <div class="pin-dot" id="cp-new-2"></div><div class="pin-dot" id="cp-new-3"></div>
+        </div>
+      </div>
+      <div id="cp-err" style="font-size:6px;color:var(--r);min-height:16px;text-align:center;margin-top:6px;line-height:1.8;"></div>
+    </div>
+    <button class="btn btn-g" onclick="doChangePin()">💾 SAVE NEW PIN</button>
+  </div>
+  <div class="nav-bar">
+    <button class="nav-btn" onclick="go('s-c-rewards')"><span class="ni">☕</span>CARD</button>
+    <button class="nav-btn" onclick="go('s-c-history')"><span class="ni">📜</span>LOG</button>
+    <button class="nav-btn active" onclick="go('s-c-settings')"><span class="ni">⚙</span>SETTINGS</button>
+    <button class="nav-btn nav-btn-logout" onclick="doSignOut()"><span class="ni">⏻</span>OUT</button>
+  </div>
+</div>
 </div><!-- /phone -->
 
 <!-- JS — load order matters: config → db → utils → auth → customer → staff → admin → app -->
