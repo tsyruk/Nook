@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<!-- user-scalable=no and maximum-scale=1 removed — they prevented accessibility zooming
+     for users with low vision (WCAG 2.1 AA failure). The DVH shim in app.js handles
+     the iOS Safari toolbar issue without needing to lock zoom. -->
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#07070f"/>
+<link rel="manifest" href="manifest.json">
+<title>THE NOOK</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"
+        integrity="sha384-c9d8RFSL+u3exBOJ4Yp3HUJXS4znl9f+z66d1y54ig+ea249SpqR+w1wyvXz/lk+"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+        integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.4"
+        integrity="sha384-4eCDoMN/7A46qQ5Tj0rZ/D2VEolFGNIINDTLAcWZcvhkRSsvTfqNfaBMlRRoGEZ5"
+        crossorigin="anonymous"></script>
+<link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+<div class="phone">
+
+<div id="busy-overlay" style="display:none;position:absolute;inset:0;background:rgba(7,7,15,.75);z-index:3000;
+  align-items:center;justify-content:center;flex-direction:column;gap:10px;">
+  <div style="font-size:10px;color:var(--g);text-shadow:0 0 10px var(--g);" class="blink">■ ■ ■</div>
+  <div style="font-size:6px;color:rgba(0,255,136,.5);letter-spacing:.12em;">LOADING…</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════════════════════════════ WELCOME ══ -->
+<div class="screen active" id="s-welcome"
+     style="align-items:center;text-align:center;justify-content:center;padding-top:18px;">
+  <div style="font-size:7px;color:var(--b);letter-spacing:.18em;margin-bottom:8px;">PRESS START</div>
+  <div class="title" style="font-size:26px;margin-bottom:4px;">THE<br>NOOK</div>
+  <div style="font-size:6px;color:var(--p);letter-spacing:.06em;margin-bottom:12px;">58 WASHINGTON ST, FAIRHAVEN</div>
+  <div style="font-size:28px;filter:drop-shadow(0 0 9px rgba(0,255,136,.6));margin-bottom:10px;">☕</div>
+  <div class="ticker-wrap" style="width:100%;">
+    <span class="ticker">★ 10 STAMPS = FREE COFFEE ★ BIRTHDAY MONTH = FREE COFFEE ★ REWARDS EXPIRE IN 90 DAYS ★ EARN A STAMP EVERY VISIT ★</span>
+  </div>
+  <div style="width:100%;margin-bottom:6px;">
+    <button class="btn btn-g" onclick="go('s-signin')">[ SIGN IN ]</button>
+    <button class="btn btn-b" onclick="go('s-create')">[ CREATE ACCOUNT ]</button>
+  </div>
+  <div class="divider" style="width:100%;margin-top:8px;"></div>
+  <button onclick="go('s-staff-login')"
+    style="background:none;border:none;font-family:'Press Start 2P',monospace;
+           font-size:7px;color:rgba(0,255,136,.55);cursor:pointer;padding:10px 20px;
+           letter-spacing:.12em;text-transform:uppercase;margin-top:2px;
+           text-shadow:0 0 6px rgba(0,255,136,.25);">· STAFF ·</button>
+  <button class="privacy-link" onclick="go('s-privacy')" style="margin-top:4px;">📋 PRIVACY POLICY</button>
+</div>
+
+<!-- ══════════════════════════════════════ SIGN IN ══ -->
+<div class="screen" id="s-signin" style="padding-top:4px;">
+  <div class="scroll">
+    <button class="back" onclick="go('s-welcome')">◀ BACK</button>
+    <div style="font-size:7px;color:var(--p);letter-spacing:.1em;margin-bottom:10px;">SIGN IN</div>
+    <div class="card-b" style="margin-bottom:12px;">
+      <div class="lbl" style="margin-bottom:8px;">ENTER YOUR PHONE NUMBER</div>
+      <input class="inp-b" id="w-phone" placeholder="5081234567" type="tel"
+             style="margin-bottom:10px;" onkeydown="if(event.key==='Enter')doSignIn()"/>
+      <button class="btn btn-b" onclick="doSignIn()" style="margin-bottom:0;">[ SIGN IN ]</button>
+    </div>
+    <p style="font-size:6px;color:rgba(0,255,136,.2);text-align:center;line-height:2.4;">
+      DON'T HAVE AN ACCOUNT?<br>
+      <button onclick="go('s-create')" style="background:none;border:none;font-family:'Press Start 2P',monospace;
+        font-size:6px;color:rgba(0,255,136,.45);cursor:pointer;padding:4px 0;
+        text-decoration:underline;text-transform:uppercase;">CREATE ONE HERE</button>
+    </p>
+  </div>
+</div>
+<!-- ══════════════════════════════════════ CUSTOMER PIN ══ -->
+<div class="screen" id="s-customer-pin" style="align-items:center;padding-top:20px;">
+  <div class="scroll" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+    <div style="font-size:26px;margin-bottom:10px;filter:drop-shadow(0 0 9px var(--g))">🔑</div>
+    <div style="font-size:10px;color:var(--g);text-shadow:0 0 10px var(--g);margin-bottom:4px;" id="cpin-title">ENTER YOUR PIN</div>
+    <div style="font-size:6px;color:rgba(0,255,136,.4);margin-bottom:14px;letter-spacing:.1em;" id="cpin-sub">4-DIGIT PIN</div>
+    <div class="pin-row" id="cpin-row">
+      <div class="pin-dot" id="cpd0"></div><div class="pin-dot" id="cpd1"></div>
+      <div class="pin-dot" id="cpd2"></div><div class="pin-dot" id="cpd3"></div>
+    </div>
+    <div id="cpin-err" style="font-size:8px;color:var(--r);min-height:20px;margin-bottom:6px;letter-spacing:.08em;text-align:center;max-width:220px;line-height:1.8;"></div>
+    <div class="numpad">
+      <div class="num" onclick="customerPinPress(1)">1</div><div class="num" onclick="customerPinPress(2)">2</div><div class="num" onclick="customerPinPress(3)">3</div>
+      <div class="num" onclick="customerPinPress(4)">4</div><div class="num" onclick="customerPinPress(5)">5</div><div class="num" onclick="customerPinPress(6)">6</div>
+      <div class="num" onclick="customerPinPress(7)">7</div><div class="num" onclick="customerPinPress(8)">8</div><div class="num" onclick="customerPinPress(9)">9</div>
+      <div class="num blank"></div><div class="num" onclick="customerPinPress(0)">0</div><div class="num" onclick="customerPinPress('del')">⌫</div>
+    </div>
+    <button class="btn-out" style="width:200px;margin-top:8px;" onclick="go('s-signin')">CANCEL</button>
+  </div>
+</div>
+  
+<!-- ══════════════════════════════════════ CREATE ACCOUNT ══ -->
+<div class="screen" id="s-create" style="padding-top:4px;">
+  <div class="scroll">
+    <button class="back" onclick="go('s-welcome')">◀ BACK</button>
+    <div style="font-size:7px;color:var(--p);letter-spacing:.1em;margin-bottom:10px;">NEW PLAYER</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div style="margin-bottom:12px;">
+        <label class="lbl">YOUR NAME</label>
+        <input id="c-name" placeholder="E.G. MARGARITA"/>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label class="lbl">PHONE (10 DIGITS)</label>
+        <input id="c-phone" placeholder="5081234567" type="tel"/>
+      </div>
+      <div>
+        <label class="lbl">BIRTHDAY (OPTIONAL)</label>
+        <div style="font-size:8px;color:rgba(0,255,136,.4);margin-bottom:6px;line-height:2;letter-spacing:.06em;">⚠ CANNOT BE CHANGED AFTER JOINING</div>
+        <div style="display:grid;grid-template-columns:2fr 1fr 2fr;gap:6px;">
+          <select id="c-bm" onchange="populateDays('c-bm','c-bd','c-by')">
+            <option value="">MONTH</option>
+            <option value="01">JAN</option><option value="02">FEB</option><option value="03">MAR</option>
+            <option value="04">APR</option><option value="05">MAY</option><option value="06">JUN</option>
+            <option value="07">JUL</option><option value="08">AUG</option><option value="09">SEP</option>
+            <option value="10">OCT</option><option value="11">NOV</option><option value="12">DEC</option>
+          </select>
+          <select id="c-bd" style="font-size:7px;padding:10px 4px;"><option value="">DD</option></select>
+          <select id="c-by" onchange="populateDays('c-bm','c-bd','c-by')" style="font-size:7px;padding:10px 4px;"><option value="">YEAR</option></select>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-g" onclick="doCreate()">▶ JOIN THE NOOK ◀</button>
+    <p style="font-size:8px;color:rgba(0,255,136,.3);text-align:center;margin-top:4px;line-height:2;">FREE TO JOIN · NO SPAM · <button class="privacy-link" onclick="go('s-privacy')">PRIVACY</button></p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ CUSTOMER: REWARDS CARD ══ -->
+<div class="screen" id="s-c-rewards" style="padding-top:4px;">
+  <div class="scroll">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <div style="font-size:9px;color:var(--g);text-shadow:0 0 6px var(--g);" id="c-header-name"></div>
+      <div style="font-size:8px;color:rgba(0,255,136,.45);">MY CARD</div>
+    </div>
+    <div id="c-offers"></div>
+    <div class="card-b" style="text-align:center;margin-bottom:9px;">
+      <div class="lbl" style="margin-bottom:8px;text-align:center;">SHOW AT CHECKOUT</div>
+      <div class="qr-wrap"><div id="c-qr" style="width:110px;height:110px;"></div></div>
+      <div style="font-size:8px;color:rgba(0,229,255,.35);margin-top:7px;" id="c-qr-id"></div>
+    </div>
+    <div class="card" style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:7px;">
+        <span style="font-size:7px;color:var(--g);">☕ COFFEE CARD</span>
+        <span id="c-stamp-lbl" style="font-size:8px;color:var(--y);text-shadow:0 0 5px rgba(255,238,0,.6);"></span>
+      </div>
+      <div class="hp-bar" id="c-stamps"></div>
+      <div class="prog-wrap"><div class="prog-fill" id="c-prog"></div><div class="prog-text" id="c-prog-t"></div></div>
+    </div>
+    <div class="card" style="margin-bottom:8px;">
+      <div style="font-size:7px;color:rgba(0,255,136,.5);margin-bottom:8px;">🏆 FREE COFFEES EARNED</div>
+      <div id="c-rewards-list"></div>
+    </div>
+    <div class="g2">
+      <div class="card" style="text-align:center;margin-bottom:0;padding:10px;">
+        <div style="font-size:9px;color:var(--b);margin-bottom:5px;">REDEEMED</div>
+        <div style="font-size:20px;color:var(--y);text-shadow:0 0 10px var(--y);" id="c-total-r">0</div>
+      </div>
+      <div class="card" style="text-align:center;margin-bottom:0;padding:10px;">
+        <div style="font-size:9px;color:var(--b);margin-bottom:5px;">VISITS</div>
+        <div style="font-size:20px;color:var(--g);text-shadow:0 0 10px var(--g);" id="c-total-v">0</div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <button class="nav-btn active" onclick="go('s-c-rewards')"><span class="ni">☕</span>CARD</button>
+    <button class="nav-btn" onclick="go('s-c-history')"><span class="ni">📜</span>LOG</button>
+    <button class="nav-btn" onclick="go('s-c-settings')"><span class="ni">⚙</span>SETTINGS</button>
+    <button class="nav-btn nav-btn-logout" onclick="doSignOut()"><span class="ni">⏻</span>OUT</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ CUSTOMER: HISTORY ══ -->
+<div class="screen" id="s-c-history" style="padding-top:4px;">
+  <div class="scroll">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <div style="font-size:8px;color:var(--g);" id="c-hist-name"></div>
+      <div style="font-size:8px;color:rgba(0,255,136,.45);">VISIT LOG</div>
+    </div>
+    <div class="card-p" style="padding:10px 12px;">
+      <div class="lbl-p" style="margin-bottom:9px;">📜 FULL HISTORY</div>
+      <div id="c-history-list"></div>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <button class="nav-btn" onclick="go('s-c-rewards')"><span class="ni">☕</span>CARD</button>
+    <button class="nav-btn active" onclick="go('s-c-history')"><span class="ni">📜</span>LOG</button>
+    <button class="nav-btn" onclick="go('s-c-settings')"><span class="ni">⚙</span>SETTINGS</button>
+    <button class="nav-btn nav-btn-logout" onclick="doSignOut()"><span class="ni">⏻</span>OUT</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ CUSTOMER: SETTINGS ══ -->
+<div class="screen" id="s-c-settings" style="padding-top:4px;">
+  <div class="scroll">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <div style="font-size:8px;color:var(--g);" id="c-set-name"></div>
+      <div style="font-size:8px;color:rgba(0,255,136,.45);">SETTINGS</div>
+    </div>
+    <div class="card" style="margin-bottom:10px;">
+      <div class="lbl-g" style="margin-bottom:10px;">⚙ ACCOUNT DETAILS</div>
+      <div style="margin-bottom:12px;">
+        <label class="lbl">DISPLAY NAME</label>
+        <input id="s-name" placeholder="YOUR NAME"/>
+      </div>
+      <div>
+        <label class="lbl">BIRTHDAY</label>
+        <div id="s-bday-locked" style="display:none;">
+          <div class="bday-locked" id="s-bday-val"></div>
+          <div style="font-size:8px;color:rgba(0,255,136,.35);margin-top:5px;line-height:2;letter-spacing:.06em;">🔒 BIRTHDAY IS LOCKED AND CANNOT BE CHANGED</div>
+        </div>
+        <div id="s-bday-dropdowns">
+          <div style="display:grid;grid-template-columns:2fr 1fr 2fr;gap:6px;">
+            <select id="s-bm" onchange="populateDays('s-bm','s-bd','s-by')">
+              <option value="">MONTH</option>
+              <option value="01">JAN</option><option value="02">FEB</option><option value="03">MAR</option>
+              <option value="04">APR</option><option value="05">MAY</option><option value="06">JUN</option>
+              <option value="07">JUL</option><option value="08">AUG</option><option value="09">SEP</option>
+              <option value="10">OCT</option><option value="11">NOV</option><option value="12">DEC</option>
+            </select>
+            <select id="s-bd" style="font-size:7px;padding:10px 4px;"><option value="">DD</option></select>
+            <select id="s-by" onchange="populateDays('s-bm','s-bd','s-by')" style="font-size:7px;padding:10px 4px;"><option value="">YEAR</option></select>
+          </div>
+          <div style="font-size:8px;color:rgba(0,255,136,.35);margin-top:5px;line-height:2;">SET ONCE — LOCKED AFTER SAVING</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-g" onclick="doSaveSettings()">💾 SAVE CHANGES</button>
+    <div class="divider"></div>
+    <div class="card">
+      <div class="lbl" style="margin-bottom:7px;">ACCOUNT INFO</div>
+      <div style="font-size:9px;color:rgba(0,229,255,.6);line-height:2.8;">
+        ID: <span id="s-id" style="color:var(--b);"></span><br>
+        PHONE: <span id="s-phone" style="color:var(--b);"></span><br>
+        MEMBER SINCE: <span id="s-since" style="color:var(--b);"></span>
+      </div>
+      <div style="margin-top:10px;">
+        <button class="privacy-link" onclick="go('s-privacy')">📋 PRIVACY POLICY</button>
+      </div>
+    </div>
+    <button class="btn btn-r" onclick="doSignOut()" style="margin-top:4px;">SIGN OUT</button>
+<div class="divider"></div>
+<button class="btn btn-b" onclick="go('s-change-pin')" style="margin-top:4px;">🔑 CHANGE PIN</button>
+<button class="btn btn-r" onclick="doDeleteAccount()" style="margin-top:4px;">⚠ DELETE ACCOUNT</button>
+  </div>
+  <div class="nav-bar">
+    <button class="nav-btn" onclick="go('s-c-rewards')"><span class="ni">☕</span>CARD</button>
+    <button class="nav-btn" onclick="go('s-c-history')"><span class="ni">📜</span>LOG</button>
+    <button class="nav-btn active" onclick="go('s-c-settings')"><span class="ni">⚙</span>SETTINGS</button>
+    <button class="nav-btn nav-btn-logout" onclick="doSignOut()"><span class="ni">⏻</span>OUT</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ STAFF LOGIN ══
+     FIX 5: .scroll wrapper prevents clipping on landscape / small phones -->
+<div class="screen" id="s-staff-login" style="align-items:center;padding-top:20px;">
+  <div class="scroll" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+    <div style="font-size:26px;margin-bottom:10px;filter:drop-shadow(0 0 9px var(--p))">🔐</div>
+    <div style="font-size:10px;color:var(--p);text-shadow:0 0 10px var(--p);margin-bottom:4px;">STAFF ACCESS</div>
+    <div style="font-size:8px;color:rgba(255,0,255,.5);margin-bottom:4px;letter-spacing:.1em;">THE NOOK · FAIRHAVEN</div>
+    <div class="pin-row" id="spin-row">
+      <div class="pin-dot" id="spd0"></div><div class="pin-dot" id="spd1"></div>
+      <div class="pin-dot" id="spd2"></div><div class="pin-dot" id="spd3"></div>
+    </div>
+    <div id="spin-err" style="font-size:9px;color:var(--r);min-height:16px;margin-bottom:10px;letter-spacing:.08em;"></div>
+    <div class="numpad">
+      <div class="num" onclick="staffPinPress(1)">1</div><div class="num" onclick="staffPinPress(2)">2</div><div class="num" onclick="staffPinPress(3)">3</div>
+      <div class="num" onclick="staffPinPress(4)">4</div><div class="num" onclick="staffPinPress(5)">5</div><div class="num" onclick="staffPinPress(6)">6</div>
+      <div class="num" onclick="staffPinPress(7)">7</div><div class="num" onclick="staffPinPress(8)">8</div><div class="num" onclick="staffPinPress(9)">9</div>
+      <div class="num blank"></div><div class="num" onclick="staffPinPress(0)">0</div><div class="num" onclick="staffPinPress('del')">⌫</div>
+    </div>
+    <button class="btn-out" style="width:200px;margin-top:8px;" onclick="go('s-welcome')">CANCEL</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ STAFF HOME ══ -->
+<div class="screen" id="s-staff-home" style="padding-top:4px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
+    <div style="font-size:8px;color:var(--p);text-shadow:0 0 6px var(--p);">THE NOOK</div>
+    <span class="tag tag-s">STAFF</span>
+  </div>
+  <div class="scroll">
+    <input id="staff-search" placeholder="SEARCH BY NAME OR PHONE..."
+           style="font-size:7px;border-color:var(--p);color:var(--p);margin-bottom:10px;"
+           oninput="renderCustomerList()"/>
+    <div class="g2" style="margin-bottom:10px;">
+      <div class="card-p" style="margin-bottom:0;text-align:center;padding:9px;">
+        <div style="font-size:9px;color:var(--p);margin-bottom:4px;">MEMBERS</div>
+        <div style="font-size:20px;color:var(--p);text-shadow:0 0 10px var(--p);" id="sh-members">0</div>
+      </div>
+      <div class="card-b" style="margin-bottom:0;text-align:center;padding:9px;">
+        <div style="font-size:9px;color:var(--b);margin-bottom:4px;">TOTAL VISITS</div>
+        <div style="font-size:20px;color:var(--b);text-shadow:0 0 10px var(--b);" id="sh-visits">0</div>
+      </div>
+    </div>
+    <div class="card-p" style="padding:0;overflow:hidden;">
+      <div style="padding:9px 12px 7px;border-bottom:1px solid rgba(255,0,255,.15);">
+        <div class="lbl-p">ALL PLAYERS</div>
+      </div>
+      <!-- FIX 4: removed max-height:220px + overflow-y:auto — no more scroll trap -->
+      <div id="staff-customer-list"></div>
+    </div>
+  </div>
+  <div class="snav-bar">
+    <button class="snav-btn active" id="snb-players" onclick="go('s-staff-home')"><span class="ni">👥</span>PLAYERS</button>
+    <button class="snav-btn" id="snb-scan" onclick="staffGoScan()"><span class="ni">📷</span>SCANNER</button>
+    <button class="snav-btn adm-entry" onclick="go('s-admin-login')"><span class="ni">🛡</span>ADMIN</button>
+    <button class="snav-btn nav-btn-logout" onclick="doStaffLogout()"><span class="ni">⏻</span>LOGOUT</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ STAFF SCANNER ══ -->
+<div class="screen" id="s-staff-scanner" style="padding-top:4px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
+    <div style="font-size:8px;color:var(--p);">QR SCANNER</div>
+    <span class="tag tag-s">STAFF</span>
+  </div>
+  <div class="scroll">
+    <div class="scan-box">
+      <div id="qr-reader"></div>
+      <div id="scan-placeholder">
+        <div class="sc-corners">
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:6px;">
+            <div style="font-size:26px;">📷</div>
+            <div style="font-size:6px;color:var(--b);" class="blink">READY</div>
+          </div>
+          <div class="scan-line"></div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-b" id="btn-cam" onclick="toggleCamera()" style="margin-top:6px;">▶ START CAMERA</button>
+    <div class="card-b" style="margin-top:6px;">
+      <div class="lbl" style="margin-bottom:8px;">LOOKUP BY PHONE</div>
+      <div style="display:flex;gap:6px;">
+        <input id="scan-phone" placeholder="5081234567" type="tel" style="font-size:7px;"
+               onkeydown="if(event.key==='Enter')doPhoneScan()"/>
+        <button class="btn btn-b" style="width:auto;padding:12px;margin-bottom:0;flex-shrink:0;" onclick="doPhoneScan()">GO</button>
+      </div>
+    </div>
+  </div>
+  <div class="snav-bar">
+    <button class="snav-btn" onclick="go('s-staff-home')"><span class="ni">👥</span>PLAYERS</button>
+    <button class="snav-btn active" onclick="staffGoScan()"><span class="ni">📷</span>SCANNER</button>
+    <button class="snav-btn adm-entry" onclick="go('s-admin-login')"><span class="ni">🛡</span>ADMIN</button>
+    <button class="snav-btn nav-btn-logout" onclick="doStaffLogout()"><span class="ni">⏻</span>LOGOUT</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ STAFF DETAIL ══ -->
+<div class="screen" id="s-staff-detail" style="padding-top:4px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
+    <button class="back" style="margin-bottom:0;" onclick="go('s-staff-home')">◀ PLAYERS</button>
+    <span class="tag tag-s">STAFF VIEW</span>
+  </div>
+  <div class="scroll">
+    <div class="card-p" style="display:flex;align-items:center;gap:10px;margin-bottom:9px;">
+      <div class="c-av" style="width:44px;height:44px;font-size:18px;" id="sd-avatar"></div>
+      <div style="flex:1;">
+        <div id="sd-name" style="font-size:10px;color:var(--y);text-shadow:0 0 6px rgba(255,238,0,.5);margin-bottom:3px;"></div>
+        <div id="sd-meta" style="font-size:9px;color:rgba(255,0,255,.55);letter-spacing:.04em;line-height:2.2;white-space:pre-line;"></div>
+      </div>
+    </div>
+    <div id="sd-offers" style="margin-bottom:4px;"></div>
+    <div class="card" style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
+        <span style="font-size:7px;color:var(--g);">☕ STAMPS</span>
+        <span id="sd-stamp-lbl" style="font-size:7px;color:var(--y);"></span>
+        <span id="sd-ready" class="blink" style="display:none;font-size:8px;color:var(--y);">★ READY ★</span>
+      </div>
+      <div class="hp-bar" id="sd-stamps"></div>
+      <div class="prog-wrap"><div class="prog-fill" id="sd-prog"></div><div class="prog-text" id="sd-prog-t"></div></div>
+    </div>
+    <div class="card" style="margin-bottom:8px;">
+      <div style="font-size:7px;color:rgba(0,255,136,.45);margin-bottom:8px;">🏆 PENDING REWARDS</div>
+      <div id="sd-rewards-list"></div>
+    </div>
+    <button class="btn btn-g" id="sd-btn-add" onclick="sdAddStamp()">+ ADD STAMP ☕</button>
+    <button class="btn btn-r" id="sd-btn-redeem" onclick="sdRedeemCoffee()">★ REDEEM FREE COFFEE ★</button>
+    <button class="btn btn-p" id="sd-btn-bday" style="display:none;" onclick="sdGrantBirthday()">🎂 GRANT BIRTHDAY REWARD</button>
+    <div style="font-size:9px;color:rgba(0,255,136,.35);text-align:center;margin-top:2px;" id="sd-cooldown"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ ADMIN LOGIN ══
+     FIX 5: .scroll wrapper prevents clipping on landscape / small phones -->
+<div class="screen" id="s-admin-login" style="align-items:center;padding-top:20px;">
+  <div class="scroll" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+    <div style="font-size:26px;margin-bottom:10px;filter:drop-shadow(0 0 9px var(--adm))">🛡</div>
+    <div style="font-size:10px;color:var(--adm);text-shadow:0 0 10px var(--adm);margin-bottom:4px;">ADMIN ACCESS</div>
+    <div style="font-size:8px;color:rgba(176,96,255,.5);margin-bottom:4px;letter-spacing:.1em;">THE NOOK · FAIRHAVEN</div>
+    <div class="pin-row" id="apin-row">
+      <div class="pin-dot" id="apd0" style="border-color:rgba(176,96,255,.22);"></div>
+      <div class="pin-dot" id="apd1" style="border-color:rgba(176,96,255,.22);"></div>
+      <div class="pin-dot" id="apd2" style="border-color:rgba(176,96,255,.22);"></div>
+      <div class="pin-dot" id="apd3" style="border-color:rgba(176,96,255,.22);"></div>
+    </div>
+    <div id="apin-err" style="font-size:9px;color:var(--r);min-height:16px;margin-bottom:10px;letter-spacing:.08em;"></div>
+    <div class="numpad">
+      <div class="num num-adm" onclick="adminPinPress(1)">1</div><div class="num num-adm" onclick="adminPinPress(2)">2</div><div class="num num-adm" onclick="adminPinPress(3)">3</div>
+      <div class="num num-adm" onclick="adminPinPress(4)">4</div><div class="num num-adm" onclick="adminPinPress(5)">5</div><div class="num num-adm" onclick="adminPinPress(6)">6</div>
+      <div class="num num-adm" onclick="adminPinPress(7)">7</div><div class="num num-adm" onclick="adminPinPress(8)">8</div><div class="num num-adm" onclick="adminPinPress(9)">9</div>
+      <div class="num blank"></div><div class="num num-adm" onclick="adminPinPress(0)">0</div><div class="num num-adm" onclick="adminPinPress('del')">⌫</div>
+    </div>
+    <button class="btn-out" style="width:200px;margin-top:8px;border-color:rgba(176,96,255,.4);color:var(--adm);" onclick="go('s-staff-home')">CANCEL</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ ADMIN DASHBOARD ══ -->
+<div class="screen" id="s-admin-dash" style="padding-top:4px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
+    <div style="font-size:8px;color:var(--adm);text-shadow:0 0 6px var(--adm);">THE NOOK</div>
+    <span class="tag tag-a">ADMIN</span>
+  </div>
+  <div class="scroll">
+    <div style="font-size:7px;color:var(--adm);margin-bottom:10px;letter-spacing:.08em;">📊 DASHBOARD</div>
+    <div class="g2" style="margin-bottom:8px;">
+      <div class="card-adm" style="margin-bottom:0;text-align:center;padding:9px;">
+        <div style="font-size:9px;color:var(--adm);margin-bottom:4px;">MEMBERS</div>
+        <div style="font-size:20px;color:var(--adm);text-shadow:0 0 10px var(--adm);" id="db-members">0</div>
+      </div>
+      <div class="card-b" style="margin-bottom:0;text-align:center;padding:9px;">
+        <div style="font-size:9px;color:var(--b);margin-bottom:4px;">TOTAL VISITS</div>
+        <div style="font-size:20px;color:var(--b);text-shadow:0 0 10px var(--b);" id="db-visits">0</div>
+      </div>
+    </div>
+    <div class="g2" style="margin-bottom:8px;">
+      <div style="background:rgba(255,238,0,.07);border:2px solid var(--y);box-shadow:3px 3px 0 #222200;text-align:center;padding:9px;">
+        <div style="font-size:9px;color:var(--y);margin-bottom:4px;">COFFEES REDEEMED</div>
+        <div style="font-size:20px;color:var(--y);text-shadow:0 0 10px var(--y);" id="db-redeemed">0</div>
+      </div>
+      <div class="card" style="margin-bottom:0;text-align:center;padding:9px;">
+        <div style="font-size:9px;color:var(--g);margin-bottom:4px;">ACTIVE REWARDS</div>
+        <div style="font-size:20px;color:var(--g);text-shadow:0 0 10px var(--g);" id="db-active">0</div>
+      </div>
+    </div>
+    <div class="card-adm" style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+        <span style="font-size:9px;color:var(--adm);">AVG STAMP PROGRESS</span>
+        <span style="font-size:9px;color:var(--adm);" id="db-avg-lbl">0/10</span>
+      </div>
+      <div class="prog-wrap" style="border-color:rgba(176,96,255,.25);">
+        <div id="db-avg-bar" style="height:100%;background:var(--adm);box-shadow:0 0 7px rgba(176,96,255,.5);width:0%;transition:width .3s steps(8);"></div>
+        <div class="prog-text" id="db-avg-text"></div>
+      </div>
+      <div style="font-size:8px;color:rgba(176,96,255,.4);margin-top:5px;line-height:2;">AVERAGE CURRENT STAMPS ACROSS ALL MEMBERS</div>
+    </div>
+    <div class="card-adm" style="margin-bottom:8px;">
+      <div style="font-size:9px;color:var(--adm);margin-bottom:8px;">🏆 TOP CUSTOMERS</div>
+      <div id="db-top"></div>
+    </div>
+    <div class="card-adm">
+      <div style="font-size:9px;color:var(--adm);margin-bottom:8px;">🕐 RECENT ACTIVITY</div>
+      <div id="db-activity"></div>
+    </div>
+  </div>
+  <div class="anav-bar">
+    <button class="anav-btn active" onclick="adminGoTab('dash')"><span class="ni">📊</span>DASH</button>
+    <button class="anav-btn" onclick="adminGoTab('rdm')"><span class="ni">🎁</span>HISTORY</button>
+    <button class="anav-btn" onclick="adminGoTab('players')"><span class="ni">👥</span>PLAYERS</button>
+    <button class="anav-btn" onclick="adminGoTab('scan')"><span class="ni">📷</span>SCAN</button>
+    <button class="anav-btn nav-btn-logout" onclick="doAdminLogout()"><span class="ni">⏻</span>OUT</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ ADMIN REDEMPTIONS ══ -->
+<div class="screen" id="s-admin-rdm" style="padding-top:4px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
+    <div style="font-size:8px;color:var(--adm);">🎁 REDEMPTION LOG</div>
+    <span class="tag tag-a">ADMIN</span>
+  </div>
+  <div class="scroll">
+    <div id="rdm-list" style="border:2px solid rgba(176,96,255,.2);overflow:hidden;"></div>
+  </div>
+  <div class="anav-bar">
+    <button class="anav-btn" onclick="adminGoTab('dash')"><span class="ni">📊</span>DASH</button>
+    <button class="anav-btn active" onclick="adminGoTab('rdm')"><span class="ni">🎁</span>HISTORY</button>
+    <button class="anav-btn" onclick="adminGoTab('players')"><span class="ni">👥</span>PLAYERS</button>
+    <button class="anav-btn" onclick="adminGoTab('scan')"><span class="ni">📷</span>SCAN</button>
+    <button class="anav-btn nav-btn-logout" onclick="doAdminLogout()"><span class="ni">⏻</span>OUT</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ ADMIN PLAYERS ══ -->
+<div class="screen" id="s-admin-players" style="padding-top:4px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
+    <div style="font-size:8px;color:var(--adm);">👥 ALL PLAYERS</div>
+    <span class="tag tag-a">ADMIN</span>
+  </div>
+  <div class="scroll">
+    <input id="admin-search" placeholder="SEARCH BY NAME OR PHONE..."
+           style="font-size:7px;border-color:var(--adm);color:var(--adm);margin-bottom:10px;"
+           oninput="renderAdminPlayerList()"/>
+    <!-- FIX 4: no scroll trap here either -->
+    <div id="admin-player-list" style="border:2px solid rgba(176,96,255,.2);overflow:hidden;"></div>
+  </div>
+  <div class="anav-bar">
+    <button class="anav-btn" onclick="adminGoTab('dash')"><span class="ni">📊</span>DASH</button>
+    <button class="anav-btn" onclick="adminGoTab('rdm')"><span class="ni">🎁</span>HISTORY</button>
+    <button class="anav-btn active" onclick="adminGoTab('players')"><span class="ni">👥</span>PLAYERS</button>
+    <button class="anav-btn" onclick="adminGoTab('scan')"><span class="ni">📷</span>SCAN</button>
+    <button class="anav-btn nav-btn-logout" onclick="doAdminLogout()"><span class="ni">⏻</span>OUT</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ ADMIN SCANNER ══ -->
+<div class="screen" id="s-admin-scan" style="padding-top:4px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
+    <div style="font-size:8px;color:var(--adm);">📷 SCANNER</div>
+    <span class="tag tag-a">ADMIN</span>
+  </div>
+  <div class="scroll">
+    <div class="scan-box scan-box-adm">
+      <div id="qr-reader-adm"></div>
+      <div id="scan-ph-adm">
+        <div class="sc-corners">
+          <div class="corner tl" style="border-color:var(--adm);"></div>
+          <div class="corner tr" style="border-color:var(--adm);"></div>
+          <div class="corner bl" style="border-color:var(--adm);"></div>
+          <div class="corner br" style="border-color:var(--adm);"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:6px;">
+            <div style="font-size:26px;">📷</div>
+            <div style="font-size:6px;color:var(--adm);" class="blink">READY</div>
+          </div>
+          <div class="scan-line" style="background:linear-gradient(90deg,transparent,var(--adm),transparent);box-shadow:0 0 7px var(--adm);"></div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-adm" id="btn-cam-adm" onclick="toggleAdminCamera()">▶ START CAMERA</button>
+    <div class="card-adm" style="margin-top:6px;">
+      <div class="lbl-adm" style="margin-bottom:8px;">LOOKUP BY PHONE</div>
+      <div style="display:flex;gap:6px;">
+        <input id="scan-phone-adm" placeholder="5081234567" type="tel"
+               style="font-size:7px;border-color:var(--adm);color:var(--adm);"
+               onkeydown="if(event.key==='Enter')doAdminPhoneScan()"/>
+        <button class="btn btn-adm" style="width:auto;padding:12px;margin-bottom:0;flex-shrink:0;" onclick="doAdminPhoneScan()">GO</button>
+      </div>
+    </div>
+  </div>
+  <div class="anav-bar">
+    <button class="anav-btn" onclick="adminGoTab('dash')"><span class="ni">📊</span>DASH</button>
+    <button class="anav-btn" onclick="adminGoTab('rdm')"><span class="ni">🎁</span>HISTORY</button>
+    <button class="anav-btn" onclick="adminGoTab('players')"><span class="ni">👥</span>PLAYERS</button>
+    <button class="anav-btn active" onclick="adminGoTab('scan')"><span class="ni">📷</span>SCAN</button>
+    <button class="anav-btn nav-btn-logout" onclick="doAdminLogout()"><span class="ni">⏻</span>OUT</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ ADMIN DETAIL ══ -->
+<div class="screen" id="s-admin-detail" style="padding-top:4px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-shrink:0;">
+    <button class="back" style="margin-bottom:0;" onclick="go('s-admin-players')">◀ PLAYERS</button>
+    <span class="tag tag-a">ADMIN VIEW</span>
+  </div>
+  <div class="scroll">
+    <div class="card-adm" style="display:flex;align-items:center;gap:10px;margin-bottom:9px;">
+      <div class="c-av c-av-adm" style="width:44px;height:44px;font-size:18px;" id="ad-avatar"></div>
+      <div style="flex:1;">
+        <div id="ad-name" style="font-size:10px;color:var(--y);text-shadow:0 0 6px rgba(255,238,0,.5);margin-bottom:3px;"></div>
+        <div id="ad-meta" style="font-size:9px;color:rgba(176,96,255,.6);letter-spacing:.04em;line-height:2.2;white-space:pre-line;"></div>
+      </div>
+    </div>
+    <div id="ad-offers" style="margin-bottom:4px;"></div>
+    <div class="card" style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
+        <span style="font-size:7px;color:var(--g);">☕ STAMPS</span>
+        <span id="ad-stamp-lbl" style="font-size:7px;color:var(--y);"></span>
+      </div>
+      <div class="hp-bar" id="ad-stamps"></div>
+      <div class="prog-wrap"><div class="prog-fill" id="ad-prog"></div><div class="prog-text" id="ad-prog-t"></div></div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn-sm btn-sm-g" onclick="adAddStamp()" style="flex:1;">+ ADD STAMP</button>
+        <button class="btn-sm btn-sm-r" id="ad-rm-btn" onclick="adRemoveStamp()" style="flex:1;">– REMOVE</button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:8px;">
+      <div style="font-size:7px;color:rgba(0,255,136,.45);margin-bottom:8px;">🏆 PENDING REWARDS</div>
+      <div id="ad-rewards-list"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn-sm btn-sm-adm" onclick="adGrantReward()" style="flex:1;">+ GRANT REWARD</button>
+        <button class="btn-sm btn-sm-g" id="ad-redeem-btn" onclick="adRedeemCoffee()" style="flex:1;">★ REDEEM</button>
+      </div>
+    </div>
+    <button class="btn btn-r" id="sd-btn-redeem-adm" onclick="adRedeemCoffee()">★ REDEEM FREE COFFEE ★</button>
+    <button class="btn btn-p" id="ad-btn-bday" style="display:none;" onclick="adGrantBirthday()">🎂 GRANT BIRTHDAY REWARD</button>
+    <div class="card-b">
+      <div class="lbl" style="margin-bottom:8px;">📜 VISIT HISTORY</div>
+      <div id="ad-hist-list"></div>
+    </div>
+  </div>
+</div>
+<!-- ══════════════════════════════════════ CHANGE PIN ══ -->
+<div class="screen" id="s-change-pin" style="padding-top:4px;">
+  <div class="scroll">
+    <button class="back" onclick="go('s-c-settings')">◀ BACK</button>
+    <div style="font-size:7px;color:var(--g);letter-spacing:.1em;margin-bottom:14px;">🔑 CHANGE PIN</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div style="margin-bottom:12px;">
+        <label class="lbl">CURRENT PIN</label>
+        <div class="numpad" style="margin:8px auto;">
+          <div class="num" onclick="cpPress('old',1)">1</div><div class="num" onclick="cpPress('old',2)">2</div><div class="num" onclick="cpPress('old',3)">3</div>
+          <div class="num" onclick="cpPress('old',4)">4</div><div class="num" onclick="cpPress('old',5)">5</div><div class="num" onclick="cpPress('old',6)">6</div>
+          <div class="num" onclick="cpPress('old',7)">7</div><div class="num" onclick="cpPress('old',8)">8</div><div class="num" onclick="cpPress('old',9)">9</div>
+          <div class="num blank"></div><div class="num" onclick="cpPress('old',0)">0</div><div class="num" onclick="cpPress('old','del')">⌫</div>
+        </div>
+        <div class="pin-row" id="cp-old-row" style="margin:0 auto 4px;">
+          <div class="pin-dot" id="cp-old-0"></div><div class="pin-dot" id="cp-old-1"></div>
+          <div class="pin-dot" id="cp-old-2"></div><div class="pin-dot" id="cp-old-3"></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div style="margin-top:12px;">
+        <label class="lbl">NEW PIN</label>
+        <div class="numpad" style="margin:8px auto;">
+          <div class="num" onclick="cpPress('new',1)">1</div><div class="num" onclick="cpPress('new',2)">2</div><div class="num" onclick="cpPress('new',3)">3</div>
+          <div class="num" onclick="cpPress('new',4)">4</div><div class="num" onclick="cpPress('new',5)">5</div><div class="num" onclick="cpPress('new',6)">6</div>
+          <div class="num" onclick="cpPress('new',7)">7</div><div class="num" onclick="cpPress('new',8)">8</div><div class="num" onclick="cpPress('new',9)">9</div>
+          <div class="num blank"></div><div class="num" onclick="cpPress('new',0)">0</div><div class="num" onclick="cpPress('new','del')">⌫</div>
+        </div>
+        <div class="pin-row" id="cp-new-row" style="margin:0 auto 4px;">
+          <div class="pin-dot" id="cp-new-0"></div><div class="pin-dot" id="cp-new-1"></div>
+          <div class="pin-dot" id="cp-new-2"></div><div class="pin-dot" id="cp-new-3"></div>
+        </div>
+      </div>
+      <div id="cp-err" style="font-size:8px;color:var(--r);min-height:16px;text-align:center;margin-top:6px;line-height:1.8;"></div>
+    </div>
+    <button class="btn btn-g" onclick="doChangePin()">💾 SAVE NEW PIN</button>
+  </div>
+  <div class="nav-bar">
+    <button class="nav-btn" onclick="go('s-c-rewards')"><span class="ni">☕</span>CARD</button>
+    <button class="nav-btn" onclick="go('s-c-history')"><span class="ni">📜</span>LOG</button>
+    <button class="nav-btn active" onclick="go('s-c-settings')"><span class="ni">⚙</span>SETTINGS</button>
+    <button class="nav-btn nav-btn-logout" onclick="doSignOut()"><span class="ni">⏻</span>OUT</button>
+  </div>
+</div>
+<!-- ══════════════════════════════════════ PRIVACY POLICY ══ -->
+<div class="screen" id="s-privacy" style="padding-top:4px;">
+  <div class="scroll">
+    <button class="back" onclick="go(prevScreen)">◀ BACK</button>
+    <div style="font-size:9px;color:var(--b);letter-spacing:.1em;margin-bottom:14px;">📋 PRIVACY POLICY</div>
+    <div class="card-b">
+      <div class="privacy-body">
+        <h3>WHAT WE COLLECT</h3>
+        <p>• Phone number — required, your account identifier</p>
+        <p>• Name — shown on your loyalty card</p>
+        <p>• Birthday month/year — optional, birthday reward only</p>
+        <p>• Visit history — stamps earned and rewards redeemed</p>
+        <h3>HOW WE USE IT</h3>
+        <p>Your data is used solely to run your loyalty rewards. It is never sold, shared with advertisers, or used for marketing of any kind.</p>
+        <h3>WHO CAN SEE IT</h3>
+        <p>Only café staff and admin with a PIN can view your account. No one else has access.</p>
+        <h3>DATA RETENTION</h3>
+        <p>Data is kept while your account is active. You can delete your account at any time from Settings — this permanently removes all your data.</p>
+        <h3>CONTACT</h3>
+        <p>The Nook Café<br>58 Washington St, Fairhaven</p>
+        <p style="margin-top:14px;font-size:8px;color:rgba(0,229,255,.35);">LAST UPDATED: MAY 2026</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ CONFIRM MODAL ══ -->
+<div id="confirm-overlay" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-msg" id="confirm-msg"></div>
+    <div class="modal-actions">
+      <button class="btn btn-r" style="margin-bottom:0;flex:1;" id="confirm-yes">YES, DELETE</button>
+      <button class="btn-out" style="margin-bottom:0;flex:1;" id="confirm-no">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /phone -->
+
+<!-- JS — load order matters: config → db → utils → auth → customer → staff → admin → app -->
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/customer.js"></script>
+<script src="js/staff.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

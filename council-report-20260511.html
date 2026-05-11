@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>LLM Council Report — Nook Loyalty App</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f7f8fa; color: #1a1a2e; line-height: 1.6; }
+  .header { background: #1a1a2e; color: #fff; padding: 32px 40px 24px; border-bottom: 3px solid #00e5ff; }
+  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 6px; }
+  .header .sub { font-size: 13px; color: rgba(255,255,255,0.55); }
+  .header .question { margin-top: 14px; background: rgba(0,229,255,0.08); border-left: 3px solid #00e5ff; padding: 10px 16px; font-size: 14px; color: rgba(255,255,255,0.85); border-radius: 0 4px 4px 0; }
+  .container { max-width: 860px; margin: 0 auto; padding: 32px 20px 60px; }
+
+  /* Verdict section */
+  .verdict { background: #fff; border-radius: 10px; border: 1px solid #e0e4ed; overflow: hidden; margin-bottom: 28px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .verdict-header { background: #1a1a2e; color: #fff; padding: 14px 24px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+  .verdict-header .badge { background: #00e5ff; color: #1a1a2e; border-radius: 4px; padding: 2px 8px; font-size: 10px; font-weight: 800; }
+  .verdict-body { padding: 24px 28px; }
+  .verdict-section { margin-bottom: 24px; }
+  .verdict-section:last-child { margin-bottom: 0; }
+  .verdict-section h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #4a4a6a; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #f0f2f7; }
+  .verdict-section p { font-size: 14.5px; color: #2a2a4a; line-height: 1.75; margin-bottom: 10px; }
+  .verdict-section p:last-child { margin-bottom: 0; }
+  .verdict-section strong { color: #1a1a2e; }
+
+  /* One thing */
+  .one-thing { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 10px; padding: 24px 28px; margin-bottom: 28px; border: 1px solid rgba(0,229,255,0.3); box-shadow: 0 2px 20px rgba(0,229,255,0.1); }
+  .one-thing .label { font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #00e5ff; margin-bottom: 10px; }
+  .one-thing p { font-size: 15px; color: #fff; line-height: 1.7; }
+  .one-thing .highlight { color: #00ff88; font-weight: 700; }
+
+  /* Alignment visual */
+  .alignment { background: #fff; border-radius: 10px; border: 1px solid #e0e4ed; margin-bottom: 28px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .alignment-header { background: #f7f8fa; border-bottom: 1px solid #e0e4ed; padding: 12px 24px; font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: #4a4a6a; }
+  .alignment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #e0e4ed; }
+  .alignment-cell { background: #fff; padding: 16px 20px; }
+  .alignment-cell .issue { font-size: 12px; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; }
+  .advisor-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .advisor-pip { font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: 600; }
+  .pip-agree { background: #e8faf2; color: #00a854; border: 1px solid #b7e8cf; }
+  .pip-disagree { background: #fff0f0; color: #d0021b; border: 1px solid #f5c6c6; }
+  .pip-neutral { background: #f5f6fa; color: #6b6b8d; border: 1px solid #d8dae8; }
+
+  /* Collapsible sections */
+  details { background: #fff; border-radius: 10px; border: 1px solid #e0e4ed; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,0.04); }
+  summary { padding: 14px 20px; cursor: pointer; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 10px; list-style: none; user-select: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: '▶'; font-size: 9px; color: #8888aa; transition: transform 0.2s; }
+  details[open] summary::before { transform: rotate(90deg); }
+  .advisor-tag { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .tag-contrarian { background: #fff0f0; color: #c0392b; }
+  .tag-principles { background: #f0f4ff; color: #2c6bed; }
+  .tag-expansionist { background: #f0fff4; color: #27ae60; }
+  .tag-outsider { background: #fffaf0; color: #e67e22; }
+  .tag-executor { background: #fdf0ff; color: #8e44ad; }
+  .tag-review { background: #f0f9ff; color: #0077aa; }
+  details .content { padding: 0 20px 20px; font-size: 14px; color: #2a2a4a; line-height: 1.75; border-top: 1px solid #f0f2f7; padding-top: 16px; }
+  details .content p { margin-bottom: 10px; }
+  details .content strong { color: #1a1a2e; }
+  details .content ol, details .content ul { margin-left: 20px; margin-bottom: 10px; }
+  details .content li { margin-bottom: 6px; }
+  details .content .fix-item { background: #f8f9fc; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-size: 13px; border-left: 3px solid #ccc; }
+  details .content .fix-critical { border-left-color: #e74c3c; }
+  details .content .fix-high { border-left-color: #e67e22; }
+  details .content .fix-medium { border-left-color: #3498db; }
+  details .content .fix-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+  details .content .fix-critical .fix-label { color: #e74c3c; }
+  details .content .fix-high .fix-label { color: #e67e22; }
+  details .content .fix-medium .fix-label { color: #3498db; }
+  .section-title { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: #8888aa; margin: 28px 0 12px; }
+
+  /* Severity badges */
+  .sev { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; margin-right: 6px; }
+  .sev-critical { background: #fde8e8; color: #c0392b; }
+  .sev-high { background: #fef0e0; color: #d35400; }
+  .sev-medium { background: #e8f4fd; color: #2980b9; }
+  .sev-low { background: #f0f0f0; color: #7f8c8d; }
+
+  .footer { text-align: center; font-size: 12px; color: #aaa; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e4ed; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⚖️ LLM Council Report — Nook Loyalty App</h1>
+  <div class="sub">Generated 11 May 2026 · 5 Advisors · 5 Peer Reviewers · 1 Chairman</div>
+  <div class="question">
+    <strong>Question brought to the council:</strong> Is the Nook QR loyalty PWA truly "elite" and production-ready? What are the real safety and UI/UX concerns that must be addressed before this is something to be proud of publicly?
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- THE ONE THING -->
+  <div class="one-thing">
+    <div class="label">⚡ The One Thing to Do First</div>
+    <p>
+      <span class="highlight">Audit and restrict the Supabase anon key exposure.</span>
+      Right now, the deployed <code>config.js</code> hands anyone who visits the site the key to query all customer records — phone numbers, stamp histories, birthday data. Row-level security policies must be tightened so the anon key cannot return customer PII under any query. If that means temporarily restricting the <code>nook-read</code> Edge Function while you sort it, do that. Everything else on the fix list is real and follows — but you cannot responsibly add more customers to a system that is currently exposing the ones already in it.
+    </p>
+  </div>
+
+  <!-- CHAIRMAN VERDICT -->
+  <div class="section-title">📋 Chairman's Verdict</div>
+  <div class="verdict">
+    <div class="verdict-header">
+      <span>Council Synthesis</span>
+      <span class="badge">FINAL</span>
+    </div>
+    <div class="verdict-body">
+
+      <div class="verdict-section">
+        <h3>Where the Council Agrees</h3>
+        <p>Every advisor who engaged seriously with the code agrees on three things: <strong>the app is not production-ready</strong> in its current state. It has a coherent concept, genuine aesthetic ambition, and a working architecture. It is also currently shipping with critical security vulnerabilities and accessibility failures that will cause real harm to real people.</p>
+        <p>The <strong>9,000-ID space with no collision detection</strong> is a trust-destroying bug. When two customers silently share a QR code and one redeems the other's reward, the café owner stands at the counter explaining that someone's loyalty points are gone. That is the moment this app fails in public.</p>
+        <p>The <strong>innerHTML injection on <code>e.note</code></strong> is a genuine XSS vector. It is not theoretical — staff and admin input flows directly into the DOM with no sanitization.</p>
+        <p>The <strong>font sizes are a functional barrier</strong>, not an aesthetic statement. 5–8px text with zoom locked via <code>user-scalable=no</code> means real customers cannot use this app. This is inaccessibility with legal exposure attached.</p>
+      </div>
+
+      <div class="verdict-section">
+        <h3>Where the Council Clashes</h3>
+        <p>The Expansionist called the ID collision and font issues "polish problems" while pitching a SaaS pivot. All five peer reviewers identified this as the session's biggest blind spot — dangerous framing that could convince a developer to ship a cracked foundation because the business case sounds exciting.</p>
+        <p>The real productive disagreement is about severity ranking. The First Principles Thinker correctly reframes: for a neighborhood café, a disgruntled employee exploiting XSS via a crafted note is a <em>more</em> credible threat than an external attacker. Severity should be calibrated to realistic threat actors, not abstract CVE scores.</p>
+        <p>On SHA-256 vs bcrypt/Argon2: the Contrarian is right on the cryptography. But a gap the peer review caught — nobody confirmed whether the PIN travels in plaintext before reaching the server-side hash. That analysis gap is itself a finding.</p>
+      </div>
+
+      <div class="verdict-section">
+        <h3>Blind Spots the Council Caught (via Peer Review)</h3>
+        <p><strong>The anon key is public and unguarded.</strong> The Supabase anon key lives in the deployed <code>config.js</code>, is visible to anyone who views source, and is the actual <code>Authorization</code> header for unauthenticated <code>callEdge</code> calls. Anyone can enumerate all customer phone numbers, stamp counts, and loyalty data right now. This is more immediately exploitable than the XSS.</p>
+        <p><strong>The QR code is static and never expires.</strong> It encodes a customer ID and has no rotation or invalidation mechanism. A screenshot shared between customers allows indefinite impersonation to accumulate stamps. For a loyalty system, this is the primary abuse vector — and the app currently does nothing about it.</p>
+        <p><strong>The stamp cooldown is client-side only.</strong> The <code>lastStampTime</code> check in <code>staff.js</code> is browser-only. Any request to the Edge Function bypassing the UI bypasses the rate limit entirely. The server does not enforce cooldown.</p>
+        <p><strong>GDPR and privacy compliance is absent.</strong> The app collects phone numbers, birthdays, and behavioral loyalty data with no privacy policy, no data retention disclosure, and no consent mechanism. A regulatory complaint requires only one informed customer.</p>
+      </div>
+
+      <div class="verdict-section">
+        <h3>The Recommendation</h3>
+        <p>This is a <strong>70% app.</strong> The last 30% is where it crosses from "impressive demo" to "elite production system." That 30% is not polish — it is the difference between a product that is trustworthy and one that is not.</p>
+        <p>The architecture is sound. Supabase, GitHub Pages, Vanilla JS, GitHub Actions — defensible stack for this use case. The retro aesthetic is a real differentiator. The leaderboard mechanic is genuinely clever. The PWA approach eliminates install friction. These are real strengths.</p>
+        <p>The security posture has two critical issues open right now: the public customer data enumeration via the exposed anon key, and the XSS on <code>e.note</code>. Both can be weaponized today, by someone with minimal technical skill, using only a browser.</p>
+        <p>Fix these, address the QR impersonation design, lift the accessibility floor, and add a privacy policy. Then it earns "elite."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALIGNMENT VISUAL -->
+  <div class="section-title">📊 Advisor Agreement / Divergence</div>
+  <div class="alignment">
+    <div class="alignment-header">Issue Alignment Across Advisors</div>
+    <div class="alignment-grid">
+      <div class="alignment-cell">
+        <div class="issue">ID collision (9,000-space genId)</div>
+        <div class="advisor-row">
+          <span class="advisor-pip pip-agree">Contrarian ✓</span>
+          <span class="advisor-pip pip-agree">1st Principles ✓</span>
+          <span class="advisor-pip pip-disagree">Expansionist ✗</span>
+          <span class="advisor-pip pip-agree">Outsider ✓</span>
+          <span class="advisor-pip pip-agree">Executor ✓</span>
+        </div>
+      </div>
+      <div class="alignment-cell">
+        <div class="issue">XSS on e.note (innerHTML injection)</div>
+        <div class="advisor-row">
+          <span class="advisor-pip pip-agree">Contrarian ✓</span>
+          <span class="advisor-pip pip-agree">1st Principles ✓</span>
+          <span class="advisor-pip pip-disagree">Expansionist ✗</span>
+          <span class="advisor-pip pip-neutral">Outsider –</span>
+          <span class="advisor-pip pip-agree">Executor ✓</span>
+        </div>
+      </div>
+      <div class="alignment-cell">
+        <div class="issue">Font sizes / user-scalable=no</div>
+        <div class="advisor-row">
+          <span class="advisor-pip pip-agree">Contrarian ✓</span>
+          <span class="advisor-pip pip-agree">1st Principles ✓</span>
+          <span class="advisor-pip pip-disagree">Expansionist ✗</span>
+          <span class="advisor-pip pip-agree">Outsider ✓</span>
+          <span class="advisor-pip pip-agree">Executor ✓</span>
+        </div>
+      </div>
+      <div class="alignment-cell">
+        <div class="issue">Service worker path mismatch</div>
+        <div class="advisor-row">
+          <span class="advisor-pip pip-agree">Contrarian ✓</span>
+          <span class="advisor-pip pip-neutral">1st Principles –</span>
+          <span class="advisor-pip pip-neutral">Expansionist –</span>
+          <span class="advisor-pip pip-neutral">Outsider –</span>
+          <span class="advisor-pip pip-agree">Executor ✓</span>
+        </div>
+      </div>
+      <div class="alignment-cell">
+        <div class="issue">Anon key data exposure (peer review)</div>
+        <div class="advisor-row">
+          <span class="advisor-pip pip-neutral">— Caught in peer review —</span>
+        </div>
+      </div>
+      <div class="alignment-cell">
+        <div class="issue">Static QR impersonation (peer review)</div>
+        <div class="advisor-row">
+          <span class="advisor-pip pip-neutral">— Caught in peer review —</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADVISOR RESPONSES -->
+  <div class="section-title">💬 Advisor Responses</div>
+
+  <details>
+    <summary>
+      <span class="advisor-tag tag-contrarian">The Contrarian</span>
+      This app has bones. It is not production-ready.
+    </summary>
+    <div class="content">
+      <p>The 9,000-ID space is a timebomb. At a real café with any regularity, collisions become statistically likely well before you hit capacity — and there's no collision detection, so two customers silently share a QR code. One person redeems another's reward. Nobody notices until a customer is furious.</p>
+      <p>The <code>e.note</code> innerHTML injection is an XSS vector, full stop. Staff or admins can enter crafted input that executes in any browser viewing that history. On a shared staff device, that's a session hijack waiting to happen.</p>
+      <p><strong>SHA-256 is not a password hashing algorithm.</strong> It's a checksum. PINs hashed with SHA-256 plus salt are crackable in seconds with a GPU and a wordlist. bcrypt or Argon2 exist for exactly this reason.</p>
+      <p>The font sizes are not an aesthetic choice — 5px–8px text is inaccessible under WCAG 2.1 AA, period. Combined with <code>user-scalable=no</code>, you've actively blocked the compensatory mechanism users with low vision rely on. This is legal exposure for a public-facing commercial product.</p>
+      <p>CDN dependencies without SRI mean a compromised CDN silently injects malicious code into your auth flow. Dead code in <code>config.js</code> signals an abandoned auth migration with inconsistent security assumptions baked in. The service worker path mismatch means offline functionality will silently fail on the custom domain.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="advisor-tag tag-principles">The First Principles Thinker</span>
+      Technical sophistication ≠ production-ready.
+    </summary>
+    <div class="content">
+      <p>What problem are you actually solving? A small café wants to reward repeat customers. The success metric: do loyal customers feel recognized, and do they come back more often? Everything else is downstream of that.</p>
+      <p>"Production-ready" for this context means: don't break during a Saturday morning rush, don't embarrass the owner in front of a customer, don't create legal or financial liability. That's the bar.</p>
+      <p><strong>High impact:</strong> The 9,000-ID space with no collision detection is a genuine operational failure. Two customers sharing a QR code = stamps going to the wrong account = a trust-destroying moment at the counter.<br>
+      <strong>High impact:</strong> innerHTML injection of e.note. The threat actor is more likely a disgruntled employee than an external hacker — which makes it more probable, not less.<br>
+      <strong>Medium impact:</strong> 5px–8px fonts + zoom locked = functional barrier for core users.<br>
+      <strong>Low actual impact at this scale:</strong> JWT sessionStorage, client-side birthday logic, missing SRI.</p>
+      <p>The deeper wrong assumption: treating "technically sophisticated" as a proxy for "production-ready." The unsophisticated failure — a customer can't read the screen — will hurt the business far more than a missing SRI hash.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="advisor-tag tag-expansionist">The Expansionist</span>
+      This developer built something businesses would pay for.
+    </summary>
+    <div class="content">
+      <p>This is a full-stack loyalty platform disguised as a café app. The real asset isn't the stamp card — it's the customer behavior graph. Visit history, birthday data, leaderboard mechanics, redemption patterns: this is exactly what small businesses pay $200+/month for through Toast, Square Loyalty, or Paytronix.</p>
+      <p>The opportunity hiding in plain sight: white-label SaaS. The tech stack is intentionally portable — vanilla JS, Supabase, no proprietary lock-in. The retro aesthetic is a differentiator. PWA means zero install barrier. The leaderboard is the most exciting feature — weekly top 5 on Instagram = word-of-mouth engine.</p>
+      <p>Left on the table: push notifications, geo-triggered visit detection, referral stamping, seasonal campaigns.</p>
+      <p><em>Note: Peer reviewers unanimously flagged this response as the session's biggest blind spot — dismissing ID collision and font legibility as "polish problems" could lead to shipping a system with genuine data integrity failures.</em></p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="advisor-tag tag-outsider">The Outsider</span>
+      Built to be admired by developers. Not yet built for the person who wants their tenth coffee free.
+    </summary>
+    <div class="content">
+      <p>The first thing a café regular sees is text they literally cannot read. 5–8px font is not a design choice — it is a barrier. And they cannot zoom in to compensate because <code>user-scalable=no</code> removes that escape hatch entirely.</p>
+      <p>A 60-year-old retiree picking up their morning coffee does not know they are a "PLAYER" with "HP." The gaming metaphors are internally consistent but assume the user is in on the joke. Regular café customers are not in on the joke. They will feel confused, then embarrassed, then done.</p>
+      <p>The brackets around buttons — <code>[ SIGN IN ]</code> — look broken on first glance. Not stylized. Broken. The <code>confirm()</code> dialog for account deletion is a browser-native popup that looks like a system alert on mobile — alarming and unpolished. "NOOK-XXXX" displayed prominently as the primary identity marker means nothing to the customer.</p>
+      <p>Cohesion is not the same as usability.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="advisor-tag tag-executor">The Executor</span>
+      Ranked fix list — do items 1–4 this week.
+    </summary>
+    <div class="content">
+      <div class="fix-item fix-critical">
+        <div class="fix-label">🔴 Critical · 30 min</div>
+        <strong>1. Fix genId() collision</strong> — Replace with <code>'NOOK-' + crypto.randomUUID().replace(/-/g,'').slice(0,8).toUpperCase()</code>. Add DB unique constraint on customer ID column.
+      </div>
+      <div class="fix-item fix-critical">
+        <div class="fix-label">🔴 Critical · 15 min</div>
+        <strong>2. Fix XSS on e.note</strong> — Create a <code>sanitize(s)</code> helper using <code>textContent</code> assignment, replace raw template literal interpolations in <code>renderHistList</code>.
+      </div>
+      <div class="fix-item fix-high">
+        <div class="fix-label">🟠 High · 10 min</div>
+        <strong>3. Fix service worker path mismatch</strong> — <code>app.js</code> registers <code>/Nook/sw.js</code> but the custom domain serves from root. Change to <code>/sw.js</code>. PWA offline is currently broken.
+      </div>
+      <div class="fix-item fix-high">
+        <div class="fix-label">🟠 High · 20 min</div>
+        <strong>4. Add JWT expiry check</strong> — Decode payload, check <code>exp</code> before each staff/admin action, redirect to login if expired.
+      </div>
+      <div class="fix-item fix-high">
+        <div class="fix-label">🟠 High · 1 hour</div>
+        <strong>5. Font minimum floor</strong> — Raise minimum from 5–6px to 10–11px. Remove <code>user-scalable=no</code> and <code>maximum-scale=1</code> from viewport meta.
+      </div>
+      <div class="fix-item fix-medium">
+        <div class="fix-label">🔵 Medium · 2 hours</div>
+        <strong>6. Birthday enforcement server-side</strong> — Edge Function must re-verify birthday month + birthdayYear before committing the grant.
+      </div>
+      <div class="fix-item fix-medium">
+        <div class="fix-label">🔵 Medium · 20 min</div>
+        <strong>7. SRI integrity hashes</strong> — Add <code>integrity</code> and <code>crossorigin="anonymous"</code> to all CDN script tags.
+      </div>
+    </div>
+  </details>
+
+  <!-- PEER REVIEWS -->
+  <div class="section-title">🔍 Peer Review Highlights</div>
+
+  <details>
+    <summary>
+      <span class="advisor-tag tag-review">Peer Reviews</span>
+      4 things the advisors collectively missed — surfaced in review
+    </summary>
+    <div class="content">
+      <p><strong>1. Anon key data exposure</strong> (caught by Reviewers 1 & 2)<br>
+      The Supabase anon key is in the deployed <code>config.js</code>, visible in page source, and used as the <code>Authorization</code> bearer token for all unauthenticated Edge Function calls. Anyone with the URL can enumerate all customer records — phone numbers, stamp counts, birthday data — with a single fetch. This is the highest-priority issue in the entire codebase.</p>
+
+      <p><strong>2. Static QR code enables impersonation</strong> (caught by Reviewer 5)<br>
+      The QR encodes the customer ID and never rotates or expires. A customer who photographs another's card can impersonate them indefinitely to accumulate stamps. For a loyalty system, this is the primary abuse vector — and the current design has no defense against it.</p>
+
+      <p><strong>3. Stamp cooldown is client-side only</strong> (caught by Reviewer 1)<br>
+      <code>lastStampTime</code> in <code>staff.js</code> is a browser check only. A direct API call to the Edge Function bypasses the rate limit entirely. The server must enforce cooldown, not the browser.</p>
+
+      <p><strong>4. Privacy compliance is absent</strong> (caught by Reviewer 3)<br>
+      The app collects phone numbers, birthdays, and behavioral loyalty data with no privacy policy, no data retention disclosure, and no consent mechanism. A regulatory complaint does not care how charming the pixel aesthetic is.</p>
+
+      <p><em>The peer review also unanimously named Response A (The Expansionist) as the session's biggest blind spot — calling data integrity failures "polish problems" while pitching a SaaS pivot is dangerous framing that could lead a developer to ship a broken product with confidence.</em></p>
+    </div>
+  </details>
+
+</div>
+
+<div class="footer" style="max-width:860px;margin:0 auto;padding:0 20px 40px;">
+  LLM Council · Nook Loyalty App · 11 May 2026 · 5 Advisors · 5 Peer Reviewers · 1 Chairman
+</div>
+
+</body>
+</html>
